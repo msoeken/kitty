@@ -170,5 +170,12 @@ texinfo_documents = [
 
 # -- Options for breathe --------------------------------------------------
 
+import subprocess, os
+
+read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
+if read_the_docs_build:
+    subprocess.call('doxygen Doxyfile', shell = True)
+
 breathe_projects = {"kitty": "doxyxml/xml"}
 breathe_default_project = "kitty"
