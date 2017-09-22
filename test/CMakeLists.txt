@@ -1,5 +1,6 @@
+add_subdirectory(googletest/googletest)
+
 include_directories(googletest/googletest/include)
-link_directories(googletest/build/googlemock/gtest)
 
 file(GLOB FILENAMES *.cpp)
 
