@@ -28,6 +28,8 @@
 #include <array>
 #include <cstdint>
 
+#include "detail/constants.hpp"
+
 namespace kitty
 {
 
@@ -116,4 +118,4 @@ public: /* fields */
   std::array<uint64_t, NumBlocks> _bits;
   /*! \endcond */
 };
-}
+} // namespace kitty

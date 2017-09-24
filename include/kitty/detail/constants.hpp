@@ -23,53 +23,20 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*! \cond PRIVATE */
 #pragma once
 
 #include <cstdint>
-#include <vector>
-
-#include "detail/constants.hpp"
 
 namespace kitty
 {
 
-/*! Truth table in which number of variables is known at runtime.
-*/
-struct dynamic_truth_table
+namespace detail
 {
-  /*! Standard constructor.
 
-    The number of variables provided to the truth table can be
-    computed at runtime.  However, once the truth table is constructed
-    its number of variables cannot change anymore.
+static constexpr uint64_t projections[] = {0xaaaaaaaaaaaaaaaa, 0xcccccccccccccccc, 0xf0f0f0f0f0f0f0f0, 0xff00ff00ff00ff00, 0xffff0000ffff0000, 0xffffffff00000000};
 
-    The constructor computes the number of blocks and resizes the
-    vector accordingly.
-
-    \param num_vars Number of variables
-  */
-  dynamic_truth_table( int num_vars )
-      : _bits( ( num_vars <= 6 ) ? 1 : ( 1 << ( num_vars - 6 ) ) ),
-        _num_vars( num_vars )
-  {
-  }
-
-  /*! Returns number of variables.
-   */
-  inline auto num_vars() const noexcept { return _num_vars; }
-
-  /*! Returns number of blocks.
-   */
-  inline auto num_blocks() const noexcept { return _bits.size(); }
-
-  /*! Returns number of bits.
-   */
-  inline auto num_bits() const noexcept { return uint64_t( 1 ) << _num_vars; }
-
-  /*! \cond PRIVATE */
-public: /* fields */
-  std::vector<uint64_t> _bits;
-  int _num_vars;
-  /*! \endcond */
-};
+static constexpr uint64_t masks[] = {0x0000000000000001, 0x0000000000000003, 0x000000000000000f, 0x00000000000000ff, 0x000000000000ffff, 0x00000000ffffffff, 0xffffffffffffffff};
+} // namespace detail
 } // namespace kitty
+/*! \endcond */

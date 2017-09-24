@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <cstdint>
+
+#include "static_truth_table.hpp"
+
 namespace kitty
 {
 
@@ -88,4 +92,4 @@ void clear_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
   tt._bits &= ~( uint64_t( 1 ) << index );
 }
 /*! \endcond */
-}
+} // namespace kitty

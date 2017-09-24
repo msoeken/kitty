@@ -25,15 +25,11 @@
 
 #pragma once
 
+#include "static_truth_table.hpp"
+#include "detail/constants.hpp"
+
 namespace kitty
 {
-
-/*! \cond PRIVATE */
-namespace detail
-{
-static constexpr uint64_t projections[] = {0xaaaaaaaaaaaaaaaa, 0xcccccccccccccccc, 0xf0f0f0f0f0f0f0f0, 0xff00ff00ff00ff00, 0xffff0000ffff0000, 0xffffffff00000000};
-}
-/*! \endcond */
 
 /*! Constructs projections (single-variable functions).
 
@@ -114,4 +110,4 @@ void create_majority( TT& tt )
     }
   }
 }
-}
+} // namespace kitty
