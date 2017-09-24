@@ -46,10 +46,7 @@ void create_nth_var( TT& tt, uint64_t var_index, bool complement = false )
     tt._bits[0] = complement ? !detail::projections[var_index] : detail::projections[var_index];
 
     /* mask if truth table does not require all bits */
-    if ( tt.num_vars() < 6 )
-    {
-      tt._bits[0] &= ( uint64_t( 1 ) << ( uint64_t( 1 ) << tt.num_vars() ) ) - 1;
-    }
+    tt.mask_bits();
   }
   else if ( var_index < 6 )
   {
@@ -84,10 +81,7 @@ void create_nth_var( static_truth_table<NumVars, true>& tt, uint64_t var_index, 
   tt._bits = complement ? ~detail::projections[var_index] : detail::projections[var_index];
 
   /* mask if truth table does not require all bits */
-  if ( tt.num_vars() < 6 )
-  {
-    tt._bits &= ( uint64_t( 1 ) << ( uint64_t( 1 ) << tt.num_vars() ) ) - 1;
-  }
+  tt.mask_bits();
 }
 /*! \endcond */
 

@@ -72,6 +72,20 @@ struct dynamic_truth_table
    */
   inline auto num_bits() const noexcept { return uint64_t( 1 ) << _num_vars; }
 
+  /*! Masks the number of valid truth table bits.
+
+    If the truth table has less than 6 variables, it may not use all
+    the bits.  This operation makes sure to zero out all non-valid
+    bits.
+  */
+  inline void mask_bits() noexcept
+  {
+    if ( _num_vars < 6 )
+    {
+      _bits[0u] &= detail::masks[_num_vars];
+    }
+  }
+
   /*! \cond PRIVATE */
 public: /* fields */
   std::vector<uint64_t> _bits;
