@@ -54,6 +54,12 @@ struct dynamic_truth_table
   {
   }
 
+  /*! Constructs a new dynamic truth table instance with the same number of variables. */
+  inline dynamic_truth_table construct() const
+  {
+    return dynamic_truth_table( _num_vars );
+  }
+
   /*! Returns number of variables.
    */
   inline auto num_vars() const noexcept { return _num_vars; }

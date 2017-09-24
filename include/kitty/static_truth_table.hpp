@@ -55,6 +55,12 @@ struct static_truth_table<NumVars, true>
   };
   /*! \endcond */
 
+  /*! Constructs a new static truth table instance with the same number of variables. */
+  inline static_truth_table<NumVars> construct() const
+  {
+    return static_truth_table<NumVars>();
+  }
+
   /*! Returns number of variables.
    */
   inline auto num_vars() const noexcept { return NumVars; }
@@ -99,6 +105,12 @@ struct static_truth_table<NumVars, false>
   static_truth_table()
   {
     _bits.fill( 0 );
+  }
+
+  /*! Constructs a new static truth table instance with the same number of variables. */
+  inline static_truth_table<NumVars> construct() const
+  {
+    return static_truth_table<NumVars>();
   }
 
   /*! Returns number of variables.
