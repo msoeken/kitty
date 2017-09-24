@@ -54,6 +54,12 @@ struct dynamic_truth_table
   {
   }
 
+  /*! Constructs a new dynamic truth table instance with the same number of variables. */
+  inline dynamic_truth_table construct() const
+  {
+    return dynamic_truth_table( _num_vars );
+  }
+
   /*! Returns number of variables.
    */
   inline auto num_vars() const noexcept { return _num_vars; }
@@ -65,6 +71,20 @@ struct dynamic_truth_table
   /*! Returns number of bits.
    */
   inline auto num_bits() const noexcept { return uint64_t( 1 ) << _num_vars; }
+
+  /*! Masks the number of valid truth table bits.
+
+    If the truth table has less than 6 variables, it may not use all
+    the bits.  This operation makes sure to zero out all non-valid
+    bits.
+  */
+  inline void mask_bits() noexcept
+  {
+    if ( _num_vars < 6 )
+    {
+      _bits[0u] &= detail::masks[_num_vars];
+    }
+  }
 
   /*! \cond PRIVATE */
 public: /* fields */

@@ -55,6 +55,12 @@ struct static_truth_table<NumVars, true>
   };
   /*! \endcond */
 
+  /*! Constructs a new static truth table instance with the same number of variables. */
+  inline static_truth_table<NumVars> construct() const
+  {
+    return static_truth_table<NumVars>();
+  }
+
   /*! Returns number of variables.
    */
   inline auto num_vars() const noexcept { return NumVars; }
@@ -66,6 +72,14 @@ struct static_truth_table<NumVars, true>
   /*! Returns number of bits.
    */
   inline auto num_bits() const noexcept { return NumBits; }
+
+  /*! Masks the number of valid truth table bits.
+
+    If the truth table has less than 6 variables, it may not use all
+    the bits.  This operation makes sure to zero out all non-valid
+    bits.
+  */
+  inline void mask_bits() noexcept { _bits &= detail::masks[NumVars]; }
 
   /*! \cond PRIVATE */
 public: /* fields */
@@ -101,6 +115,12 @@ struct static_truth_table<NumVars, false>
     _bits.fill( 0 );
   }
 
+  /*! Constructs a new static truth table instance with the same number of variables. */
+  inline static_truth_table<NumVars> construct() const
+  {
+    return static_truth_table<NumVars>();
+  }
+
   /*! Returns number of variables.
    */
   inline auto num_vars() const noexcept { return NumVars; }
@@ -112,6 +132,13 @@ struct static_truth_table<NumVars, false>
   /*! Returns number of bits.
    */
   inline auto num_bits() const noexcept { return NumBits; }
+
+  /*! Masks the number of valid truth table bits.
+
+    We know that we will have at least 7 variables in this data
+    structure.
+  */
+  inline void mask_bits() noexcept {}
 
   /*! \cond PRIVATE */
 public: /* fields */

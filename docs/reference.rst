@@ -31,3 +31,8 @@ Constructors
 
 .. doxygenfile:: constructors.hpp
 
+Operations
+----------
+
+.. doxygenfile:: operations.hpp
+

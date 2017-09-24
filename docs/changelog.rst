@@ -13,3 +13,7 @@ Change Log
 * Constructors ``create_nth_var`` and ``create_majority``
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
 
+* Unary and binary operations: ``unary_not``, ``binary_and``, ``binary_or``, and ``binary_xor``
+  `#2 <https://github.com/msoeken/kitty/pull/2>`_
+
+

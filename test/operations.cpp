@@ -23,11 +23,41 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <algorithm>
 
-#include "bit_operations.hpp"
-#include "constructors.hpp"
-#include "operations.hpp"
+#include <kitty/kitty.hpp>
+
+using namespace kitty;
+
+TEST( OperationsTest, binary_for_small )
+{
+  static_truth_table<2> tt1_s, tt2_s;
+
+  create_nth_var( tt1_s, 0 );
+  create_nth_var( tt2_s, 1 );
+
+  EXPECT_EQ( binary_and( tt1_s, tt2_s )._bits, 0x8 );
+  EXPECT_EQ( binary_or( tt1_s, tt2_s )._bits, 0xe );
+  EXPECT_EQ( unary_not( binary_and( tt1_s, tt2_s ) )._bits, 0x7 );
+  EXPECT_EQ( unary_not( binary_or( tt1_s, tt2_s ) )._bits, 0x1 );
+}
+
+TEST( OperationsTest, binary_for_large )
+{
+  static_truth_table<7> tt1_s, tt2_s;
+  create_nth_var( tt1_s, 0 );
+  create_nth_var( tt2_s, 1 );
+
+  auto tt_s = binary_and( tt1_s, tt2_s );
+  for ( auto i = 2; i < 7; ++i )
+  {
+    static_truth_table<7> ttv_s;
+    create_nth_var( ttv_s, i );
+    tt_s = binary_and( tt_s, ttv_s );
+  }
+
+  EXPECT_EQ( tt_s._bits[0], 0x0 );
+  EXPECT_EQ( tt_s._bits[1], uint64_t( 1 ) << 63 );
+}
