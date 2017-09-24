@@ -12,6 +12,8 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang$")
   add_definitions(-fcolor-diagnostics)
 endif()
 
+set(CMAKE_CXX_FLAGS "-Wall")
+
 include_directories(include)
 
 if(KITTY_BENCH)
