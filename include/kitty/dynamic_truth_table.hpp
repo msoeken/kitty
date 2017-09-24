@@ -48,7 +48,7 @@ struct dynamic_truth_table
 
     \param num_vars Number of variables
   */
-  dynamic_truth_table( int num_vars )
+  explicit dynamic_truth_table( int num_vars )
       : _bits( ( num_vars <= 6 ) ? 1 : ( 1 << ( num_vars - 6 ) ) ),
         _num_vars( num_vars )
   {
