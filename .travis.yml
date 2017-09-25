@@ -1,5 +1,5 @@
 language: cpp
-script: mkdir build && cd build && cmake .. && make
+script: mkdir build && cd build && cmake -DKITTY_BENCH=ON -DKITTY_TEST=ON .. && make
 compiler:
   - clang
   - gcc
