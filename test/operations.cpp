@@ -53,6 +53,48 @@ TEST( OperationsTest, binary_for_small )
   EXPECT_EQ( unary_not( binary_and( tt1_d, tt2_d ) )._bits[0], 0x7 );
   EXPECT_EQ( unary_not( binary_or( tt1_d, tt2_d ) )._bits[0], 0x1 );
 }
+
+TEST( OperationsTest, ternary_for_small )
+{
+  {
+    static_truth_table<3> tt1_s, tt2_s, tt3_s;
+
+    create_nth_var( tt1_s, 0 );
+    create_nth_var( tt2_s, 1 );
+    create_nth_var( tt3_s, 2 );
+
+    const auto maj_expr = binary_or( binary_or( binary_and( tt1_s, tt2_s ), binary_and( tt1_s, tt3_s ) ), binary_and( tt2_s, tt3_s ) );
+    const auto maj_direct = ternary_majority( tt1_s, tt2_s, tt3_s );
+
+    EXPECT_EQ( maj_expr._bits, 0xe8 );
+    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+
+    const auto ite_expr = binary_or( binary_and( tt1_s, tt2_s ), binary_and( unary_not( tt1_s ), tt3_s ) );
+    const auto ite_direct = ternary_ite( tt1_s, tt2_s, tt3_s );
+
+    EXPECT_EQ( ite_expr._bits, 0xd8 );
+    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+  }
+
+  {
+    dynamic_truth_table tt1_d( 3 ), tt2_d( 3 ), tt3_d( 3 );
+
+    create_nth_var( tt1_d, 0 );
+    create_nth_var( tt2_d, 1 );
+    create_nth_var( tt3_d, 2 );
+
+    const auto maj_expr = binary_or( binary_or( binary_and( tt1_d, tt2_d ), binary_and( tt1_d, tt3_d ) ), binary_and( tt2_d, tt3_d ) );
+    const auto maj_direct = ternary_majority( tt1_d, tt2_d, tt3_d );
+
+    EXPECT_EQ( maj_expr._bits[0], 0xe8 );
+    EXPECT_EQ( maj_expr._bits[0], maj_direct._bits[0] );
+
+    const auto ite_expr = binary_or( binary_and( tt1_d, tt2_d ), binary_and( unary_not( tt1_d ), tt3_d ) );
+    const auto ite_direct = ternary_ite( tt1_d, tt2_d, tt3_d );
+
+    EXPECT_EQ( ite_expr._bits[0], 0xd8 );
+    EXPECT_EQ( ite_expr._bits[0], ite_direct._bits[0] );
+  }
 }
 
 TEST( OperationsTest, binary_for_large )
@@ -92,4 +134,41 @@ TEST( OperationsTest, binary_for_large )
   }
 }
 
+TEST( OperationsTest, ternary_for_large )
+{
+  {
+    static_truth_table<7> tt1_s, tt2_s, tt3_s;
+
+    create_nth_var( tt1_s, 0 );
+    create_nth_var( tt2_s, 3 );
+    create_nth_var( tt3_s, 6 );
+
+    const auto maj_expr = binary_or( binary_or( binary_and( tt1_s, tt2_s ), binary_and( tt1_s, tt3_s ) ), binary_and( tt2_s, tt3_s ) );
+    const auto maj_direct = ternary_majority( tt1_s, tt2_s, tt3_s );
+
+    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+
+    const auto ite_expr = binary_or( binary_and( tt1_s, tt2_s ), binary_and( unary_not( tt1_s ), tt3_s ) );
+    const auto ite_direct = ternary_ite( tt1_s, tt2_s, tt3_s );
+
+    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+  }
+
+  {
+    dynamic_truth_table tt1_d( 7 ), tt2_d( 7 ), tt3_d( 7 );
+
+    create_nth_var( tt1_d, 0 );
+    create_nth_var( tt2_d, 3 );
+    create_nth_var( tt3_d, 6 );
+
+    const auto maj_expr = binary_or( binary_or( binary_and( tt1_d, tt2_d ), binary_and( tt1_d, tt3_d ) ), binary_and( tt2_d, tt3_d ) );
+    const auto maj_direct = ternary_majority( tt1_d, tt2_d, tt3_d );
+
+    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+
+    const auto ite_expr = binary_or( binary_and( tt1_d, tt2_d ), binary_and( unary_not( tt1_d ), tt3_d ) );
+    const auto ite_direct = ternary_ite( tt1_d, tt2_d, tt3_d );
+
+    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+  }
 }

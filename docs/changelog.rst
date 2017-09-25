@@ -17,4 +17,5 @@ v0.1
 * Unary and binary operations: ``unary_not``, ``binary_and``, ``binary_or``, and ``binary_xor``
   `#2 <https://github.com/msoeken/kitty/pull/2>`_
 
-
+* Ternary operations: ``ternary_majority`` and ``ternary_ite``
+  `#3 <https://github.com/msoeken/kitty/pull/3>`_
