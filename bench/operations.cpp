@@ -59,6 +59,16 @@ void BM_bitwise_and_func_static( benchmark::State& state )
   }
 }
 
+template<int NumVars>
+void BM_bitwise_majority_func_static( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    static_truth_table<NumVars> tt1, tt2, tt3;
+    ternary_majority( tt1, tt2, tt3 );
+  }
+}
+
 void BM_bitwise_and_lambda_dynamic( benchmark::State& state )
 {
   while ( state.KeepRunning() )
@@ -86,6 +96,15 @@ void BM_bitwise_and_func_dynamic( benchmark::State& state )
   }
 }
 
+void BM_bitwise_majority_func_dynamic( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    dynamic_truth_table tt1( state.range( 0 ) ), tt2( state.range( 0 ) ), tt3( state.range( 0 ) );
+    ternary_majority( tt1, tt2, tt3 );
+  }
+}
+
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 5 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 7 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 9 );
@@ -95,9 +114,13 @@ BENCHMARK_TEMPLATE( BM_bitwise_and_std_static, 9 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_func_static, 5 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_func_static, 7 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_func_static, 9 );
+BENCHMARK_TEMPLATE( BM_bitwise_majority_func_static, 5 );
+BENCHMARK_TEMPLATE( BM_bitwise_majority_func_static, 7 );
+BENCHMARK_TEMPLATE( BM_bitwise_majority_func_static, 9 );
 
 BENCHMARK( BM_bitwise_and_lambda_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 BENCHMARK( BM_bitwise_and_std_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 BENCHMARK( BM_bitwise_and_func_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
+BENCHMARK( BM_bitwise_majority_func_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 
 BENCHMARK_MAIN()
