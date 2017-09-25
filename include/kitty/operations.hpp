@@ -62,7 +62,7 @@ static_truth_table<NumVars, true> unary_operation( const static_truth_table<NumV
 }
 /* \endcond */
 
-/*! Perform bitwise binary operation on truth table.
+/*! Perform bitwise binary operation on two truth tables.
 
   The dimensions of `first` and `second` must match.  This is ensured
   at compile-time for static truth tables, but at run-time for dynamic
@@ -70,7 +70,7 @@ static_truth_table<NumVars, true> unary_operation( const static_truth_table<NumV
 
   \param first First truth table
   \param second Second truth table
-  \param op Unary operation that takes as input two words (`uint64_t`) and returns a word
+  \param op Binary operation that takes as input two words (`uint64_t`) and returns a word
 
   \return new constructed truth table of same type and dimensions
  */
@@ -98,28 +98,28 @@ static_truth_table<NumVars, true> binary_operation( const static_truth_table<Num
 
 /*! Inverts all bits in a truth table. */
 template<typename TT>
-TT unary_not( const TT& tt )
+inline TT unary_not( const TT& tt )
 {
   return unary_operation( tt, []( auto a ) { return ~a; } );
 }
 
 /*! Performs bitwise AND of two truth tables. */
 template<typename TT>
-TT binary_and( const TT& first, const TT& second )
+inline TT binary_and( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_and<>() );
 }
 
 /*! Performs bitwise OR of two truth tables. */
 template<typename TT>
-TT binary_or( const TT& first, const TT& second )
+inline TT binary_or( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_or<>() );
 }
 
 /*! Performs bitwise XOR of two truth tables. */
 template<typename TT>
-TT binary_xor( const TT& first, const TT& second )
+inline TT binary_xor( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_xor<>() );
 }
