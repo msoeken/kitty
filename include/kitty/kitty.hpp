@@ -31,3 +31,11 @@
 #include "bit_operations.hpp"
 #include "constructors.hpp"
 #include "operations.hpp"
+
+//         /\___/\
+//        (  o o  )
+//        /   *   \
+//        \__\_/__/
+//          /   \
+//         / ___ \
+//         \/___\/
