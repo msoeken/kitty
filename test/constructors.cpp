@@ -47,6 +47,20 @@ TEST( ConstructorsTest, create_nth_var5 )
   }
 }
 
+TEST( ConstructorsTest, create_from_bitstring )
+{
+  static_truth_table<3> tt_s, tt_s_str;
+  create_majority( tt_s );
+  create_from_binary_string( tt_s_str, "11101000" );
+
+  dynamic_truth_table tt_d( 3 ), tt_d_str( 3 );
+  create_majority( tt_d );
+  create_from_binary_string( tt_d_str, "11101000" );
+
+  EXPECT_TRUE( equal( tt_s, tt_s_str ) );
+  EXPECT_TRUE( equal( tt_d, tt_d_str ) );
+}
+
 TEST( ConstructorsTest, create_majority5 )
 {
   static_truth_table<5> tt_s;
