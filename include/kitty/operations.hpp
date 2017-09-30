@@ -227,4 +227,88 @@ inline bool equal( const TT& first, const TT& second )
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
+/*! Swaps two adjacent variables in a truth table
+
+  The function swaps variable `var_index` with `var_index + 1`.  The
+  function will change `tt` in-place.  If `tt` should not be changed,
+  one can use `swap_adjacent` instead.
+
+  \param tt Truth table
+  \param var_index A variable
+*/
+template<typename TT>
+void swap_adjacent_inplace( TT& tt, uint64_t var_index )
+{
+  assert( var_index < tt.num_vars() - 1 );
+
+  /* permute within each word */
+  if ( var_index < 5 )
+  {
+    const auto shift = uint64_t( 1 ) << var_index;
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
+                    [shift, var_index]( uint64_t word ) {
+                      return ( word & detail::permutation_masks[var_index][0] ) |
+                             ( ( word & detail::permutation_masks[var_index][1] ) << shift ) |
+                             ( ( word & detail::permutation_masks[var_index][2] ) >> shift );
+                    } );
+  }
+  /* permute (half) parts of words */
+  else if ( var_index == 5 )
+  {
+    auto it = std::begin( tt._bits );
+    while ( it != std::end( tt._bits ) )
+    {
+      const auto tmp = *it;
+      auto it2 = it + 1;
+      *it = ( tmp & 0xffffffff ) | ( *it2 << 0x20 );
+      *it2 = ( *it2 & 0xffffffff00000000 ) | ( tmp >> 0x20 );
+      it += 2;
+    }
+  }
+  /* permute comlete words */
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    auto it = std::begin( tt._bits );
+    while ( it != std::end( tt._bits ) )
+    {
+      for ( auto i = decltype( step ){0}; i < step; ++i )
+      {
+        std::swap( *( it + i + step ), *( it + i + 2 * step ) );
+      }
+      it += 4 * step;
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  const auto shift = uint64_t( 1 ) << var_index;
+
+  tt._bits = ( tt._bits & detail::permutation_masks[var_index][0] ) |
+             ( ( tt._bits & detail::permutation_masks[var_index][1] ) << shift ) |
+             ( ( tt._bits & detail::permutation_masks[var_index][2] ) >> shift );
+}
+/*! \endcond */
+
+/*! Swaps two adjacent variables in a truth table
+
+  The function swaps variable `var_index` with `var_index + 1`.  The
+  function will return a new truth table with the result.
+
+  \param tt Truth table
+  \param var_index A variable
+*/
+template<typename TT>
+inline TT swap_adjacent( const TT& tt, uint64_t var_index )
+{
+  auto copy = tt;
+  swap_adjacent_inplace( copy, var_index );
+  return copy;
+}
+
 } // namespace kitty
