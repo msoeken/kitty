@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "static_truth_table.hpp"
 #include "detail/constants.hpp"
+#include "static_truth_table.hpp"
 
 namespace kitty
 {
@@ -85,7 +85,33 @@ void create_nth_var( static_truth_table<NumVars, true>& tt, uint64_t var_index, 
 }
 /*! \endcond */
 
-/*! Constructs majority-n function.
+/*! Constructs truth table from binary string
+
+  Note that the first character in the string represents the most
+  significant bit in the truth table.  For example, the 2-input AND
+  function is represented by the binary string "1000".  The number of
+  characters in `binary` must match the number of bits in `tt`.
+
+  \param tt Truth table
+  \param binary Binary string with as many characters as bits in the truth table
+*/
+template<typename TT>
+void create_from_binary_string( TT& tt, const std::string& binary )
+{
+  assert( binary.size() == tt.num_bits() );
+
+  size_t i = 0u, j = binary.size();
+  do
+  {
+    --j;
+    if ( binary[i++] == '1' )
+    {
+      set_bit( tt, j );
+    }
+  } while ( j );
+}
+
+/*! Constructs majority-\f$n\f$ function.
 
   The number of variables is determined from the truth table.
 
