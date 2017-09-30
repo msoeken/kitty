@@ -141,6 +141,34 @@ static_truth_table<NumVars, true> ternary_operation( const static_truth_table<Nu
 }
 /*! \endcond */
 
+/*! Computes a predicate based on two truth tables.
+
+  The dimensions of `first` and `second` must match.  This is ensured
+  at compile-time for static truth tables, but at run-time for dynamic
+  truth tables.
+
+  \param first First truth table
+  \param second Second truth table
+  \param op Binary operation that takes as input two words (`uint64_t`) and returns a Boolean
+
+  \return true or false based on the predicate
+ */
+template<typename TT, typename Fn>
+bool binary_predicate( const TT& first, const TT& second, Fn&& op )
+{
+  assert( first.num_vars() == second.num_vars() );
+
+  return std::equal( std::begin( first._bits ), std::end( first._bits ), std::begin( second._bits ), op );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars, typename Fn>
+bool binary_predicate( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second, Fn&& op )
+{
+  return op( first._bits, second._bits );
+}
+/*! \endcond */
+
 /*! Inverts all bits in a truth table. */
 template<typename TT>
 inline TT unary_not( const TT& tt )
@@ -186,6 +214,17 @@ template<typename TT>
 inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
 {
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
+}
+
+/*! Checks whether two truth tables are equal
+
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool equal( const TT& first, const TT& second )
+{
+  return binary_predicate( first, second, std::equal_to<>() );
 }
 
 } // namespace kitty
