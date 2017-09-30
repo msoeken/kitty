@@ -47,7 +47,7 @@ TEST( ConstructorsTest, create_nth_var5 )
   }
 }
 
-TEST( ConstructorsTest, create_from_bitstring )
+TEST( ConstructorsTest, create_from_binary_string )
 {
   static_truth_table<3> tt_s, tt_s_str;
   create_majority( tt_s );
@@ -56,6 +56,20 @@ TEST( ConstructorsTest, create_from_bitstring )
   dynamic_truth_table tt_d( 3 ), tt_d_str( 3 );
   create_majority( tt_d );
   create_from_binary_string( tt_d_str, "11101000" );
+
+  EXPECT_TRUE( equal( tt_s, tt_s_str ) );
+  EXPECT_TRUE( equal( tt_d, tt_d_str ) );
+}
+
+TEST( ConstructorsTest, create_from_hex_string )
+{
+  static_truth_table<9> tt_s, tt_s_str;
+  create_majority( tt_s );
+  create_from_hex_string( tt_s_str, "fffffffefffefee8fffefee8fee8e880fffefee8fee8e880fee8e880e8808000fffefee8fee8e880fee8e880e8808000fee8e880e8808000e880800080000000" );
+
+  dynamic_truth_table tt_d( 9 ), tt_d_str( 9 );
+  create_majority( tt_d );
+  create_from_hex_string( tt_d_str, "FFFFFFFEFFFEFEE8FFFEFEE8FEE8E880FFFEFEE8FEE8E880FEE8E880E8808000FFFEFEE8FEE8E880FEE8E880E8808000FEE8E880E8808000E880800080000000" );
 
   EXPECT_TRUE( equal( tt_s, tt_s_str ) );
   EXPECT_TRUE( equal( tt_d, tt_d_str ) );
