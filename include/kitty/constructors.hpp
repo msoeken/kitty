@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <cctype>
+
 #include "detail/constants.hpp"
 #include "static_truth_table.hpp"
 
@@ -109,6 +111,24 @@ void create_from_binary_string( TT& tt, const std::string& binary )
       set_bit( tt, j );
     }
   } while ( j );
+}
+
+template<typename TT>
+void create_from_hex_string( TT& tt, const std::string& hex )
+{
+  assert( ( hex.size() << 2 ) == tt.num_bits() );
+
+  auto j = tt.num_bits() - 1;
+
+  for ( unsigned char c : hex )
+  {
+    const auto i = detail::hex_to_int[c];
+    if ( i & 8 ) set_bit( tt, j );
+    if ( i & 4 ) set_bit( tt, j - 1 );
+    if ( i & 2 ) set_bit( tt, j - 2 );
+    if ( i & 1 ) set_bit( tt, j - 3 );
+    j -= 4;
+  }
 }
 
 /*! Constructs majority-\f$n\f$ function.
