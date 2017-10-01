@@ -311,6 +311,15 @@ inline TT swap_adjacent( const TT& tt, uint64_t var_index )
   return copy;
 }
 
+/*! Flips a variable in a truth table
+
+  The function flips variable `var_index` in `tt`.  The function will
+  change `tt` in-place.  If `tt` should not be changed, one can use
+  `flip` instead.
+
+  \param tt Truth table
+  \param var_index A variable
+*/
 template<typename TT>
 void flip_inplace( TT& tt, uint64_t var_index )
 {
@@ -344,6 +353,7 @@ void flip_inplace( TT& tt, uint64_t var_index )
   }
 }
 
+/*! \cond PRIVATE */
 template<int NumVars>
 inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
 {
@@ -352,7 +362,16 @@ inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_in
   const auto shift = 1 << var_index;
   tt._bits = ( ( tt._bits << shift ) & detail::projections[var_index] ) | ( ( tt._bits & detail::projections[var_index] ) >> shift );
 }
+/* \endcond */
 
+/*! Flips a variable in a truth table
+
+  The function flips variable `var_index` in `tt`.  The function will
+  not change `tt` and return the result as a copy.
+
+  \param tt Truth table
+  \param var_index A variable
+*/
 template<typename TT>
 inline TT flip( const TT& tt, uint64_t var_index )
 {
