@@ -38,7 +38,7 @@ static constexpr uint64_t projections[] = {0xaaaaaaaaaaaaaaaa, 0xccccccccccccccc
 
 static constexpr uint64_t masks[] = {0x0000000000000001, 0x0000000000000003, 0x000000000000000f, 0x00000000000000ff, 0x000000000000ffff, 0x00000000ffffffff, 0xffffffffffffffff};
 
-static constexpr uint64_t permutation_masks[6][3] = {
+static constexpr uint64_t permutation_masks[][3] = {
     {0x9999999999999999, 0x2222222222222222, 0x4444444444444444},
     {0xC3C3C3C3C3C3C3C3, 0x0C0C0C0C0C0C0C0C, 0x3030303030303030},
     {0xF00FF00FF00FF00F, 0x00F000F000F000F0, 0x0F000F000F000F00},
