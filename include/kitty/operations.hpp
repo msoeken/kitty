@@ -311,4 +311,54 @@ inline TT swap_adjacent( const TT& tt, uint64_t var_index )
   return copy;
 }
 
+template<typename TT>
+void flip_inplace( TT& tt, uint64_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  if ( tt.num_blocks() == 1 )
+  {
+    const auto shift = 1 << var_index;
+    tt._bits[0] = ( ( tt._bits[0] << shift ) & detail::projections[var_index] ) | ( ( tt._bits[0] & detail::projections[var_index] ) >> shift );
+  }
+  else if ( var_index < 6 )
+  {
+    const auto shift = 1 << var_index;
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
+                    [var_index, shift]( uint64_t word ) {
+                      return ( ( word << shift ) & detail::projections[var_index] ) | ( ( word & detail::projections[var_index] ) >> shift );
+                    } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    auto it = std::begin( tt._bits );
+    while ( it != std::end( tt._bits ) )
+    {
+      for ( auto i = decltype( step ){0}; i < step; ++i )
+      {
+        std::swap( *( it + i ), *( it + i + step ) );
+      }
+      it += 2 * step;
+    }
+  }
+}
+
+template<int NumVars>
+inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  const auto shift = 1 << var_index;
+  tt._bits = ( ( tt._bits << shift ) & detail::projections[var_index] ) | ( ( tt._bits & detail::projections[var_index] ) >> shift );
+}
+
+template<typename TT>
+inline TT flip( const TT& tt, uint64_t var_index )
+{
+  auto copy = tt;
+  flip_inplace( copy, var_index );
+  return copy;
+}
+
 } // namespace kitty

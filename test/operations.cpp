@@ -173,10 +173,6 @@ TEST( OperationsTest, ternary_for_large )
   }
 }
 
-class OperationsTest : public ::testing::TestWithParam<std::pair<unsigned, std::string>>
-{
-};
-
 TEST( OperationsTest, swap_adjacent_inplace_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
@@ -188,7 +184,6 @@ TEST( OperationsTest, swap_adjacent_inplace_small )
     create_from_hex_string( tt_s_res, p.second );
 
     EXPECT_TRUE( equal( tt_s, tt_s_res ) );
-
 
     dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
     create_from_hex_string( tt_d, "dae8" );
@@ -210,7 +205,6 @@ TEST( OperationsTest, swap_adjacent_small )
 
     EXPECT_TRUE( equal( swap_adjacent( tt_s, p.first ), tt_s_res ) );
 
-
     dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
     create_from_hex_string( tt_d, "dae8" );
     create_from_hex_string( tt_d_res, p.second );
@@ -219,7 +213,11 @@ TEST( OperationsTest, swap_adjacent_small )
   }
 }
 
-TEST_P( OperationsTest, swap_adjacent_inplace_large )
+class OperationsTestSwap : public ::testing::TestWithParam<std::pair<unsigned, std::string>>
+{
+};
+
+TEST_P( OperationsTestSwap, swap_adjacent_inplace_large )
 {
   static_truth_table<9> tt_s, tt_s_res;
   create_from_hex_string( tt_s, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
@@ -238,7 +236,7 @@ TEST_P( OperationsTest, swap_adjacent_inplace_large )
   EXPECT_TRUE( equal( tt_d, tt_d_res ) );
 }
 
-TEST_P( OperationsTest, swap_adjacent_large )
+TEST_P( OperationsTestSwap, swap_adjacent_large )
 {
   static_truth_table<9> tt_s, tt_s_res;
   create_from_hex_string( tt_s, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
@@ -253,8 +251,8 @@ TEST_P( OperationsTest, swap_adjacent_large )
   EXPECT_TRUE( equal( swap_adjacent( tt_d, GetParam().first ), tt_d_res ) );
 }
 
-INSTANTIATE_TEST_CASE_P( OperationsTestInst,
-                         OperationsTest,
+INSTANTIATE_TEST_CASE_P( OperationsTestSwapInst,
+                         OperationsTestSwap,
                          ::testing::Values( std::make_pair( 0u, "48e5d8b64833a2d787eef591c95d55497836638d6725cc5aa7e11fbe2e9adf7a"
                                                                 "98d07f3fedfff55da7cb6f331da2ada220235e1dde42f0ad2f468a6771d33eee" ),
                                             std::make_pair( 1u, "28cbacd62855d09f93facf85a92f0f296c5659a35b43aa3cd3c937f672b4bf7c"
@@ -271,3 +269,102 @@ INSTANTIATE_TEST_CASE_P( OperationsTestInst,
                                                                 "98b07f5febfff33b40453e1bbe24f0cbc7ad6f551bc4cbc44f268c6771b55eee" ),
                                             std::make_pair( 7u, "28e3b8d62855c4b787eef391a93b332998b07f5febfff33bc7ad6f551bc4cbc4"
                                                                 "7856658b6743aa3cc7e11fde4e9cbf7c40453e1bbe24f0cb4f268c6771b55eee" ) ) );
+
+TEST( OperationsTest, flip_inplace_small )
+{
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  {
+    static_truth_table<4> tt_s, tt_s_res;
+    create_from_hex_string( tt_s, "0738" );
+
+    flip_inplace( tt_s, p.first );
+    create_from_hex_string( tt_s_res, p.second );
+
+    EXPECT_TRUE( equal( tt_s, tt_s_res ) );
+
+    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
+    create_from_hex_string( tt_d, "0738" );
+
+    flip_inplace( tt_d, p.first );
+    create_from_hex_string( tt_d_res, p.second );
+
+    EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+  }
+}
+
+TEST( OperationsTest, flip_small )
+{
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  {
+    static_truth_table<4> tt_s, tt_s_res;
+    create_from_hex_string( tt_s, "0738" );
+    create_from_hex_string( tt_s_res, p.second );
+
+    EXPECT_TRUE( equal( flip( tt_s, p.first ), tt_s_res ) );
+
+    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
+    create_from_hex_string( tt_d, "0738" );
+    create_from_hex_string( tt_d_res, p.second );
+
+    EXPECT_TRUE( equal( flip( tt_d, p.first ), tt_d_res ) );
+  }
+}
+
+class OperationsTestFlip : public ::testing::TestWithParam<std::pair<unsigned, std::string>>
+{
+};
+
+TEST_P( OperationsTestFlip, flip_inplace_large )
+{
+  static_truth_table<9> tt_s, tt_s_res;
+  create_from_hex_string( tt_s, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
+
+  flip_inplace( tt_s, GetParam().first );
+  create_from_hex_string( tt_s_res, GetParam().second );
+
+  EXPECT_TRUE( equal( tt_s, tt_s_res ) );
+
+  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
+  create_from_hex_string( tt_d, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
+
+  flip_inplace( tt_d, GetParam().first );
+  create_from_hex_string( tt_d_res, GetParam().second );
+
+  EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+}
+
+TEST_P( OperationsTestFlip, flip_large )
+{
+  static_truth_table<9> tt_s, tt_s_res;
+  create_from_hex_string( tt_s, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
+  create_from_hex_string( tt_s_res, GetParam().second );
+
+  EXPECT_TRUE( equal( flip( tt_s, GetParam().first ), tt_s_res ) );
+
+  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
+  create_from_hex_string( tt_d, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
+  create_from_hex_string( tt_d_res, GetParam().second );
+
+  EXPECT_TRUE( equal( flip( tt_d, GetParam().first ), tt_d_res ) );
+}
+
+INSTANTIATE_TEST_CASE_P( OperationsTestFlipInst,
+                         OperationsTestFlip,
+                         ::testing::Values( std::make_pair( 0u, "4b1ac582812cb7750c549d1938b48ba19fc389ebf3db6db9a9956863f7df22d1"
+                                                                "8fb850b9835fe68926af953b1babd08af37c5a4f220df00d7f1e42d4075a9b6f" ),
+                                            std::make_pair( 1u, "2d853a141843deea03a29b89c1d21d589f3c197dfcbd6bd9599a616cfebf44b8"
+                                                                "1fd1a0d91caf7619465f9acd8d5db015fce3a52f440bf00bef8724b20ea59d6f" ),
+                                            std::make_pair( 2u, "7852ac1424c1b7abc08ae66243877425f63c647d3f7ee96765a64939bffe112e"
+                                                                "f4470a6734fa9d6491f5a67372750e543fcb5af811e00fe0fbd2188eb05a76f9" ),
+                                            std::make_pair( 3u, "258741ca1c42ba7ba80c266e78345247c36fd746e7f3769e6a569394effbe211"
+                                                                "744f76a0af4346d95f19376a572745e0bcf38fa50e110ef02dbfe881a50b9f67" ),
+                                            std::make_pair( 4u, "ca4187257bba421c6e260ca84752347846d76fc39e76f3e79493566a11e2fbef"
+                                                                "a0764f74d94643af6a37195fe0452757a58ff3bcf00e110e81e8bf2d679f0ba5" ),
+                                            std::make_pair( 5u, "421c7bba8725ca41347847520ca86e26f3e79e766fc346d7fbef11e2566a9493"
+                                                                "43afd9464f74a0762757e045195f6a37110ef00ef3bca58f0ba5679fbf2d81e8" ),
+                                            std::make_pair( 6u, "0ca86e26347847528725ca41421c7bba566a9493fbef11e26fc346d7f3e79e76"
+                                                                "195f6a372757e0454f74a07643afd946bf2d81e80ba5679ff3bca58f110ef00e" ),
+                                            std::make_pair( 7u, "6fc346d7f3e79e76566a9493fbef11e28725ca41421c7bba0ca86e2634784752"
+                                                                "f3bca58f110ef00ebf2d81e80ba5679f4f74a07643afd946195f6a372757e045" ),
+                                            std::make_pair( 8u, "4f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f"
+                                                                "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e2" ) ) );
