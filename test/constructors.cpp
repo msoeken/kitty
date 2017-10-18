@@ -107,6 +107,23 @@ TEST( ConstructorsTest, create_one_variable_functions )
   EXPECT_EQ( tt_s._bits, 3 );
 }
 
+TEST( ConstructorsTest, create_random )
+{
+  static_truth_table<5> tt_s5;
+  static_truth_table<7> tt_s7;
+  dynamic_truth_table tt_d5( 5 );
+  dynamic_truth_table tt_d7( 7 );
+
+  create_random( tt_s5 );
+  create_random( tt_s7 );
+  create_random( tt_d5 );
+  create_random( tt_d7 );
+
+  // std::cout << tt_s5._bits[0] << std::endl;
+
+  EXPECT_TRUE( true ); /* a dummy test to enable the print out */
+}
+
 TEST( ConstructorsTest, create_majority5 )
 {
   static_truth_table<5> tt_s;

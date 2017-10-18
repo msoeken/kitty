@@ -26,8 +26,10 @@
 #pragma once
 
 #include <cctype>
+#include <random>
 
 #include "detail/constants.hpp"
+#include "operations.hpp"
 #include "static_truth_table.hpp"
 
 namespace kitty
@@ -164,6 +166,37 @@ void create_from_hex_string( TT& tt, const std::string& hex )
       set_bit( tt, j - 3 );
     j -= 4;
   }
+}
+
+/*! \brief Constructs a truth table from random value
+
+  Computes random words and assigns them to the truth table.  The
+  number of variables is determined from the truth table.
+
+  \param tt Truth table
+  \param seed Random seed
+*/
+template<typename TT>
+void create_random( TT& tt, std::default_random_engine::result_type seed )
+{
+  std::default_random_engine gen( seed );
+  std::uniform_int_distribution<uint64_t> dist( 0ul, std::numeric_limits<uint64_t>::max() );
+
+  assign_operation( tt, [&dist, &gen]() { return dist( gen ); } );
+}
+
+/*! \brief Constructs a truth table from random value
+
+  Computes random words and assigns them to the truth table.  The
+  number of variables is determined from the truth table.  Seed is
+  taken from current time.
+
+  \param tt Truth table
+*/
+template<typename TT>
+void create_random( TT& tt )
+{
+  create_random( tt, std::chrono::system_clock::now().time_since_epoch().count() );
 }
 
 /*! Constructs majority-\f$n\f$ function.

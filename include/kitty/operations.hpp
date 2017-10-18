@@ -169,6 +169,30 @@ bool binary_predicate( const static_truth_table<NumVars, true>& first, const sta
 }
 /*! \endcond */
 
+/*! \brief Assign computed values to bits
+
+  The functor `op` computes bits which are assigned to the bits of the
+  truth table.
+
+  \param tt Truth table
+  \param op Unary operation that takes no input and returns a word (`uint64_t`)
+*/
+template<typename TT, typename Fn>
+void assign_operation( TT& tt, Fn&& op )
+{
+  std::generate( std::begin( tt._bits ), std::end( tt._bits ), op );
+  tt.mask_bits();
+}
+
+/*! \cond PRIVATE */
+template<int NumVars, typename Fn>
+void assign_operation( static_truth_table<NumVars, true>& tt, Fn&& op )
+{
+  tt._bits = op();
+  tt.mask_bits();
+}
+/*! \endcond */
+
 /*! Inverts all bits in a truth table. */
 template<typename TT>
 inline TT unary_not( const TT& tt )
