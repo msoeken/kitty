@@ -26,6 +26,7 @@
 #pragma once
 
 #include <cctype>
+#include <chrono>
 #include <random>
 
 #include "detail/constants.hpp"
