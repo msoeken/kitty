@@ -163,18 +163,11 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   /* is output complemented? */
   auto res = ( ( phase >> num_vars ) & 1 ) ? ~from : from;
 
-  /* input complementations */
-  for ( auto i = 0; i < num_vars; ++i )
-  {
-    if ( ( phase >> i ) & 1 )
-    {
-      flip_inplace( res, i );
-    }
-  }
-
   /* input permutations */
   for ( auto i = 0; i < num_vars; ++i )
   {
+    if ( perm[i] == i ) continue;
+
     int k = i;
     while ( perm[k] != i )
     {
@@ -184,6 +177,16 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
     swap_inplace( res, i, k );
     std::swap( perm[i], perm[k] );
   }
+
+  /* input complementations */
+  for ( auto i = 0; i < num_vars; ++i )
+  {
+    if ( ( phase >> i ) & 1 )
+    {
+      flip_inplace( res, i );
+    }
+  }
+
 
   return res;
 }

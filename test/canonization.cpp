@@ -25,6 +25,7 @@
 
 #include <gtest/gtest.h>
 
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -66,21 +67,10 @@ TEST_F( CanonizationTest, random_functions )
     check_npn<2>( p.first, p.second );
   }
 
-  {
-    const auto tt = from_hex<4>( "cafe" );
-    const auto res = exact_npn_canonization( tt );
-    EXPECT_EQ( std::get<0>( res ), from_hex<4>( "011b" ) );
-    EXPECT_EQ( create_from_npn_config( res ), tt );
-  }
+  check_npn<3>( "5b", "19" );
+  check_npn<3>( "dc", "07" );
+  check_npn<3>( "2e", "1b" );
 
-  {
-    static_truth_table<6> tt, tt_r;
-    create_from_hex_string( tt, "17cad20f55459c3f" );
-    const auto res = exact_npn_canonization( tt );
-
-    create_from_hex_string( tt_r, "001b674bdf9ca7c3" );
-    EXPECT_EQ( std::get<0>( res ), tt_r );
-
-    EXPECT_EQ( create_from_npn_config( res ), tt );
-  }
+  check_npn<4>( "cafe", "011b" );
+  check_npn<6>( "17cad20f55459c3f", "001b674bdf9ca7c3" );
 }
