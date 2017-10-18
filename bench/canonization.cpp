@@ -23,21 +23,33 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include <benchmark/benchmark.h>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <kitty/kitty.hpp>
 
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
+using namespace kitty;
 
-//         /\___/\
-//        (  o o  )
-//        /   *   \
-//        \__\_/__/
-//          /   \
-//         / ___ \
-//         \/___\/
+void BM_exact_npn_canonization_static( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    static_truth_table<6> tt;
+    create_from_hex_string( tt, "17cad20f55459c3f" );
+    exact_npn_canonization( tt );
+  }
+}
+
+void BM_exact_npn_canonization_dynamic( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    dynamic_truth_table tt( 6 );
+    create_from_hex_string( tt, "17cad20f55459c3f" );
+    exact_npn_canonization( tt );
+  }
+}
+
+BENCHMARK( BM_exact_npn_canonization_static );
+BENCHMARK( BM_exact_npn_canonization_dynamic );
+
+BENCHMARK_MAIN()

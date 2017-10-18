@@ -41,3 +41,8 @@ Operators
 
 .. doxygenfile:: operators.hpp
 
+Canonization
+------------
+
+.. doxygenfile:: canonization.hpp
+
