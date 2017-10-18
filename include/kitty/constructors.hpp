@@ -102,6 +102,8 @@ void create_from_binary_string( TT& tt, const std::string& binary )
 {
   assert( binary.size() == tt.num_bits() );
 
+  clear( tt );
+
   size_t i = 0u, j = binary.size();
   do
   {
@@ -127,6 +129,24 @@ void create_from_binary_string( TT& tt, const std::string& binary )
 template<typename TT>
 void create_from_hex_string( TT& tt, const std::string& hex )
 {
+  clear( tt );
+
+  /* special case for small truth tables */
+  if ( tt.num_vars() < 2 )
+  {
+    assert( hex.size() == 1 );
+    const auto i = detail::hex_to_int[static_cast<unsigned char>( hex[0] )];
+    if ( i & 1 )
+    {
+      set_bit( tt, 0 );
+    }
+    if ( tt.num_vars() == 1 && ( i & 2 ) )
+    {
+      set_bit( tt, 1 );
+    }
+    return;
+  }
+
   assert( ( hex.size() << 2 ) == tt.num_bits() );
 
   auto j = tt.num_bits() - 1;
@@ -134,10 +154,14 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   for ( unsigned char c : hex )
   {
     const auto i = detail::hex_to_int[c];
-    if ( i & 8 ) set_bit( tt, j );
-    if ( i & 4 ) set_bit( tt, j - 1 );
-    if ( i & 2 ) set_bit( tt, j - 2 );
-    if ( i & 1 ) set_bit( tt, j - 3 );
+    if ( i & 8 )
+      set_bit( tt, j );
+    if ( i & 4 )
+      set_bit( tt, j - 1 );
+    if ( i & 2 )
+      set_bit( tt, j - 2 );
+    if ( i & 1 )
+      set_bit( tt, j - 3 );
     j -= 4;
   }
 }
