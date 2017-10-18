@@ -28,5 +28,8 @@ v0.1
 * Swap adjacent variables: ``swap_adjacent_inplace``, ``swap_adjacent``
   `#6 <https://github.com/msoeken/kitty/pull/6>`_
 
+* Swap variables: ``swap_inplace``, ``swap``
+  `#8 <https://github.com/msoeken/kitty/pull/8>`_
+
 * Flip variable: ``flip_inplace``, ``flip``
   `#7 <https://github.com/msoeken/kitty/pull/7>`_
