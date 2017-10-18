@@ -8,8 +8,9 @@ v0.1
 * Data structures ``static_truth_table`` and ``dynamic_truth_table``
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
 
-* Bit-access functions ``set_bit`` and ``get_bit``
+* Bit functions: ``set_bit``, ``get_bit``, ``clear_bit``, ``clear``
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
+  `#8 <https://github.com/msoeken/kitty/pull/8>`_
 
 * Constructors ``create_nth_var``, ``create_from_binary_string``, ``create_from_hex_string``, and ``create_majority``
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
@@ -38,3 +39,6 @@ v0.1
 
 * Flip variable: ``flip_inplace``, ``flip``
   `#7 <https://github.com/msoeken/kitty/pull/7>`_
+
+* NPN canonization: ``exact_npn_canonization``, ``create_from_npn_config``
+  `#8 <https://github.com/msoeken/kitty/pull/8>`_
