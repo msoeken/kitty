@@ -237,7 +237,7 @@ inline bool equal( const TT& first, const TT& second )
   \param var_index A variable
 */
 template<typename TT>
-void swap_adjacent_inplace( TT& tt, uint64_t var_index )
+void swap_adjacent_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() - 1 );
 
@@ -283,7 +283,7 @@ void swap_adjacent_inplace( TT& tt, uint64_t var_index )
 
 /*! \cond PRIVATE */
 template<int NumVars>
-void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -304,7 +304,7 @@ void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_
   \param var_index A variable
 */
 template<typename TT>
-inline TT swap_adjacent( const TT& tt, uint64_t var_index )
+inline TT swap_adjacent( const TT& tt, uint8_t var_index )
 {
   auto copy = tt;
   swap_adjacent_inplace( copy, var_index );
@@ -432,7 +432,7 @@ inline TT swap( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   \param var_index A variable
 */
 template<typename TT>
-void flip_inplace( TT& tt, uint64_t var_index )
+void flip_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -466,7 +466,7 @@ void flip_inplace( TT& tt, uint64_t var_index )
 
 /*! \cond PRIVATE */
 template<int NumVars>
-inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -484,7 +484,7 @@ inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_in
   \param var_index A variable
 */
 template<typename TT>
-inline TT flip( const TT& tt, uint64_t var_index )
+inline TT flip( const TT& tt, uint8_t var_index )
 {
   auto copy = tt;
   flip_inplace( copy, var_index );
