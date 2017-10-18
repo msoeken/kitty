@@ -105,6 +105,24 @@ void BM_bitwise_majority_func_dynamic( benchmark::State& state )
   }
 }
 
+void BM_unary_not_ite_dynamic( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    dynamic_truth_table tt( state.range( 0 ) );
+    const auto tt_new = !get_bit( tt, 0 ) ? unary_not( tt ) : tt;
+  }
+}
+
+void BM_unary_not_if_dynamic( benchmark::State& state )
+{
+  while ( state.KeepRunning() )
+  {
+    dynamic_truth_table tt( state.range( 0 ) );
+    const auto tt_new = unary_not_if( tt, get_bit( tt, 0 ) );
+  }
+}
+
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 5 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 7 );
 BENCHMARK_TEMPLATE( BM_bitwise_and_lambda_static, 9 );
@@ -122,5 +140,8 @@ BENCHMARK( BM_bitwise_and_lambda_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 BENCHMARK( BM_bitwise_and_std_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 BENCHMARK( BM_bitwise_and_func_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 BENCHMARK( BM_bitwise_majority_func_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
+
+BENCHMARK( BM_unary_not_ite_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
+BENCHMARK( BM_unary_not_if_dynamic )->Arg( 5 )->Arg( 7 )->Arg( 9 );
 
 BENCHMARK_MAIN()

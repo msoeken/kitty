@@ -176,6 +176,14 @@ inline TT unary_not( const TT& tt )
   return unary_operation( tt, []( auto a ) { return ~a; } );
 }
 
+/*! Inverts all bits in a truth table, based on a condition */
+template<typename TT>
+inline TT unary_not_if( const TT& tt, bool cond )
+{
+  const auto mask = -static_cast<uint64_t>( cond );
+  return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
+}
+
 /*! Performs bitwise AND of two truth tables. */
 template<typename TT>
 inline TT binary_and( const TT& first, const TT& second )
