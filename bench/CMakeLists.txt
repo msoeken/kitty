@@ -1,7 +1,7 @@
 file(GLOB FILENAMES *.cpp)
 
 # No debugging and full optimization for benchmark test
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -DNODEBUG")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -DNDEBUG")
 
 set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "Enable testing of the benchmark library." FORCE)
 set(CMAKE_BUILD_TYPE "Release")
