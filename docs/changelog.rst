@@ -22,8 +22,9 @@ v0.1
 * Ternary operations: ``ternary_majority`` and ``ternary_ite``
   `#3 <https://github.com/msoeken/kitty/pull/3>`_
 
-* Binary predicates: ``equal``
+* Binary predicates: ``equal``, ``less_than``
   `#4 <https://github.com/msoeken/kitty/pull/4>`_
+  `#8 <https://github.com/msoeken/kitty/pull/8>`_
 
 * Swap adjacent variables: ``swap_adjacent_inplace``, ``swap_adjacent``
   `#6 <https://github.com/msoeken/kitty/pull/6>`_

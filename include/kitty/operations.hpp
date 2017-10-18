@@ -227,6 +227,28 @@ inline bool equal( const TT& first, const TT& second )
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
+/*! Checks whether a truth table is lexicographically smaller than another
+
+  Comparison is initiated from most-significant bit.
+
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool less_than( const TT& first, const TT& second )
+{
+  return std::lexicographical_compare( std::rbegin( first._bits ), std::rend( first._bits ),
+                                       std::rbegin( second._bits ), std::rend( second._bits ) );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline bool less_than( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second )
+{
+  return first._bits < second._bits;
+}
+/*! \endcond PRIVATE */
+
 /*! Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The
