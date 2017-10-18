@@ -245,8 +245,8 @@ inline bool equal( const TT& first, const TT& second )
 template<typename TT>
 inline bool less_than( const TT& first, const TT& second )
 {
-  return std::lexicographical_compare( std::rbegin( first._bits ), std::rend( first._bits ),
-                                       std::rbegin( second._bits ), std::rend( second._bits ) );
+  return std::lexicographical_compare( first._bits.rbegin(), first._bits.rend(),
+                                       second._bits.rbegin(), second._bits.rend() );
 }
 
 /*! \cond PRIVATE */
