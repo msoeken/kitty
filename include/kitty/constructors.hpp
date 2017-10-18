@@ -113,6 +113,17 @@ void create_from_binary_string( TT& tt, const std::string& binary )
   } while ( j );
 }
 
+/*! Constructs truth table from hexadecimal string
+
+  Note that the first character in the string represents the four most
+  significant bit in the truth table.  For example, the 3-input
+  majority function is represented by the binary string "E8" or "e8".
+  The number of characters in `hex` must be one fourth the number of
+  bits in `tt`.
+
+  \param tt Truth table
+  \param hex Hexadecimal string
+*/
 template<typename TT>
 void create_from_hex_string( TT& tt, const std::string& hex )
 {
