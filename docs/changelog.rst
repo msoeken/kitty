@@ -26,6 +26,9 @@ v0.1
   `#4 <https://github.com/msoeken/kitty/pull/4>`_
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
 
+* Operators: ``~``, ``==``, ``<``
+  `#8 <https://github.com/msoeken/kitty/pull/8>`_
+
 * Swap adjacent variables: ``swap_adjacent_inplace``, ``swap_adjacent``
   `#6 <https://github.com/msoeken/kitty/pull/6>`_
 
