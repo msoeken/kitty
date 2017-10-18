@@ -29,41 +29,25 @@
 
 #include <kitty/kitty.hpp>
 
+#include "utility.hpp"
+
 using namespace kitty;
 
-class OperationsTest : public ::testing::Test
+class OperationsTest : public kitty::testing::Test
 {
-protected:
-  template<int NumVars>
-  inline static_truth_table<NumVars> nth( uint64_t var_index ) const
-  {
-    static_truth_table<NumVars> tt;
-    create_nth_var( tt, var_index );
-    return tt;
-  }
-
-  inline dynamic_truth_table nth( uint64_t num_vars, uint64_t var_index ) const
-  {
-    dynamic_truth_table tt( num_vars );
-    create_nth_var( tt, var_index );
-    return tt;
-  }
-
-  template<int NumVars>
-  inline static_truth_table<NumVars> from_hex( const std::string& hex ) const
-  {
-    static_truth_table<NumVars> tt;
-    create_from_hex_string( tt, hex );
-    return tt;
-  }
-
-  inline dynamic_truth_table from_hex( uint64_t num_vars, const std::string& hex ) const
-  {
-    dynamic_truth_table tt( num_vars );
-    create_from_hex_string( tt, hex );
-    return tt;
-  }
 };
+
+TEST_F( OperationsTest, unary_for_small )
+{
+  EXPECT_EQ( unary_not( from_hex<2>( "8" ) ), from_hex<2>( "7" ) );
+  EXPECT_EQ( unary_not( from_hex<2>( "6" ) ), from_hex<2>( "9" ) );
+
+  EXPECT_EQ( unary_not_if( from_hex<2>( "8" ), true ), from_hex<2>( "7" ) );
+  EXPECT_EQ( unary_not_if( from_hex<2>( "6" ), true ), from_hex<2>( "9" ) );
+
+  EXPECT_EQ( unary_not_if( from_hex<2>( "8" ), false ), from_hex<2>( "8" ) );
+  EXPECT_EQ( unary_not_if( from_hex<2>( "6" ), false ), from_hex<2>( "6" ) );
+}
 
 TEST_F( OperationsTest, binary_for_small )
 {
@@ -111,6 +95,18 @@ TEST_F( OperationsTest, ternary_for_small )
     EXPECT_EQ( ite_expr, from_hex( 3, "d8" ) );
     EXPECT_EQ( ite_expr, ite_direct );
   }
+}
+
+TEST_F( OperationsTest, unary_for_large )
+{
+  EXPECT_EQ( unary_not( from_hex<7>( "80000000000000000000000000000000" ) ), from_hex<7>( "7fffffffffffffffffffffffffffffff" ) );
+  EXPECT_EQ( unary_not( from_hex<7>( "66666666666666666666666666666666" ) ), from_hex<7>( "99999999999999999999999999999999" ) );
+
+  EXPECT_EQ( unary_not_if( from_hex<7>( "80000000000000000000000000000000" ), true ), from_hex<7>( "7fffffffffffffffffffffffffffffff" ) );
+  EXPECT_EQ( unary_not_if( from_hex<7>( "66666666666666666666666666666666" ), true ), from_hex<7>( "99999999999999999999999999999999" ) );
+
+  EXPECT_EQ( unary_not_if( from_hex<7>( "80000000000000000000000000000000" ), false ), from_hex<7>( "80000000000000000000000000000000" ) );
+  EXPECT_EQ( unary_not_if( from_hex<7>( "66666666666666666666666666666666" ), false ), from_hex<7>( "66666666666666666666666666666666" ) );
 }
 
 TEST_F( OperationsTest, binary_for_large )
