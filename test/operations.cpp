@@ -31,224 +31,222 @@
 
 using namespace kitty;
 
-TEST( OperationsTest, binary_for_small )
+class OperationsTest : public ::testing::Test
 {
-  static_truth_table<2> tt1_s, tt2_s;
+protected:
+  template<int NumVars>
+  inline static_truth_table<NumVars> nth( uint64_t var_index ) const
+  {
+    static_truth_table<NumVars> tt;
+    create_nth_var( tt, var_index );
+    return tt;
+  }
 
-  create_nth_var( tt1_s, 0 );
-  create_nth_var( tt2_s, 1 );
+  inline dynamic_truth_table nth( uint64_t num_vars, uint64_t var_index ) const
+  {
+    dynamic_truth_table tt( num_vars );
+    create_nth_var( tt, var_index );
+    return tt;
+  }
 
-  EXPECT_EQ( binary_and( tt1_s, tt2_s )._bits, 0x8 );
-  EXPECT_EQ( binary_or( tt1_s, tt2_s )._bits, 0xe );
-  EXPECT_EQ( unary_not( binary_and( tt1_s, tt2_s ) )._bits, 0x7 );
-  EXPECT_EQ( unary_not( binary_or( tt1_s, tt2_s ) )._bits, 0x1 );
+  template<int NumVars>
+  inline static_truth_table<NumVars> from_hex( const std::string& hex ) const
+  {
+    static_truth_table<NumVars> tt;
+    create_from_hex_string( tt, hex );
+    return tt;
+  }
 
-  dynamic_truth_table tt1_d( 2 ), tt2_d( 2 );
+  inline dynamic_truth_table from_hex( uint64_t num_vars, const std::string& hex ) const
+  {
+    dynamic_truth_table tt( num_vars );
+    create_from_hex_string( tt, hex );
+    return tt;
+  }
+};
 
-  create_nth_var( tt1_d, 0 );
-  create_nth_var( tt2_d, 1 );
+TEST_F( OperationsTest, binary_for_small )
+{
+  EXPECT_EQ( binary_and( nth<2>( 0 ), nth<2>( 1 ) ), from_hex<2>( "8" ) );
+  EXPECT_EQ( binary_or( nth<2>( 0 ), nth<2>( 1 ) ), from_hex<2>( "e" ) );
+  EXPECT_EQ( unary_not( binary_and( nth<2>( 0 ), nth<2>( 1 ) ) ), from_hex<2>( "7" ) );
+  EXPECT_EQ( unary_not( binary_or( nth<2>( 0 ), nth<2>( 1 ) ) ), from_hex<2>( "1" ) );
 
-  EXPECT_EQ( binary_and( tt1_d, tt2_d )._bits[0], 0x8 );
-  EXPECT_EQ( binary_or( tt1_d, tt2_d )._bits[0], 0xe );
-  EXPECT_EQ( unary_not( binary_and( tt1_d, tt2_d ) )._bits[0], 0x7 );
-  EXPECT_EQ( unary_not( binary_or( tt1_d, tt2_d ) )._bits[0], 0x1 );
+  EXPECT_EQ( binary_and( nth( 2, 0 ), nth( 2, 1 ) ), from_hex( 2, "8" ) );
+  EXPECT_EQ( binary_or( nth( 2, 0 ), nth( 2, 1 ) ), from_hex( 2, "e" ) );
+  EXPECT_EQ( unary_not( binary_and( nth( 2, 0 ), nth( 2, 1 ) ) ), from_hex( 2, "7" ) );
+  EXPECT_EQ( unary_not( binary_or( nth( 2, 0 ), nth( 2, 1 ) ) ), from_hex( 2, "1" ) );
 }
 
-TEST( OperationsTest, ternary_for_small )
+TEST_F( OperationsTest, ternary_for_small )
 {
   {
-    static_truth_table<3> tt1_s, tt2_s, tt3_s;
+    const auto t1 = nth<3>( 0 ), t2 = nth<3>( 1 ), t3 = nth<3>( 2 );
 
-    create_nth_var( tt1_s, 0 );
-    create_nth_var( tt2_s, 1 );
-    create_nth_var( tt3_s, 2 );
+    const auto maj_expr = binary_or( binary_or( binary_and( t1, t2 ), binary_and( t1, t3 ) ), binary_and( t2, t3 ) );
+    const auto maj_direct = ternary_majority( t1, t2, t3 );
 
-    const auto maj_expr = binary_or( binary_or( binary_and( tt1_s, tt2_s ), binary_and( tt1_s, tt3_s ) ), binary_and( tt2_s, tt3_s ) );
-    const auto maj_direct = ternary_majority( tt1_s, tt2_s, tt3_s );
+    EXPECT_EQ( maj_expr, from_hex<3>( "e8" ) );
+    EXPECT_EQ( maj_expr, maj_direct );
 
-    EXPECT_EQ( maj_expr._bits, 0xe8 );
-    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+    const auto ite_expr = binary_or( binary_and( t1, t2 ), binary_and( unary_not( t1 ), t3 ) );
+    const auto ite_direct = ternary_ite( t1, t2, t3 );
 
-    const auto ite_expr = binary_or( binary_and( tt1_s, tt2_s ), binary_and( unary_not( tt1_s ), tt3_s ) );
-    const auto ite_direct = ternary_ite( tt1_s, tt2_s, tt3_s );
-
-    EXPECT_EQ( ite_expr._bits, 0xd8 );
-    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+    EXPECT_EQ( ite_expr, from_hex<3>( "d8" ) );
+    EXPECT_EQ( ite_expr, ite_direct );
   }
 
   {
-    dynamic_truth_table tt1_d( 3 ), tt2_d( 3 ), tt3_d( 3 );
+    const auto t1 = nth( 3, 0 ), t2 = nth( 3, 1 ), t3 = nth( 3, 2 );
 
-    create_nth_var( tt1_d, 0 );
-    create_nth_var( tt2_d, 1 );
-    create_nth_var( tt3_d, 2 );
+    const auto maj_expr = binary_or( binary_or( binary_and( t1, t2 ), binary_and( t1, t3 ) ), binary_and( t2, t3 ) );
+    const auto maj_direct = ternary_majority( t1, t2, t3 );
 
-    const auto maj_expr = binary_or( binary_or( binary_and( tt1_d, tt2_d ), binary_and( tt1_d, tt3_d ) ), binary_and( tt2_d, tt3_d ) );
-    const auto maj_direct = ternary_majority( tt1_d, tt2_d, tt3_d );
+    EXPECT_EQ( maj_expr, from_hex( 3, "e8" ) );
+    EXPECT_EQ( maj_expr, maj_direct );
 
-    EXPECT_EQ( maj_expr._bits[0], 0xe8 );
-    EXPECT_EQ( maj_expr._bits[0], maj_direct._bits[0] );
+    const auto ite_expr = binary_or( binary_and( t1, t2 ), binary_and( unary_not( t1 ), t3 ) );
+    const auto ite_direct = ternary_ite( t1, t2, t3 );
 
-    const auto ite_expr = binary_or( binary_and( tt1_d, tt2_d ), binary_and( unary_not( tt1_d ), tt3_d ) );
-    const auto ite_direct = ternary_ite( tt1_d, tt2_d, tt3_d );
-
-    EXPECT_EQ( ite_expr._bits[0], 0xd8 );
-    EXPECT_EQ( ite_expr._bits[0], ite_direct._bits[0] );
+    EXPECT_EQ( ite_expr, from_hex( 3, "d8" ) );
+    EXPECT_EQ( ite_expr, ite_direct );
   }
 }
 
-TEST( OperationsTest, binary_for_large )
+TEST_F( OperationsTest, binary_for_large )
 {
   {
-    static_truth_table<7> tt1_s, tt2_s;
-    create_nth_var( tt1_s, 0 );
-    create_nth_var( tt2_s, 1 );
-
-    auto tt_s = binary_and( tt1_s, tt2_s );
-    for ( auto i = 2; i < 7; ++i )
+    auto tt = nth<7>( 0 );
+    for ( auto i = 1; i < 7; ++i )
     {
-      static_truth_table<7> ttv_s;
-      create_nth_var( ttv_s, i );
-      tt_s = binary_and( tt_s, ttv_s );
+      tt = binary_and( tt, nth<7>( i ) );
     }
-
-    EXPECT_EQ( tt_s._bits[0], 0x0 );
-    EXPECT_EQ( tt_s._bits[1], uint64_t( 1 ) << 63 );
+    EXPECT_EQ( tt, from_hex<7>( "8000000000000000" ) );
   }
 
   {
-    dynamic_truth_table tt1_d( 7 ), tt2_d( 7 );
-    create_nth_var( tt1_d, 0 );
-    create_nth_var( tt2_d, 1 );
-
-    auto tt_d = binary_and( tt1_d, tt2_d );
-    for ( auto i = 2; i < 7; ++i )
+    auto tt = nth( 7, 0 );
+    for ( auto i = 1; i < 7; ++i )
     {
-      dynamic_truth_table ttv_d( 7 );
-      create_nth_var( ttv_d, i );
-      tt_d = binary_and( tt_d, ttv_d );
+      tt = binary_and( tt, nth( 7, i ) );
     }
-
-    EXPECT_EQ( tt_d._bits[0], 0x0 );
-    EXPECT_EQ( tt_d._bits[1], uint64_t( 1 ) << 63 );
+    EXPECT_EQ( tt, from_hex( 7, "8000000000000000" ) );
   }
 }
 
-TEST( OperationsTest, ternary_for_large )
+TEST_F( OperationsTest, ternary_for_large )
 {
   {
-    static_truth_table<7> tt1_s, tt2_s, tt3_s;
+    const auto t1 = nth<7>( 0 ), t2 = nth<7>( 1 ), t3 = nth<7>( 2 );
 
-    create_nth_var( tt1_s, 0 );
-    create_nth_var( tt2_s, 3 );
-    create_nth_var( tt3_s, 6 );
+    const auto maj_expr = binary_or( binary_or( binary_and( t1, t2 ), binary_and( t1, t3 ) ), binary_and( t2, t3 ) );
+    const auto maj_direct = ternary_majority( t1, t2, t3 );
 
-    const auto maj_expr = binary_or( binary_or( binary_and( tt1_s, tt2_s ), binary_and( tt1_s, tt3_s ) ), binary_and( tt2_s, tt3_s ) );
-    const auto maj_direct = ternary_majority( tt1_s, tt2_s, tt3_s );
+    EXPECT_EQ( maj_expr, maj_direct );
 
-    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+    const auto ite_expr = binary_or( binary_and( t1, t2 ), binary_and( unary_not( t1 ), t3 ) );
+    const auto ite_direct = ternary_ite( t1, t2, t3 );
 
-    const auto ite_expr = binary_or( binary_and( tt1_s, tt2_s ), binary_and( unary_not( tt1_s ), tt3_s ) );
-    const auto ite_direct = ternary_ite( tt1_s, tt2_s, tt3_s );
-
-    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+    EXPECT_EQ( ite_expr, ite_direct );
   }
 
   {
-    dynamic_truth_table tt1_d( 7 ), tt2_d( 7 ), tt3_d( 7 );
+    const auto t1 = nth( 7, 0 ), t2 = nth( 7, 1 ), t3 = nth( 7, 2 );
 
-    create_nth_var( tt1_d, 0 );
-    create_nth_var( tt2_d, 3 );
-    create_nth_var( tt3_d, 6 );
+    const auto maj_expr = binary_or( binary_or( binary_and( t1, t2 ), binary_and( t1, t3 ) ), binary_and( t2, t3 ) );
+    const auto maj_direct = ternary_majority( t1, t2, t3 );
 
-    const auto maj_expr = binary_or( binary_or( binary_and( tt1_d, tt2_d ), binary_and( tt1_d, tt3_d ) ), binary_and( tt2_d, tt3_d ) );
-    const auto maj_direct = ternary_majority( tt1_d, tt2_d, tt3_d );
+    EXPECT_EQ( maj_expr, maj_direct );
 
-    EXPECT_EQ( maj_expr._bits, maj_direct._bits );
+    const auto ite_expr = binary_or( binary_and( t1, t2 ), binary_and( unary_not( t1 ), t3 ) );
+    const auto ite_direct = ternary_ite( t1, t2, t3 );
 
-    const auto ite_expr = binary_or( binary_and( tt1_d, tt2_d ), binary_and( unary_not( tt1_d ), tt3_d ) );
-    const auto ite_direct = ternary_ite( tt1_d, tt2_d, tt3_d );
-
-    EXPECT_EQ( ite_expr._bits, ite_direct._bits );
+    EXPECT_EQ( ite_expr, ite_direct );
   }
 }
 
-TEST( OperationsTest, swap_adjacent_inplace_small )
+TEST_F( OperationsTest, comparisons )
+{
+  EXPECT_TRUE( equal( from_hex<3>( "e8" ), from_hex<3>( "e8" ) ) );
+  EXPECT_TRUE( equal( from_hex( 3, "e8" ), from_hex( 3, "e8" ) ) );
+
+  EXPECT_TRUE( less_than( from_hex<3>( "e5" ), from_hex<3>( "f6" ) ) );
+  EXPECT_TRUE( less_than( from_hex<3>( "e5" ), from_hex<3>( "f5" ) ) );
+  EXPECT_TRUE( less_than( from_hex<3>( "e5" ), from_hex<3>( "f4" ) ) );
+  EXPECT_TRUE( less_than( from_hex<3>( "e5" ), from_hex<3>( "e6" ) ) );
+  EXPECT_FALSE( less_than( from_hex<3>( "e5" ), from_hex<3>( "e5" ) ) );
+  EXPECT_FALSE( less_than( from_hex<3>( "e5" ), from_hex<3>( "e4" ) ) );
+  EXPECT_FALSE( less_than( from_hex<3>( "e5" ), from_hex<3>( "d6" ) ) );
+  EXPECT_FALSE( less_than( from_hex<3>( "e5" ), from_hex<3>( "d5" ) ) );
+  EXPECT_FALSE( less_than( from_hex<3>( "e5" ), from_hex<3>( "d4" ) ) );
+
+  EXPECT_TRUE( less_than( from_hex( 3, "e5" ), from_hex( 3, "f6" ) ) );
+  EXPECT_TRUE( less_than( from_hex( 3, "e5" ), from_hex( 3, "f5" ) ) );
+  EXPECT_TRUE( less_than( from_hex( 3, "e5" ), from_hex( 3, "f4" ) ) );
+  EXPECT_TRUE( less_than( from_hex( 3, "e5" ), from_hex( 3, "e6" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 3, "e5" ), from_hex( 3, "e5" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 3, "e5" ), from_hex( 3, "e4" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 3, "e5" ), from_hex( 3, "d6" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 3, "e5" ), from_hex( 3, "d5" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 3, "e5" ), from_hex( 3, "d4" ) ) );
+
+  EXPECT_TRUE( equal( from_hex<7>( "e92c774439c72c8955906ef92ecefec9" ), from_hex<7>( "e92c774439c72c8955906ef92ecefec9" ) ) );
+  EXPECT_TRUE( equal( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ) ) );
+
+  EXPECT_TRUE( less_than( from_hex<7>( "e92c774439c72c8955906ef92ecefec9" ), from_hex<7>( "e92c774439c72c8955906ef92edefec9" ) ) );
+  EXPECT_FALSE( less_than( from_hex<7>( "e92c774439c72c8955906ef92ecefec9" ), from_hex<7>( "e92c774439c72c8955906ef92ebefec9" ) ) );
+
+  EXPECT_TRUE( less_than( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92edefec9" ) ) );
+  EXPECT_FALSE( less_than( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92ebefec9" ) ) );
+}
+
+TEST_F( OperationsTest, swap_adjacent_inplace_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
   {
-    static_truth_table<4> tt_s, tt_s_res;
-    create_from_hex_string( tt_s, "dae8" );
-
+    auto tt_s = from_hex<4>( "dae8" );
     swap_adjacent_inplace( tt_s, p.first );
-    create_from_hex_string( tt_s_res, p.second );
+    EXPECT_EQ( tt_s, from_hex<4>( p.second ) );
 
-    EXPECT_TRUE( equal( tt_s, tt_s_res ) );
-
-    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
-    create_from_hex_string( tt_d, "dae8" );
-
+    auto tt_d = from_hex( 4, "dae8" );
     swap_adjacent_inplace( tt_d, p.first );
-    create_from_hex_string( tt_d_res, p.second );
-
-    EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+    EXPECT_EQ( tt_d, from_hex( 4, p.second ) );
   }
 }
 
-TEST( OperationsTest, swap_adjacent_small )
+TEST_F( OperationsTest, swap_adjacent_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
   {
-    static_truth_table<4> tt_s, tt_s_res;
-    create_from_hex_string( tt_s, "dae8" );
-    create_from_hex_string( tt_s_res, p.second );
-
-    EXPECT_TRUE( equal( swap_adjacent( tt_s, p.first ), tt_s_res ) );
-
-    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
-    create_from_hex_string( tt_d, "dae8" );
-    create_from_hex_string( tt_d_res, p.second );
-
-    EXPECT_TRUE( equal( swap_adjacent( tt_d, p.first ), tt_d_res ) );
+    EXPECT_EQ( swap_adjacent( from_hex<4>( "dae8" ), p.first ), from_hex<4>( p.second ) );
+    EXPECT_EQ( swap_adjacent( from_hex( 4, "dae8" ), p.first ), from_hex( 4, p.second ) );
   }
 }
 
-class OperationsTestSwap : public ::testing::TestWithParam<std::pair<unsigned, std::string>>
+class OperationsTestSwap : public OperationsTest, public ::testing::WithParamInterface<std::pair<unsigned, std::string>>
 {
 };
 
 TEST_P( OperationsTestSwap, swap_adjacent_inplace_large )
 {
-  static_truth_table<9> tt_s, tt_s_res;
-  create_from_hex_string( tt_s, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
-
+  auto tt_s = from_hex<9>( "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
   swap_adjacent_inplace( tt_s, GetParam().first );
-  create_from_hex_string( tt_s_res, GetParam().second );
+  EXPECT_EQ( tt_s, from_hex<9>( GetParam().second ) );
 
-  EXPECT_TRUE( equal( tt_s, tt_s_res ) );
-
-  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
-  create_from_hex_string( tt_d, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
-
+  auto tt_d = from_hex( 9, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
   swap_adjacent_inplace( tt_d, GetParam().first );
-  create_from_hex_string( tt_d_res, GetParam().second );
-
-  EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+  EXPECT_EQ( tt_d, from_hex( 9, GetParam().second ) );
 }
 
 TEST_P( OperationsTestSwap, swap_adjacent_large )
 {
-  static_truth_table<9> tt_s, tt_s_res;
-  create_from_hex_string( tt_s, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
-  create_from_hex_string( tt_s_res, GetParam().second );
+  EXPECT_EQ( swap_adjacent( from_hex<9>( "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" ),
+                            GetParam().first ),
+             from_hex<9>( GetParam().second ) );
 
-  EXPECT_TRUE( equal( swap_adjacent( tt_s, GetParam().first ), tt_s_res ) );
-
-  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
-  create_from_hex_string( tt_d, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" );
-  create_from_hex_string( tt_d_res, GetParam().second );
-
-  EXPECT_TRUE( equal( swap_adjacent( tt_d, GetParam().first ), tt_d_res ) );
+  EXPECT_EQ( swap_adjacent( from_hex( 9, "28e3b8d62855c4b787eef391a93b33297856658b6743aa3cc7e11fde4e9cbf7c98b07f5febfff33bc7ad6f551bc4cbc440453e1bbe24f0cb4f268c6771b55eee" ),
+                            GetParam().first ),
+             from_hex( 9, GetParam().second ) );
 }
 
 INSTANTIATE_TEST_CASE_P( OperationsTestSwapInst,
@@ -270,82 +268,52 @@ INSTANTIATE_TEST_CASE_P( OperationsTestSwapInst,
                                             std::make_pair( 7u, "28e3b8d62855c4b787eef391a93b332998b07f5febfff33bc7ad6f551bc4cbc4"
                                                                 "7856658b6743aa3cc7e11fde4e9cbf7c40453e1bbe24f0cb4f268c6771b55eee" ) ) );
 
-TEST( OperationsTest, flip_inplace_small )
+TEST_F( OperationsTest, flip_inplace_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
   {
-    static_truth_table<4> tt_s, tt_s_res;
-    create_from_hex_string( tt_s, "0738" );
-
+    auto tt_s = from_hex<4>( "0738" );
     flip_inplace( tt_s, p.first );
-    create_from_hex_string( tt_s_res, p.second );
+    EXPECT_EQ( tt_s, from_hex<4>( p.second ) );
 
-    EXPECT_TRUE( equal( tt_s, tt_s_res ) );
-
-    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
-    create_from_hex_string( tt_d, "0738" );
-
+    auto tt_d = from_hex( 4, "0738" );
     flip_inplace( tt_d, p.first );
-    create_from_hex_string( tt_d_res, p.second );
-
-    EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+    EXPECT_EQ( tt_d, from_hex( 4, p.second ) );
   }
 }
 
-TEST( OperationsTest, flip_small )
+TEST_F( OperationsTest, flip_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
   {
-    static_truth_table<4> tt_s, tt_s_res;
-    create_from_hex_string( tt_s, "0738" );
-    create_from_hex_string( tt_s_res, p.second );
-
-    EXPECT_TRUE( equal( flip( tt_s, p.first ), tt_s_res ) );
-
-    dynamic_truth_table tt_d( 4 ), tt_d_res( 4 );
-    create_from_hex_string( tt_d, "0738" );
-    create_from_hex_string( tt_d_res, p.second );
-
-    EXPECT_TRUE( equal( flip( tt_d, p.first ), tt_d_res ) );
+    EXPECT_EQ( flip( from_hex<4>( "0738" ), p.first ), from_hex<4>( p.second ) );
+    EXPECT_EQ( flip( from_hex( 4, "0738" ), p.first ), from_hex( 4, p.second ) );
   }
 }
 
-class OperationsTestFlip : public ::testing::TestWithParam<std::pair<unsigned, std::string>>
+class OperationsTestFlip : public OperationsTest, public ::testing::WithParamInterface<std::pair<unsigned, std::string>>
 {
 };
 
 TEST_P( OperationsTestFlip, flip_inplace_large )
 {
-  static_truth_table<9> tt_s, tt_s_res;
-  create_from_hex_string( tt_s, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
-
+  auto tt_s = from_hex<9>( "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
   flip_inplace( tt_s, GetParam().first );
-  create_from_hex_string( tt_s_res, GetParam().second );
+  EXPECT_EQ( tt_s, from_hex<9>( GetParam().second ) );
 
-  EXPECT_TRUE( equal( tt_s, tt_s_res ) );
-
-  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
-  create_from_hex_string( tt_d, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
-
+  auto tt_d = from_hex( 9, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
   flip_inplace( tt_d, GetParam().first );
-  create_from_hex_string( tt_d_res, GetParam().second );
-
-  EXPECT_TRUE( equal( tt_d, tt_d_res ) );
+  EXPECT_EQ( tt_d, from_hex( 9, GetParam().second ) );
 }
 
 TEST_P( OperationsTestFlip, flip_large )
 {
-  static_truth_table<9> tt_s, tt_s_res;
-  create_from_hex_string( tt_s, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
-  create_from_hex_string( tt_s_res, GetParam().second );
-
-  EXPECT_TRUE( equal( flip( tt_s, GetParam().first ), tt_s_res ) );
-
-  dynamic_truth_table tt_d( 9 ), tt_d_res( 9 );
-  create_from_hex_string( tt_d, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" );
-  create_from_hex_string( tt_d_res, GetParam().second );
-
-  EXPECT_TRUE( equal( flip( tt_d, GetParam().first ), tt_d_res ) );
+  EXPECT_EQ( flip( from_hex<9>( "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" ),
+                   GetParam().first ),
+             from_hex<9>( GetParam().second ) );
+  EXPECT_EQ( flip( from_hex( 9, "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e24f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f" ),
+                   GetParam().first ),
+             from_hex( 9, GetParam().second ) );
 }
 
 INSTANTIATE_TEST_CASE_P( OperationsTestFlipInst,
