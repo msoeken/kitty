@@ -23,21 +23,48 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include <gtest/gtest.h>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <kitty/kitty.hpp>
 
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
+namespace kitty
+{
 
-//         /\___/\
-//        (  o o  )
-//        /   *   \
-//        \__\_/__/
-//          /   \
-//         / ___ \
-//         \/___\/
+namespace testing
+{
+
+class Test : public ::testing::Test
+{
+protected:
+  template<int NumVars>
+  inline static_truth_table<NumVars> nth( uint64_t var_index ) const
+  {
+    static_truth_table<NumVars> tt;
+    create_nth_var( tt, var_index );
+    return tt;
+  }
+
+  inline dynamic_truth_table nth( uint64_t num_vars, uint64_t var_index ) const
+  {
+    dynamic_truth_table tt( num_vars );
+    create_nth_var( tt, var_index );
+    return tt;
+  }
+
+  template<int NumVars>
+  inline static_truth_table<NumVars> from_hex( const std::string& hex ) const
+  {
+    static_truth_table<NumVars> tt;
+    create_from_hex_string( tt, hex );
+    return tt;
+  }
+
+  inline dynamic_truth_table from_hex( uint64_t num_vars, const std::string& hex ) const
+  {
+    dynamic_truth_table tt( num_vars );
+    create_from_hex_string( tt, hex );
+    return tt;
+  }
+};
+}
+}

@@ -176,6 +176,14 @@ inline TT unary_not( const TT& tt )
   return unary_operation( tt, []( auto a ) { return ~a; } );
 }
 
+/*! Inverts all bits in a truth table, based on a condition */
+template<typename TT>
+inline TT unary_not_if( const TT& tt, bool cond )
+{
+  const auto mask = -static_cast<uint64_t>( cond );
+  return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
+}
+
 /*! Performs bitwise AND of two truth tables. */
 template<typename TT>
 inline TT binary_and( const TT& first, const TT& second )
@@ -227,6 +235,28 @@ inline bool equal( const TT& first, const TT& second )
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
+/*! Checks whether a truth table is lexicographically smaller than another
+
+  Comparison is initiated from most-significant bit.
+
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool less_than( const TT& first, const TT& second )
+{
+  return std::lexicographical_compare( std::rbegin( first._bits ), std::rend( first._bits ),
+                                       std::rbegin( second._bits ), std::rend( second._bits ) );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline bool less_than( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second )
+{
+  return first._bits < second._bits;
+}
+/*! \endcond PRIVATE */
+
 /*! Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The
@@ -237,7 +267,7 @@ inline bool equal( const TT& first, const TT& second )
   \param var_index A variable
 */
 template<typename TT>
-void swap_adjacent_inplace( TT& tt, uint64_t var_index )
+void swap_adjacent_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() - 1 );
 
@@ -283,7 +313,7 @@ void swap_adjacent_inplace( TT& tt, uint64_t var_index )
 
 /*! \cond PRIVATE */
 template<int NumVars>
-void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -304,10 +334,121 @@ void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_
   \param var_index A variable
 */
 template<typename TT>
-inline TT swap_adjacent( const TT& tt, uint64_t var_index )
+inline TT swap_adjacent( const TT& tt, uint8_t var_index )
 {
   auto copy = tt;
   swap_adjacent_inplace( copy, var_index );
+  return copy;
+}
+
+/*! Swaps two variables in a truth table
+
+  The function swaps variable `var_index1` with `var_index2`.  The
+  function will change `tt` in-place.  If `tt` should not be changed,
+  one can use `swap` instead.
+
+  \param tt Truth table
+  \param var_index1 First variable
+  \param var_index2 Second variable
+*/
+template<typename TT>
+void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
+{
+  if ( var_index1 == var_index2 )
+  {
+    return;
+  }
+
+  if ( var_index1 > var_index2 )
+  {
+    std::swap( var_index1, var_index2 );
+  }
+
+  if ( tt.num_vars <= 6 )
+  {
+    const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
+    const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
+    tt._bits[0] = ( tt._bits[0] & pmask[0] ) | ( ( tt._bits[0] & pmask[1] ) << shift ) | ( ( tt._bits[0] & pmask[2] ) >> shift );
+  }
+  else if ( var_index2 <= 5 )
+  {
+    const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
+    const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
+                    [var_index1, var_index2, shift, &pmask]( uint64_t word ) {
+                      return ( word & pmask[0] ) | ( ( word & pmask[1] ) << shift ) | ( ( word & pmask[2] ) >> shift );
+                    } );
+  }
+  else if ( var_index1 <= 5 ) /* in this case, var_index2 > 5 */
+  {
+    const auto step = 1 << ( var_index2 - 6 );
+    const auto shift = 1 << var_index1;
+    auto it = std::begin( tt._bits );
+    while ( it != std::end( tt._bits ) )
+    {
+      for ( auto i = decltype( step ){0}; i < step; ++i )
+      {
+        const auto low_to_high = ( *( it + i ) & detail::projections[var_index1] ) >> shift;
+        const auto high_to_low = ( *( it + i + step ) << shift ) & detail::projections[var_index1];
+        *( it + i ) = ( *( it + i ) & ~detail::projections[var_index1] ) | high_to_low;
+        *( it + i + step ) = ( *( it + i + step ) & detail::projections[var_index1] ) | low_to_high;
+      }
+      it += 2 * step;
+    }
+  }
+  else
+  {
+    const auto step1 = 1 << ( var_index1 - 6 );
+    const auto step2 = 1 << ( var_index2 - 6 );
+    auto it = std::begin( tt._bits );
+    while ( it != std::end( tt._bits ) )
+    {
+      for ( auto i = 0; i < step2; i += 2 * step1 )
+      {
+        for ( auto j = 0; j < step1; ++j )
+        {
+          std::swap( *( it + i + j + step1 ), *( it + i + j + step2 ) );
+        }
+      }
+      it += 2 * step2;
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void swap_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index1, uint8_t var_index2 )
+{
+  if ( var_index1 == var_index2 )
+  {
+    return;
+  }
+
+  if ( var_index1 > var_index2 )
+  {
+    std::swap( var_index1, var_index2 );
+  }
+
+  const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
+  const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
+  tt._bits = ( tt._bits & pmask[0] ) | ( ( tt._bits & pmask[1] ) << shift ) | ( ( tt._bits & pmask[2] ) >> shift );
+}
+/* \endcond */
+
+/*! Swaps two adjacent variables in a truth table
+
+  The function swaps variable `var_index1` with `var_index2`.  The
+  function will return a new truth table with the result.
+
+  \param tt Truth table
+  \param var_index1 First variable
+  \param var_index2 Second variable
+*/
+template<typename TT>
+inline TT swap( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
+{
+  auto copy = tt;
+  swap_inplace( copy, var_index1, var_index2 );
   return copy;
 }
 
@@ -321,7 +462,7 @@ inline TT swap_adjacent( const TT& tt, uint64_t var_index )
   \param var_index A variable
 */
 template<typename TT>
-void flip_inplace( TT& tt, uint64_t var_index )
+void flip_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -355,7 +496,7 @@ void flip_inplace( TT& tt, uint64_t var_index )
 
 /*! \cond PRIVATE */
 template<int NumVars>
-inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_index )
+inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
 
@@ -373,7 +514,7 @@ inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint64_t var_in
   \param var_index A variable
 */
 template<typename TT>
-inline TT flip( const TT& tt, uint64_t var_index )
+inline TT flip( const TT& tt, uint8_t var_index )
 {
   auto copy = tt;
   flip_inplace( copy, var_index );

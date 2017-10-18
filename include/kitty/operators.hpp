@@ -25,19 +25,30 @@
 
 #pragma once
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
-
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
 #include "operations.hpp"
-#include "operators.hpp"
 
-//         /\___/\
-//        (  o o  )
-//        /   *   \
-//        \__\_/__/
-//          /   \
-//         / ___ \
-//         \/___\/
+namespace kitty
+{
+
+/*! Operator for `unary_not` */
+template<typename TT>
+inline TT operator~( const TT& tt )
+{
+  return unary_not( tt );
+}
+
+/*! Operator for `equal` */
+template<typename TT>
+inline bool operator==( const TT& first, const TT& second )
+{
+  return equal( first, second );
+}
+
+/*! Operator for `less_than` */
+template<typename TT>
+inline bool operator<( const TT& first, const TT& second )
+{
+  return less_than( first, second );
+}
+
+} // namespace kitty

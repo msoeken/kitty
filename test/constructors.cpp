@@ -75,6 +75,38 @@ TEST( ConstructorsTest, create_from_hex_string )
   EXPECT_TRUE( equal( tt_d, tt_d_str ) );
 }
 
+TEST( ConstructorsTest, create_constants )
+{
+  static_truth_table<0> tt_s;
+  EXPECT_EQ( tt_s.num_vars(), 0 );
+  EXPECT_EQ( tt_s.num_bits(), 1 );
+
+  create_from_hex_string( tt_s, "0" );
+  EXPECT_EQ( tt_s._bits, 0 );
+
+  create_from_hex_string( tt_s, "1" );
+  EXPECT_EQ( tt_s._bits, 1 );
+}
+
+TEST( ConstructorsTest, create_one_variable_functions )
+{
+  static_truth_table<1> tt_s;
+  EXPECT_EQ( tt_s.num_vars(), 1 );
+  EXPECT_EQ( tt_s.num_bits(), 2 );
+
+  create_from_hex_string( tt_s, "0" );
+  EXPECT_EQ( tt_s._bits, 0 );
+
+  create_from_hex_string( tt_s, "1" );
+  EXPECT_EQ( tt_s._bits, 1 );
+
+  create_from_hex_string( tt_s, "2" );
+  EXPECT_EQ( tt_s._bits, 2 );
+
+  create_from_hex_string( tt_s, "3" );
+  EXPECT_EQ( tt_s._bits, 3 );
+}
+
 TEST( ConstructorsTest, create_majority5 )
 {
   static_truth_table<5> tt_s;
