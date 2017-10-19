@@ -4,6 +4,7 @@ project(kitty LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 # Options
+option(KITTY_EXAMPLES "Build examples" ON)
 option(KITTY_BENCH "Build benchmarks" OFF)
 option(KITTY_TEST "Build tests" OFF)
 
@@ -15,6 +16,10 @@ endif()
 set(CMAKE_CXX_FLAGS "-Wall")
 
 include_directories(include)
+
+if(KITTY_EXAMPLES)
+  add_subdirectory(examples)
+endif()
 
 if(KITTY_BENCH)
   add_subdirectory(bench)
