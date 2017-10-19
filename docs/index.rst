@@ -12,6 +12,7 @@ Welcome to kitty's documentation!
 
    introduction
    operations
+   examples
    reference
    changelog
 
