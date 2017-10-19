@@ -35,7 +35,7 @@
 namespace kitty
 {
 
-/*! Perform bitwise unary operation on truth table.
+/*! \brief Perform bitwise unary operation on truth table
 
   \param tt Truth table
   \param op Unary operation that takes as input a word (`uint64_t`) and returns a word
@@ -62,7 +62,7 @@ static_truth_table<NumVars, true> unary_operation( const static_truth_table<NumV
 }
 /* \endcond */
 
-/*! Perform bitwise binary operation on two truth tables.
+/*! \brief Perform bitwise binary operation on two truth tables
 
   The dimensions of `first` and `second` must match.  This is ensured
   at compile-time for static truth tables, but at run-time for dynamic
@@ -96,7 +96,7 @@ static_truth_table<NumVars, true> binary_operation( const static_truth_table<Num
 }
 /*! \endcond */
 
-/*! Perform bitwise ternary operation on three truth tables.
+/*! \brief Perform bitwise ternary operation on three truth tables
 
   The dimensions of `first`, `second`, and `third` must match.  This
   is ensured at compile-time for static truth tables, but at run-time
@@ -193,7 +193,7 @@ void assign_operation( static_truth_table<NumVars, true>& tt, Fn&& op )
 }
 /*! \endcond */
 
-/*! Inverts all bits in a truth table. */
+/*! \brief Inverts all bits in a truth table */
 template<typename TT>
 inline TT unary_not( const TT& tt )
 {
@@ -208,28 +208,28 @@ inline TT unary_not_if( const TT& tt, bool cond )
   return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
 }
 
-/*! Performs bitwise AND of two truth tables. */
+/*! \brief Bitwise AND of two truth tables. */
 template<typename TT>
 inline TT binary_and( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_and<>() );
 }
 
-/*! Performs bitwise OR of two truth tables. */
+/*! \brief Bitwise OR of two truth tables. */
 template<typename TT>
 inline TT binary_or( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_or<>() );
 }
 
-/*! Performs bitwise XOR of two truth tables. */
+/*! \brief Bitwise XOR of two truth tables. */
 template<typename TT>
 inline TT binary_xor( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_xor<>() );
 }
 
-/*! Performs ternary majority of three truth tables. */
+/*! \brief Ternary majority of three truth tables. */
 template<typename TT>
 inline TT ternary_majority( const TT& first, const TT& second, const TT& third )
 {

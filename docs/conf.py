@@ -179,3 +179,24 @@ if read_the_docs_build:
 
 breathe_projects = {"kitty": "doxyxml/xml"}
 breathe_default_project = "kitty"
+
+# -- Custom directives ----------------------------------------------------
+
+from docutils import nodes
+from docutils.parsers.rst import Directive
+
+def extract_brief(tree, name):
+    node = tree.findtext("./compounddef/sectiondef/memberdef/[name='%s']/briefdescription/para" % name)
+    return node.strip() if node else "no brief description"
+
+class DocBriefDirective(Directive):
+    has_content = True
+
+    def run(self):
+        tree = self.state.document.settings.env.app.doxyxml
+        return [nodes.line(text = extract_brief(tree, self.content[0].strip()))]
+
+def setup(app):
+    import xml.etree.ElementTree as ET
+    app.doxyxml = ET.parse("doxyxml/xml/namespacekitty.xml")
+    app.add_directive('doc_brief', DocBriefDirective)

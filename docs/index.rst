@@ -11,6 +11,7 @@ Welcome to kitty's documentation!
    :caption: Contents:
 
    introduction
+   operations
    reference
    changelog
 
