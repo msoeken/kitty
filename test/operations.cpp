@@ -196,6 +196,25 @@ TEST_F( OperationsTest, comparisons )
   EXPECT_FALSE( less_than( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92ebefec9" ) ) );
 }
 
+TEST_F( OperationsTest, next )
+{
+  EXPECT_EQ( next( from_hex<3>( "00" ) ), from_hex<3>( "01" ) );
+  EXPECT_EQ( next( from_hex<3>( "ab" ) ), from_hex<3>( "ac" ) );
+  EXPECT_EQ( next( from_hex<3>( "ff" ) ), from_hex<3>( "00" ) );
+
+  EXPECT_EQ( next( from_hex( 3, "00" ) ), from_hex( 3, "01" ) );
+  EXPECT_EQ( next( from_hex( 3, "ab" ) ), from_hex( 3, "ac" ) );
+  EXPECT_EQ( next( from_hex( 3, "ff" ) ), from_hex( 3, "00" ) );
+
+  EXPECT_EQ( next( from_hex<7>( "00000000000000000000000000000000" ) ), from_hex<7>( "00000000000000000000000000000001" ) );
+  EXPECT_EQ( next( from_hex<7>( "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb" ) ), from_hex<7>( "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbc" ) );
+  EXPECT_EQ( next( from_hex<7>( "ffffffffffffffffffffffffffffffff" ) ), from_hex<7>( "00000000000000000000000000000000" ) );
+
+  EXPECT_EQ( next( from_hex( 7, "00000000000000000000000000000000" ) ), from_hex( 7, "00000000000000000000000000000001" ) );
+  EXPECT_EQ( next( from_hex( 7, "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb" ) ), from_hex( 7, "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbc" ) );
+  EXPECT_EQ( next( from_hex( 7, "ffffffffffffffffffffffffffffffff" ) ), from_hex( 7, "00000000000000000000000000000000" ) );
+}
+
 TEST_F( OperationsTest, swap_adjacent_inplace_small )
 {
   for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )

@@ -281,6 +281,55 @@ inline bool less_than( const static_truth_table<NumVars, true>& first, const sta
 }
 /*! \endcond PRIVATE */
 
+/*! \brief Computes the next lexicographically larger truth table
+
+  This methods updates `tt` to become the next lexicographically
+  larger truth table. If `tt` is already the largest truth table, the
+  updated truth table will contain all zeros.
+
+  \param tt Truth table
+*/
+template<typename TT>
+void next_inplace( TT& tt )
+{
+  if ( tt.num_vars() <= 6 )
+  {
+    tt._bits[0]++;
+    tt.mask_bits();
+  }
+  else
+  {
+    for ( auto i = 0; i < tt.num_blocks(); ++i )
+    {
+      /* If incrementing the word does not lead to an overflow, we're done*/
+      if ( ++tt._bits[i] != 0 ) break;
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void next_inplace( static_truth_table<NumVars, true>& tt )
+{
+  tt._bits++;
+  tt.mask_bits();
+}
+/*! \endcond */
+
+/*! \brief Returns the next lexicographically larger truth table
+
+  Out-of-place variant for `next_inplace`.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline TT next( const TT& tt )
+{
+  auto copy = tt;
+  next_inplace( copy );
+  return copy;
+}
+
 /*! Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The

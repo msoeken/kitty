@@ -41,5 +41,8 @@ v0.1
 * Flip variable: ``flip_inplace``, ``flip``
   `#7 <https://github.com/msoeken/kitty/pull/7>`_
 
+* Enumerate truth tables: ``next_inplace``, ``next
+  `#10 <https://github.com/msoeken/kitty/pull/10>`_
+
 * NPN canonization: ``exact_npn_canonization``, ``create_from_npn_config``
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
