@@ -2,7 +2,12 @@ sudo: required
 dist: trusty
 
 language: cpp
-script: mkdir build && cd build && cmake -DKITTY_BENCH=ON -DKITTY_TEST=ON .. && make
+script:
+  - mkdir build
+  - cd build
+  - cmake -DKITTY_BENCH=ON -DKITTY_TEST=ON ..
+  - make
+  - ./test/run_tests
 
 matrix:
   include:
