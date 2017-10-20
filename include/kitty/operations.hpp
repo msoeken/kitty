@@ -375,6 +375,105 @@ inline TT next( const TT& tt )
   return copy;
 }
 
+/*! \brief Computes co-factor with respect to 0
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+void cofactor0_inplace( TT& tt, uint8_t var_index )
+{
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ),
+                    std::begin( tt._bits ),
+                    [var_index]( uint64_t word ) { return ( ( word & detail::projections_neg[var_index] ) << ( 1 << var_index ) ) |
+                                                          ( word & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        tt._bits[i + j + step] = tt._bits[i + j];
+      }
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void cofactor0_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  tt._bits = ( ( tt._bits & detail::projections_neg[var_index] ) << ( 1 << var_index ) ) |
+             ( tt._bits & detail::projections_neg[var_index] );
+}
+/*! \endcond */
+
+/*! \brief Returns co-factor with respect to 0
+
+ \param tt Truth table
+ \param var_index Variable index
+*/
+template<typename TT>
+TT cofactor0( const TT& tt, uint8_t var_index )
+{
+  auto copy = tt;
+  cofactor0_inplace( copy, var_index );
+  return copy;
+}
+
+/*! \brief Computes co-factor with respect to 1
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+void cofactor1_inplace( TT& tt, uint8_t var_index )
+{
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ),
+                    std::begin( tt._bits ),
+                    [var_index]( uint64_t word ) { return ( word & detail::projections[var_index] ) |
+                                                          ( ( word & detail::projections[var_index] ) >> ( 1 << var_index ) ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        tt._bits[i + j] = tt._bits[i + j + step];
+      }
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void cofactor1_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  tt._bits = ( tt._bits & detail::projections[var_index] ) | ( ( tt._bits & detail::projections[var_index] ) >> ( 1 << var_index ) );
+}
+/*! \endcond */
+
+/*! \brief Returns co-factor with respect to 1
+
+ \param tt Truth table
+ \param var_index Variable index
+*/
+template<typename TT>
+TT cofactor1( const TT& tt, uint8_t var_index )
+{
+  auto copy = tt;
+  cofactor1_inplace( copy, var_index );
+  return copy;
+}
+
 /*! \brief Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The

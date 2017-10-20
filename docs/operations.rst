@@ -33,6 +33,10 @@ Truth table combination and manipulation
    ternary_majority
    next_inplace
    next
+   cofactor0_inplace
+   cofactor0
+   cofactor1_inplace
+   cofactor1
    swap_inplace
    swap
    swap_adjacent_inplace
