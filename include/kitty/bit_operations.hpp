@@ -32,7 +32,7 @@
 namespace kitty
 {
 
-/*! Sets bit at `index` to true.
+/*! \brief Sets bit at index to true
 
   \param tt Truth table
   \param index Bit index
@@ -51,7 +51,7 @@ void set_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! Gets bit at `index`.
+/*! \brief Gets bit at index
 
   \param tt Truth table
   \param index Bit index
@@ -72,7 +72,7 @@ auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! Clears bit at `index`.
+/*! \brief Clears bit at index
 
   \param tt Truth table
   \param index Bit index
@@ -93,7 +93,7 @@ void clear_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! Clears all bits.
+/*! \brief Clears all bits
 
   \param tt Truth table
 */

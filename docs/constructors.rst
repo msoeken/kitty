@@ -1,0 +1,13 @@
+Constructors
+============
+
+The header ``<kitty/constructors.hpp>`` implements operations to construct truth tables.
+
+.. doc_brief_table::
+   create_nth_var
+   create_from_binary_string
+   create_from_hex_string
+   create_random
+   create_majority
+
+

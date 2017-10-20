@@ -33,7 +33,7 @@
 namespace kitty
 {
 
-/*! Exact NPN canonization
+/*! \brief Exact NPN canonization
 
   Given a truth table, this function finds the lexicographically
   smallest truth table in its NPN class, called NPN representative.
@@ -144,7 +144,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   return std::make_tuple( tmin, phase, perm );
 }
 
-/*! Obtain truth table from NPN configuration
+/*! \brief Obtain truth table from NPN configuration
 
   Given an NPN configuration, which contains a representative
   function, input/output negations, and input permutations this

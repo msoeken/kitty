@@ -3,35 +3,38 @@ Operations
 
 The header ``<kitty/operations.hpp>`` implements several operations on truth tables.
 
-+-------------------------------------------------+----------------------------------+
-| Function                                        | Description                      |
-+=================================================+==================================+
-| ``unary_operation(tt, op)``                     | .. doc_brief:: unary_operation   |
-+-------------------------------------------------+----------------------------------+
-| ``binary_operation(first, second, op)``         | .. doc_brief:: binary_operation  |
-+-------------------------------------------------+----------------------------------+
-| ``ternary_operation(first, second, third, op)`` | .. doc_brief:: ternary_operation |
-+-------------------------------------------------+----------------------------------+
-| ``binary_predicate(first, second, op)``         | .. doc_brief:: binary_predicate  |
-+-------------------------------------------------+----------------------------------+
-| ``assign_operation(tt, op)``                    | .. doc_brief:: assign_operation  |
-+-------------------------------------------------+----------------------------------+
+Generic operations
+------------------
 
+.. doc_brief_table::
+   unary_operation
+   binary_operation
+   ternary_operation
+   binary_predicate
+   assign_operation
 
-+--------------------------------------------+---------------------------------+
-| Function                                   | Description                     |
-+============================================+=================================+
-| ``unary_not(tt)``                          | .. doc_brief:: unary_not        |
-+--------------------------------------------+---------------------------------+
-| ``binary_and(first, second)``              | .. doc_brief:: binary_and       |
-+--------------------------------------------+---------------------------------+
-| ``binary_or(first, second)``               | .. doc_brief:: binary_or        |
-+--------------------------------------------+---------------------------------+
-| ``binary_xor(first, second)``              | .. doc_brief:: binary_xor       |
-+--------------------------------------------+---------------------------------+
-| ``ternary_majority(first, second, third)`` | .. doc_brief:: ternary_majority |
-+--------------------------------------------+---------------------------------+
-| ``next_inplace(tt)``                       | .. doc_brief:: next_inplace     |
-+--------------------------------------------+---------------------------------+
-| ``next(tt)``                               | .. doc_brief:: next             |
-+--------------------------------------------+---------------------------------+
+Predicates
+----------
+
+.. doc_brief_table::
+   equal
+   less_than
+
+Truth table combination and manipulation
+----------------------------------------
+
+.. doc_brief_table::
+   unary_not
+   binary_and
+   binary_or
+   binary_xor
+   ternary_majority
+   next_inplace
+   next
+   swap_inplace
+   swap
+   swap_adjacent_inplace
+   swap_adjacent
+   flip_inplace
+   flip
+

@@ -11,7 +11,11 @@ Welcome to kitty's documentation!
    :caption: Contents:
 
    introduction
+   bit_operations
+   constructors
    operations
+   operators
+   canonization
    examples
    reference
    changelog

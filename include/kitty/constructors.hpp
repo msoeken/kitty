@@ -36,7 +36,7 @@
 namespace kitty
 {
 
-/*! Constructs projections (single-variable functions).
+/*! \brief Constructs projections (single-variable functions)
 
   \param tt Truth table
   \param var_index Index of the variable, must be smaller than the truth table's number of variables
@@ -90,7 +90,7 @@ void create_nth_var( static_truth_table<NumVars, true>& tt, uint64_t var_index, 
 }
 /*! \endcond */
 
-/*! Constructs truth table from binary string
+/*! \brief Constructs truth table from binary string
 
   Note that the first character in the string represents the most
   significant bit in the truth table.  For example, the 2-input AND
@@ -118,7 +118,7 @@ void create_from_binary_string( TT& tt, const std::string& binary )
   } while ( j );
 }
 
-/*! Constructs truth table from hexadecimal string
+/*! \brief Constructs truth table from hexadecimal string
 
   Note that the first character in the string represents the four most
   significant bit in the truth table.  For example, the 3-input
@@ -200,7 +200,7 @@ void create_random( TT& tt )
   create_random( tt, std::chrono::system_clock::now().time_since_epoch().count() );
 }
 
-/*! Constructs majority-\f$n\f$ function.
+/*! \brief Constructs majority-n function
 
   The number of variables is determined from the truth table.
 

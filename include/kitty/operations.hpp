@@ -141,7 +141,7 @@ static_truth_table<NumVars, true> ternary_operation( const static_truth_table<Nu
 }
 /*! \endcond */
 
-/*! Computes a predicate based on two truth tables.
+/*! \brief Computes a predicate based on two truth tables
 
   The dimensions of `first` and `second` must match.  This is ensured
   at compile-time for static truth tables, but at run-time for dynamic
@@ -208,28 +208,28 @@ inline TT unary_not_if( const TT& tt, bool cond )
   return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
 }
 
-/*! \brief Bitwise AND of two truth tables. */
+/*! \brief Bitwise AND of two truth tables */
 template<typename TT>
 inline TT binary_and( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_and<>() );
 }
 
-/*! \brief Bitwise OR of two truth tables. */
+/*! \brief Bitwise OR of two truth tables */
 template<typename TT>
 inline TT binary_or( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_or<>() );
 }
 
-/*! \brief Bitwise XOR of two truth tables. */
+/*! \brief Bitwise XOR of two truth tables */
 template<typename TT>
 inline TT binary_xor( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_xor<>() );
 }
 
-/*! \brief Ternary majority of three truth tables. */
+/*! \brief Ternary majority of three truth tables */
 template<typename TT>
 inline TT ternary_majority( const TT& first, const TT& second, const TT& third )
 {
@@ -248,7 +248,7 @@ inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
 }
 
-/*! Checks whether two truth tables are equal
+/*! \brief Checks whether two truth tables are equal
 
   \param first First truth table
   \param second Second truth table
@@ -259,7 +259,7 @@ inline bool equal( const TT& first, const TT& second )
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
-/*! Checks whether a truth table is lexicographically smaller than another
+/*! \brief Checks whether a truth table is lexicographically smaller than another
 
   Comparison is initiated from most-significant bit.
 
@@ -330,7 +330,7 @@ inline TT next( const TT& tt )
   return copy;
 }
 
-/*! Swaps two adjacent variables in a truth table
+/*! \brief Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The
   function will change `tt` in-place.  If `tt` should not be changed,
@@ -398,7 +398,7 @@ void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_i
 }
 /*! \endcond */
 
-/*! Swaps two adjacent variables in a truth table
+/*! \brief Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index` with `var_index + 1`.  The
   function will return a new truth table with the result.
@@ -414,7 +414,7 @@ inline TT swap_adjacent( const TT& tt, uint8_t var_index )
   return copy;
 }
 
-/*! Swaps two variables in a truth table
+/*! \brief Swaps two variables in a truth table
 
   The function swaps variable `var_index1` with `var_index2`.  The
   function will change `tt` in-place.  If `tt` should not be changed,
@@ -508,7 +508,7 @@ inline void swap_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_ind
 }
 /* \endcond */
 
-/*! Swaps two adjacent variables in a truth table
+/*! \brief Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index1` with `var_index2`.  The
   function will return a new truth table with the result.
@@ -525,7 +525,7 @@ inline TT swap( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   return copy;
 }
 
-/*! Flips a variable in a truth table
+/*! \brief Flips a variable in a truth table
 
   The function flips variable `var_index` in `tt`.  The function will
   change `tt` in-place.  If `tt` should not be changed, one can use
@@ -578,7 +578,7 @@ inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_ind
 }
 /* \endcond */
 
-/*! Flips a variable in a truth table
+/*! \brief Flips a variable in a truth table
 
   The function flips variable `var_index` in `tt`.  The function will
   not change `tt` and return the result as a copy.

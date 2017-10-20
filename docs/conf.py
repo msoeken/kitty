@@ -196,7 +196,40 @@ class DocBriefDirective(Directive):
         tree = self.state.document.settings.env.app.doxyxml
         return [nodes.line(text = extract_brief(tree, self.content[0].strip()))]
 
+class DocBriefTableDirective(Directive):
+    has_content = True
+
+    def run(self):
+        tree = self.state.document.settings.env.app.doxyxml
+
+        table = nodes.table()
+        tgroup = nodes.tgroup(cols = 2)
+
+        tgroup += nodes.colspec(colwidth = 50)
+        tgroup += nodes.colspec(colwidth = 50)
+
+        # header
+        tgroup += nodes.thead('', nodes.row('', *[nodes.entry('', nodes.line(text = c)) for c in ["Function", "Description"]]))
+
+        # rows
+        tbody = nodes.tbody()
+        for c in self.content:
+            name = c.strip()
+
+            for elem in tree.findall("./compounddef/sectiondef/memberdef/[name='%s']" % name):
+                args = ', '.join(e.text for e in elem.findall("./param/declname"))
+
+                func = nodes.entry('', nodes.literal(text = '%s(%s)' % (name, args)))
+                desc = nodes.entry('', nodes.line(text = elem.findtext("./briefdescription/para")))
+
+                tbody += nodes.row('', func, desc)
+
+        tgroup += tbody
+        table += tgroup
+        return [table]
+
 def setup(app):
     import xml.etree.ElementTree as ET
     app.doxyxml = ET.parse("doxyxml/xml/namespacekitty.xml")
     app.add_directive('doc_brief', DocBriefDirective)
+    app.add_directive('doc_brief_table', DocBriefTableDirective)

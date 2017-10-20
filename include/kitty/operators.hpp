@@ -30,21 +30,21 @@
 namespace kitty
 {
 
-/*! Operator for `unary_not` */
+/*! \brief Operator for unary_not */
 template<typename TT>
 inline TT operator~( const TT& tt )
 {
   return unary_not( tt );
 }
 
-/*! Operator for `equal` */
+/*! \brief Operator for equal */
 template<typename TT>
 inline bool operator==( const TT& first, const TT& second )
 {
   return equal( first, second );
 }
 
-/*! Operator for `less_than` */
+/*! \brief Operator for less_than */
 template<typename TT>
 inline bool operator<( const TT& first, const TT& second )
 {
