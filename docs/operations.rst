@@ -21,8 +21,8 @@ Predicates
    less_than
    has_var
 
-Truth table combination and manipulation
-----------------------------------------
+Combination and manipulation
+----------------------------
 
 .. doc_brief_table::
    unary_not
