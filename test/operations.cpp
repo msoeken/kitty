@@ -198,6 +198,16 @@ TEST_F( OperationsTest, comparisons )
 
 TEST_F( OperationsTest, support )
 {
+  EXPECT_TRUE( is_const0( from_hex<0>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<1>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<2>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<3>( "00" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<4>( "0000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<5>( "00000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<6>( "0000000000000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<7>( "00000000000000000000000000000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<8>( "0000000000000000000000000000000000000000000000000000000000000000" ) ) );
+
   EXPECT_TRUE( has_var( from_hex<3>( "77" ), 0 ) );
   EXPECT_TRUE( has_var( from_hex<3>( "77" ), 1 ) );
   EXPECT_TRUE( !has_var( from_hex<3>( "77" ), 2 ) );

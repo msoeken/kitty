@@ -281,6 +281,24 @@ inline bool less_than( const static_truth_table<NumVars, true>& first, const sta
 }
 /*! \endcond PRIVATE */
 
+/*! \brief Checks whether truth table is contant 0
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline bool is_const0( const TT& tt )
+{
+  return std::all_of( std::begin( tt._bits ), std::end( tt._bits ), []( uint64_t word ) { return word == 0; } );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline bool is_const0( const static_truth_table<NumVars, true>& tt )
+{
+  return tt._bits == 0;
+}
+/*! \endcond */
+
 /*! \brief Checks whether truth table depends on given variable index
 
   \param tt Truth table

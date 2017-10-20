@@ -20,6 +20,7 @@ Predicates
    equal
    less_than
    has_var
+   is_const0
 
 Combination and manipulation
 ----------------------------

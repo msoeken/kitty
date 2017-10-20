@@ -29,7 +29,7 @@ v0.1
   `#4 <https://github.com/msoeken/kitty/pull/4>`_
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
 
-* Predicates: ``has_var``
+* Predicates: ``has_var``, ``is_const0``
   `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
 * Operators: ``~``, ``&``, ``|``, ``^``, ``==``, ``<``
