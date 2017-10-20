@@ -28,6 +28,7 @@ Truth table combination and manipulation
    binary_and
    binary_or
    binary_xor
+   ternary_ite
    ternary_majority
    next_inplace
    next
