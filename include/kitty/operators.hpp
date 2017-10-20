@@ -37,6 +37,27 @@ inline TT operator~( const TT& tt )
   return unary_not( tt );
 }
 
+/*! \brief Operator for binary_and */
+template<typename TT>
+inline TT operator&( const TT& first, const TT& second )
+{
+  return binary_and( first, second );
+}
+
+/*! \brief Operator for binary_or */
+template<typename TT>
+inline TT operator|( const TT& first, const TT& second )
+{
+  return binary_or( first, second );
+}
+
+/*! \brief Operator for binary_xor */
+template<typename TT>
+inline TT operator^( const TT& first, const TT& second )
+{
+  return binary_xor( first, second );
+}
+
 /*! \brief Operator for equal */
 template<typename TT>
 inline bool operator==( const TT& first, const TT& second )

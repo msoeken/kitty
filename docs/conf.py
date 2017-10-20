@@ -215,8 +215,9 @@ class DocBriefTableDirective(Directive):
         tbody = nodes.tbody()
         for c in self.content:
             name = c.strip()
+            query = name.replace("&", " &")
 
-            for elem in tree.findall("./compounddef/sectiondef/memberdef/[name='%s']" % name):
+            for elem in tree.findall("./compounddef/sectiondef/memberdef/[name='%s']" % query):
                 args = ', '.join(e.text for e in elem.findall("./param/declname"))
 
                 func = nodes.entry('', nodes.literal(text = '%s(%s)' % (name, args)))

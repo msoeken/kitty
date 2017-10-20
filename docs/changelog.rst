@@ -32,8 +32,9 @@ v0.1
 * Predicates: ``has_var``
   `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
-* Operators: ``~``, ``==``, ``<``
+* Operators: ``~``, ``&``, ``|``, ``^``, ``==``, ``<``
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
+  `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
 * Swap adjacent variables: ``swap_adjacent_inplace``, ``swap_adjacent``
   `#6 <https://github.com/msoeken/kitty/pull/6>`_
