@@ -19,6 +19,7 @@ Predicates
 .. doc_brief_table::
    equal
    less_than
+   has_var
 
 Truth table combination and manipulation
 ----------------------------------------

@@ -281,6 +281,50 @@ inline bool less_than( const static_truth_table<NumVars, true>& first, const sta
 }
 /*! \endcond PRIVATE */
 
+/*! \brief Checks whether truth table depends on given variable index
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+bool has_var( const TT& tt, uint8_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    return std::any_of( std::begin( tt._bits ), std::end( tt._bits ),
+                        [var_index]( uint64_t word ) { return ( ( word >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
+                                                              ( word & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        if ( tt._bits[i + j] != tt._bits[i + j + step] )
+        {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+bool has_var( const static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  return ( ( tt._bits >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
+         ( tt._bits & detail::projections_neg[var_index] );
+}
+/*! \endcond */
+
 /*! \brief Computes the next lexicographically larger truth table
 
   This methods updates `tt` to become the next lexicographically
@@ -302,7 +346,8 @@ void next_inplace( TT& tt )
     for ( auto i = 0; i < tt.num_blocks(); ++i )
     {
       /* If incrementing the word does not lead to an overflow, we're done*/
-      if ( ++tt._bits[i] != 0 ) break;
+      if ( ++tt._bits[i] != 0 )
+        break;
     }
   }
 }

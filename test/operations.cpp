@@ -196,6 +196,27 @@ TEST_F( OperationsTest, comparisons )
   EXPECT_FALSE( less_than( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92ebefec9" ) ) );
 }
 
+TEST_F( OperationsTest, support )
+{
+  EXPECT_TRUE( has_var( from_hex<3>( "77" ), 0 ) );
+  EXPECT_TRUE( has_var( from_hex<3>( "77" ), 1 ) );
+  EXPECT_TRUE( !has_var( from_hex<3>( "77" ), 2 ) );
+
+  EXPECT_TRUE( has_var( from_hex( 3, "77" ), 0 ) );
+  EXPECT_TRUE( has_var( from_hex( 3, "77" ), 1 ) );
+  EXPECT_TRUE( !has_var( from_hex( 3, "77" ), 2 ) );
+
+  for ( auto i = 0; i < 8; ++i )
+  {
+    EXPECT_EQ( has_var( from_hex<8>( "3333333333cc33cc3333333333cc33cc33cc33cccccccccc33cc33cccccccccc" ), i ), i % 2 == 1 );
+  }
+
+  for ( auto i = 0; i < 8; ++i )
+  {
+    EXPECT_EQ( has_var( from_hex( 8, "3333333333cc33cc3333333333cc33cc33cc33cccccccccc33cc33cccccccccc" ), i ), i % 2 == 1 );
+  }
+}
+
 TEST_F( OperationsTest, next )
 {
   EXPECT_EQ( next( from_hex<3>( "00" ) ), from_hex<3>( "01" ) );
