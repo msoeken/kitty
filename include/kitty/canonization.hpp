@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file canonization.hpp
+  \brief Implements canonization algorithms
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <numeric>

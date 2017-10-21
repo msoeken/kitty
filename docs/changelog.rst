@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.1
-----
+v0.1 (not yet released)
+-----------------------
 
 * Initial release
 * Data structures ``static_truth_table`` and ``dynamic_truth_table``

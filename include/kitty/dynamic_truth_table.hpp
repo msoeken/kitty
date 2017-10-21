@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file dynamic_truth_table.hpp
+  \brief Implements dynamic_truth_table
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <cstdint>

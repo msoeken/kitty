@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file operations.hpp
+  \brief Implements several operations on truth tables
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <algorithm>

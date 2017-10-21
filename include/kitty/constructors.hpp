@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file constructors.hpp
+  \brief Implements operations to construct truth tables
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <cctype>

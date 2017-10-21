@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file constants.hpp
+  \brief Collects several important constants
+
+  \author Mathias Soeken
+*/
+
 /*! \cond PRIVATE */
 #pragma once
 

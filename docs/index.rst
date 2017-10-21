@@ -8,18 +8,23 @@ Welcome to kitty's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    introduction
+   changelog
+   examples
+   acknowledgments
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Reference
+
    bit_operations
    constructors
    operations
    operators
    canonization
    isop
-   examples
    reference
-   changelog
 
 Indices and tables
 ==================

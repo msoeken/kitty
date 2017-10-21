@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file operators.hpp
+  \brief Implements operator shortcuts to operations
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include "operations.hpp"

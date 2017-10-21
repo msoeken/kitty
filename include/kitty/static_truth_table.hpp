@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file static_truth_table.hpp
+  \brief Implements static_truth_table
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <array>

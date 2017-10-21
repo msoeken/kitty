@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file bit_operations.hpp
+  \brief Implements bit manipulation on truth tables
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include <cstdint>

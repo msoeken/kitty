@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file kitty.hpp
+  \brief Main header for kitty
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include "static_truth_table.hpp"

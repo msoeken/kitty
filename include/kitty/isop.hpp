@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file isop.hpp
+  \brief Implements methods to compute irredundant sum-of-products (ISOP) representations
+
+  \author Mathias Soeken
+*/
+
 #pragma once
 
 #include "operations.hpp"
