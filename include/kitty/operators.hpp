@@ -44,6 +44,13 @@ inline TT operator&( const TT& first, const TT& second )
   return binary_and( first, second );
 }
 
+/*! \brief Operator for binary_and and assign */
+template<typename TT>
+inline void operator&=( TT& first, const TT& second )
+{
+  first = binary_and( first, second );
+}
+
 /*! \brief Operator for binary_or */
 template<typename TT>
 inline TT operator|( const TT& first, const TT& second )
@@ -51,11 +58,25 @@ inline TT operator|( const TT& first, const TT& second )
   return binary_or( first, second );
 }
 
+/*! \brief Operator for binary_or and assign */
+template<typename TT>
+inline void operator|=( TT& first, const TT& second )
+{
+  first = binary_or( first, second );
+}
+
 /*! \brief Operator for binary_xor */
 template<typename TT>
 inline TT operator^( const TT& first, const TT& second )
 {
   return binary_xor( first, second );
+}
+
+/*! \brief Operator for binary_xor and assign */
+template<typename TT>
+inline void operator^=( TT& first, const TT& second )
+{
+  first = binary_xor( first, second );
 }
 
 /*! \brief Operator for equal */

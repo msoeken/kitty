@@ -32,7 +32,7 @@ v0.1
 * Predicates: ``has_var``, ``is_const0``
   `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
-* Operators: ``~``, ``&``, ``|``, ``^``, ``==``, ``<``
+* Operators: ``~``, ``&``, ``&=``, ``|``, ``|=``, ``^``, ``^=``, ``==``, ``<``
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
   `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
