@@ -54,3 +54,6 @@ v0.1
 
 * NPN canonization: ``exact_npn_canonization``, ``create_from_npn_config``
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
+
+* Compute ISOP representation: ``isop``
+  `#11 <https://github.com/msoeken/kitty/pull/11>`_

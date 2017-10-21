@@ -16,6 +16,7 @@ Welcome to kitty's documentation!
    operations
    operators
    canonization
+   isop
    examples
    reference
    changelog
