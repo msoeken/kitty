@@ -32,3 +32,25 @@ Output:
    $ time ./examples/npn_random
    [i] partitioned 10000 random functions into 10000 classes.
    ./examples/npn_random  2.20s user 0.01s system 99% cpu 2.232 total
+
+ISOP computation
+----------------
+
+The following example reads a truth table from a binary string,
+computes its ISOP, and prints it.
+
+.. literalinclude:: ../examples/isop.cpp
+   :language: c++
+   :lines: 26-78
+   :caption: examples/isop.cpp
+
+Output:
+
+::
+
+   $ time ./examples/isop 11101000
+   -11
+   1-1
+   11-
+   ./examples/isop 11101000  0.00s user 0.00s system 50% cpu 0.005 total
+
