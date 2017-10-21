@@ -12,11 +12,12 @@ v0.1
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
 
-* Constructors: ``create_nth_var``, ``create_from_binary_string``, ``create_from_hex_string``, ``create_random``, and ``create_majority``
+* Constructors: ``create_nth_var``, ``create_from_binary_string``, ``create_from_hex_string``, ``create_random``, ``create_from_cubes``, and ``create_majority``
   `#1 <https://github.com/msoeken/kitty/pull/1>`_
   `#4 <https://github.com/msoeken/kitty/pull/4>`_
   `#5 <https://github.com/msoeken/kitty/pull/5>`_
   `#9 <https://github.com/msoeken/kitty/pull/9>`_
+  `#11 <https://github.com/msoeken/kitty/pull/11>`_
 
 * Unary and binary operations: ``unary_not``, ``unary_not_if``, ``binary_and``, ``binary_or``, and ``binary_xor``
   `#2 <https://github.com/msoeken/kitty/pull/2>`_
