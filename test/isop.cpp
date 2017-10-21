@@ -23,22 +23,47 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#pragma once
+#include <cstdint>
+#include <vector>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <gtest/gtest.h>
 
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
-#include "isop.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
+#include <kitty/kitty.hpp>
 
-//         /\___/\
-//        (  o o  )
-//        /   *   \
-//        \__\_/__/
-//          /   \
-//         / ___ \
-//         \/___\/
+#include "utility.hpp"
+
+using namespace kitty;
+
+class IsopTest : public kitty::testing::Test
+{
+};
+
+TEST_F( IsopTest, isop_for_small )
+{
+  const auto tt = from_hex<3>( "e8" );
+
+  const auto cubes = isop( tt );
+
+  EXPECT_EQ( cubes.size(), 3 );
+  EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 10 ) != std::end( cubes ) );
+  EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 34 ) != std::end( cubes ) );
+  EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 40 ) != std::end( cubes ) );
+
+  auto tt_copy = tt.construct();
+  create_from_cubes( tt_copy, cubes );
+  EXPECT_EQ( tt, tt_copy );
+}
+
+TEST_F( IsopTest, random_isop )
+{
+  static_truth_table<10> tt;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto cubes = isop( tt );
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}

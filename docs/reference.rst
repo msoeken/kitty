@@ -46,3 +46,8 @@ Canonization
 
 .. doxygenfile:: canonization.hpp
 
+ISOP representations
+--------------------
+
+.. doxygenfile:: isop.hpp
+

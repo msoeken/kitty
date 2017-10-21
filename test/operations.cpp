@@ -196,6 +196,37 @@ TEST_F( OperationsTest, comparisons )
   EXPECT_FALSE( less_than( from_hex( 7, "e92c774439c72c8955906ef92ecefec9" ), from_hex( 7, "e92c774439c72c8955906ef92ebefec9" ) ) );
 }
 
+TEST_F( OperationsTest, support )
+{
+  EXPECT_TRUE( is_const0( from_hex<0>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<1>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<2>( "0" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<3>( "00" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<4>( "0000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<5>( "00000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<6>( "0000000000000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<7>( "00000000000000000000000000000000" ) ) );
+  EXPECT_TRUE( is_const0( from_hex<8>( "0000000000000000000000000000000000000000000000000000000000000000" ) ) );
+
+  EXPECT_TRUE( has_var( from_hex<3>( "77" ), 0 ) );
+  EXPECT_TRUE( has_var( from_hex<3>( "77" ), 1 ) );
+  EXPECT_TRUE( !has_var( from_hex<3>( "77" ), 2 ) );
+
+  EXPECT_TRUE( has_var( from_hex( 3, "77" ), 0 ) );
+  EXPECT_TRUE( has_var( from_hex( 3, "77" ), 1 ) );
+  EXPECT_TRUE( !has_var( from_hex( 3, "77" ), 2 ) );
+
+  for ( auto i = 0; i < 8; ++i )
+  {
+    EXPECT_EQ( has_var( from_hex<8>( "3333333333cc33cc3333333333cc33cc33cc33cccccccccc33cc33cccccccccc" ), i ), i % 2 == 1 );
+  }
+
+  for ( auto i = 0; i < 8; ++i )
+  {
+    EXPECT_EQ( has_var( from_hex( 8, "3333333333cc33cc3333333333cc33cc33cc33cccccccccc33cc33cccccccccc" ), i ), i % 2 == 1 );
+  }
+}
+
 TEST_F( OperationsTest, next )
 {
   EXPECT_EQ( next( from_hex<3>( "00" ) ), from_hex<3>( "01" ) );
@@ -213,6 +244,63 @@ TEST_F( OperationsTest, next )
   EXPECT_EQ( next( from_hex( 7, "00000000000000000000000000000000" ) ), from_hex( 7, "00000000000000000000000000000001" ) );
   EXPECT_EQ( next( from_hex( 7, "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb" ) ), from_hex( 7, "aaaaaaaaaaaaaaaabbbbbbbbbbbbbbbc" ) );
   EXPECT_EQ( next( from_hex( 7, "ffffffffffffffffffffffffffffffff" ) ), from_hex( 7, "00000000000000000000000000000000" ) );
+}
+
+TEST_F( OperationsTest, cofactors )
+{
+  EXPECT_EQ( cofactor0( from_hex<3>( "e8" ), 2 ), from_hex<3>( "88" ) );
+  EXPECT_EQ( cofactor0( from_hex<3>( "e8" ), 1 ), from_hex<3>( "a0" ) );
+  EXPECT_EQ( cofactor0( from_hex<3>( "e8" ), 0 ), from_hex<3>( "c0" ) );
+
+  EXPECT_EQ( cofactor0( from_hex( 3, "e8" ), 2 ), from_hex( 3, "88" ) );
+  EXPECT_EQ( cofactor0( from_hex( 3, "e8" ), 1 ), from_hex( 3, "a0" ) );
+  EXPECT_EQ( cofactor0( from_hex( 3, "e8" ), 0 ), from_hex( 3, "c0" ) );
+
+  // Co-factors of [(<abc>d){<efg>h}]
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 0 ), from_hex<8>( "3fff3fff3fff3fff3fff3fff3fff3fff3fff3fff3fffc0003fffc000c000c000" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 1 ), from_hex<8>( "5fff5fff5fff5fff5fff5fff5fff5fff5fff5fff5fffa0005fffa000a000a000" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 2 ), from_hex<8>( "77ff77ff77ff77ff77ff77ff77ff77ff77ff77ff77ff880077ff880088008800" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 3 ), from_hex<8>( "ffffffffffffffffffffffffffffffffffffffffffff0000ffff000000000000" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 4 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800e800e800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 5 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 6 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800e80017ffe800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 7 ), from_hex<8>( "17ff17ff17ffe80017ffe800e800e80017ff17ff17ffe80017ffe800e800e800" ) );
+
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 0 ), from_hex( 8, "3fff3fff3fff3fff3fff3fff3fff3fff3fff3fff3fffc0003fffc000c000c000" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 1 ), from_hex( 8, "5fff5fff5fff5fff5fff5fff5fff5fff5fff5fff5fffa0005fffa000a000a000" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 2 ), from_hex( 8, "77ff77ff77ff77ff77ff77ff77ff77ff77ff77ff77ff880077ff880088008800" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 3 ), from_hex( 8, "ffffffffffffffffffffffffffffffffffffffffffff0000ffff000000000000" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 4 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800e800e800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 5 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 6 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800e80017ffe800e800e800" ) );
+  EXPECT_EQ( cofactor0( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 7 ), from_hex( 8, "17ff17ff17ffe80017ffe800e800e80017ff17ff17ffe80017ffe800e800e800" ) );
+
+  EXPECT_EQ( cofactor1( from_hex<3>( "e8" ), 2 ), from_hex<3>( "ee" ) );
+  EXPECT_EQ( cofactor1( from_hex<3>( "e8" ), 1 ), from_hex<3>( "fa" ) );
+  EXPECT_EQ( cofactor1( from_hex<3>( "e8" ), 0 ), from_hex<3>( "fc" ) );
+
+  EXPECT_EQ( cofactor1( from_hex( 3, "e8" ), 2 ), from_hex( 3, "ee" ) );
+  EXPECT_EQ( cofactor1( from_hex( 3, "e8" ), 1 ), from_hex( 3, "fa" ) );
+  EXPECT_EQ( cofactor1( from_hex( 3, "e8" ), 0 ), from_hex( 3, "fc" ) );
+
+  // Co-factors of [(<abc>d){<efg>h}]
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 0 ), from_hex<8>( "03ff03ff03ff03ff03ff03ff03ff03ff03ff03ff03fffc0003fffc00fc00fc00" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 1 ), from_hex<8>( "05ff05ff05ff05ff05ff05ff05ff05ff05ff05ff05fffa0005fffa00fa00fa00" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 2 ), from_hex<8>( "11ff11ff11ff11ff11ff11ff11ff11ff11ff11ff11ffee0011ffee00ee00ee00" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 3 ), from_hex<8>( "17171717171717171717171717171717171717171717e8e81717e8e8e8e8e8e8" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 4 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 5 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 6 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ff17ff17ffe800" ) );
+  EXPECT_EQ( cofactor1( from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 7 ), from_hex<8>( "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff" ) );
+
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 0 ), from_hex( 8, "03ff03ff03ff03ff03ff03ff03ff03ff03ff03ff03fffc0003fffc00fc00fc00" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 1 ), from_hex( 8, "05ff05ff05ff05ff05ff05ff05ff05ff05ff05ff05fffa0005fffa00fa00fa00" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 2 ), from_hex( 8, "11ff11ff11ff11ff11ff11ff11ff11ff11ff11ff11ffee0011ffee00ee00ee00" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 3 ), from_hex( 8, "17171717171717171717171717171717171717171717e8e81717e8e8e8e8e8e8" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 4 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe800e800" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 5 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 6 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ff17ff17ffe800" ) );
+  EXPECT_EQ( cofactor1( from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ffe80017ffe800e800e800" ), 7 ), from_hex( 8, "17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff17ff" ) );
 }
 
 TEST_F( OperationsTest, swap_adjacent_inplace_small )

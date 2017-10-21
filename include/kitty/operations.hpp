@@ -281,6 +281,68 @@ inline bool less_than( const static_truth_table<NumVars, true>& first, const sta
 }
 /*! \endcond PRIVATE */
 
+/*! \brief Checks whether truth table is contant 0
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline bool is_const0( const TT& tt )
+{
+  return std::all_of( std::begin( tt._bits ), std::end( tt._bits ), []( uint64_t word ) { return word == 0; } );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline bool is_const0( const static_truth_table<NumVars, true>& tt )
+{
+  return tt._bits == 0;
+}
+/*! \endcond */
+
+/*! \brief Checks whether truth table depends on given variable index
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+bool has_var( const TT& tt, uint8_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    return std::any_of( std::begin( tt._bits ), std::end( tt._bits ),
+                        [var_index]( uint64_t word ) { return ( ( word >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
+                                                              ( word & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        if ( tt._bits[i + j] != tt._bits[i + j + step] )
+        {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+bool has_var( const static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  assert( var_index < tt.num_vars() );
+
+  return ( ( tt._bits >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
+         ( tt._bits & detail::projections_neg[var_index] );
+}
+/*! \endcond */
+
 /*! \brief Computes the next lexicographically larger truth table
 
   This methods updates `tt` to become the next lexicographically
@@ -302,7 +364,8 @@ void next_inplace( TT& tt )
     for ( auto i = 0; i < tt.num_blocks(); ++i )
     {
       /* If incrementing the word does not lead to an overflow, we're done*/
-      if ( ++tt._bits[i] != 0 ) break;
+      if ( ++tt._bits[i] != 0 )
+        break;
     }
   }
 }
@@ -327,6 +390,105 @@ inline TT next( const TT& tt )
 {
   auto copy = tt;
   next_inplace( copy );
+  return copy;
+}
+
+/*! \brief Computes co-factor with respect to 0
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+void cofactor0_inplace( TT& tt, uint8_t var_index )
+{
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ),
+                    std::begin( tt._bits ),
+                    [var_index]( uint64_t word ) { return ( ( word & detail::projections_neg[var_index] ) << ( 1 << var_index ) ) |
+                                                          ( word & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        tt._bits[i + j + step] = tt._bits[i + j];
+      }
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void cofactor0_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  tt._bits = ( ( tt._bits & detail::projections_neg[var_index] ) << ( 1 << var_index ) ) |
+             ( tt._bits & detail::projections_neg[var_index] );
+}
+/*! \endcond */
+
+/*! \brief Returns co-factor with respect to 0
+
+ \param tt Truth table
+ \param var_index Variable index
+*/
+template<typename TT>
+TT cofactor0( const TT& tt, uint8_t var_index )
+{
+  auto copy = tt;
+  cofactor0_inplace( copy, var_index );
+  return copy;
+}
+
+/*! \brief Computes co-factor with respect to 1
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT>
+void cofactor1_inplace( TT& tt, uint8_t var_index )
+{
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    std::transform( std::begin( tt._bits ), std::end( tt._bits ),
+                    std::begin( tt._bits ),
+                    [var_index]( uint64_t word ) { return ( word & detail::projections[var_index] ) |
+                                                          ( ( word & detail::projections[var_index] ) >> ( 1 << var_index ) ); } );
+  }
+  else
+  {
+    const auto step = 1 << ( var_index - 6 );
+    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    {
+      for ( auto j = 0; j < step; ++j )
+      {
+        tt._bits[i + j] = tt._bits[i + j + step];
+      }
+    }
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void cofactor1_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
+{
+  tt._bits = ( tt._bits & detail::projections[var_index] ) | ( ( tt._bits & detail::projections[var_index] ) >> ( 1 << var_index ) );
+}
+/*! \endcond */
+
+/*! \brief Returns co-factor with respect to 1
+
+ \param tt Truth table
+ \param var_index Variable index
+*/
+template<typename TT>
+TT cofactor1( const TT& tt, uint8_t var_index )
+{
+  auto copy = tt;
+  cofactor1_inplace( copy, var_index );
   return copy;
 }
 

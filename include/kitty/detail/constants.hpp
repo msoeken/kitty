@@ -37,6 +37,8 @@ namespace detail
 
 static constexpr uint64_t projections[] = {0xaaaaaaaaaaaaaaaa, 0xcccccccccccccccc, 0xf0f0f0f0f0f0f0f0, 0xff00ff00ff00ff00, 0xffff0000ffff0000, 0xffffffff00000000};
 
+static constexpr uint64_t projections_neg[] = {0x5555555555555555, 0x3333333333333333, 0x0f0f0f0f0f0f0f0f, 0x00ff00ff00ff00ff, 0x0000ffff0000ffff, 0x00000000ffffffff};
+
 static constexpr uint64_t masks[] = {0x0000000000000001, 0x0000000000000003, 0x000000000000000f, 0x00000000000000ff, 0x000000000000ffff, 0x00000000ffffffff, 0xffffffffffffffff};
 
 static constexpr uint64_t permutation_masks[][3] = {

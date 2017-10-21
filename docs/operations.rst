@@ -19,9 +19,11 @@ Predicates
 .. doc_brief_table::
    equal
    less_than
+   has_var
+   is_const0
 
-Truth table combination and manipulation
-----------------------------------------
+Combination and manipulation
+----------------------------
 
 .. doc_brief_table::
    unary_not
@@ -32,6 +34,10 @@ Truth table combination and manipulation
    ternary_majority
    next_inplace
    next
+   cofactor0_inplace
+   cofactor0
+   cofactor1_inplace
+   cofactor1
    swap_inplace
    swap
    swap_adjacent_inplace
