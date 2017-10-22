@@ -606,7 +606,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     std::swap( var_index1, var_index2 );
   }
 
-  if ( tt.num_vars <= 6 )
+  if ( tt.num_vars() <= 6 )
   {
     const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
     const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
