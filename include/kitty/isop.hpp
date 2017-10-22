@@ -119,4 +119,5 @@ inline std::vector<uint64_t> isop( const TT& tt )
   return cubes;
 }
 
-}
+} // namespace kitty
+

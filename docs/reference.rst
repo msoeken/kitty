@@ -41,6 +41,12 @@ Operators
 
 .. doxygenfile:: operators.hpp
 
+
+Hash values
+-----------
+
+.. doxygenfile:: hash.hpp
+
 Canonization
 ------------
 

@@ -55,6 +55,9 @@ v0.1 (not yet released)
 * Compute minimum base based on functional support: ``min_base_inplace``, ``expand_inplace``
   `#12 <https://github.com/msoeken/kitty/pull/12>`_
 
+* Compute hash values for truth table
+  `#13 <https://github.com/msoeken/kitty/pull/13>`_
+
 * NPN canonization: ``exact_npn_canonization``, ``create_from_npn_config``
   `#8 <https://github.com/msoeken/kitty/pull/8>`_
 

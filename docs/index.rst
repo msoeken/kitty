@@ -22,6 +22,7 @@ Welcome to kitty's documentation!
    constructors
    operations
    operators
+   hash
    canonization
    isop
    reference

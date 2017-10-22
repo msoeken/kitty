@@ -23,42 +23,22 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdint>
-#include <iostream>
-#include <unordered_set>
+#include <cstdlib>
+#include <limits>
+
+#include <gtest/gtest.h>
 
 #include <kitty/kitty.hpp>
 
-/* compile time constant for the number of variables */
-auto constexpr num_vars = 6;
+#include "utility.hpp"
 
-/* number of random functions to generate */
-auto constexpr num_functions = 10000;
+using namespace kitty;
 
-int main( int argc, char** argv )
+class HashTest : public kitty::testing::Test
 {
-  /* truth table type in this example */
-  using truth_table = kitty::static_truth_table<num_vars>;
+};
 
-  /* set to store all NPN representatives */
-  std::unordered_set<truth_table, kitty::hash<truth_table>> classes;
-
-  /* initialize truth table (constant 0) */
-  kitty::static_truth_table<num_vars> tt;
-
-  for ( auto i = 0; i < num_functions; ++i )
-  {
-    /* create a random truth table */
-    kitty::create_random( tt );
-
-    /* apply NPN canonization and add resulting representative to set */
-    const auto res = kitty::exact_npn_canonization( tt );
-    classes.insert( std::get<0>( res ) );
-  }
-
-  std::cout << "[i] partitioned "
-            << num_functions << " random functions into "
-            << classes.size() << " classes." << std::endl;
-
-  return 0;
+TEST_F( HashTest, length_of_size_t )
+{
+  EXPECT_EQ( std::numeric_limits<std::size_t>::digits, 64 );
 }

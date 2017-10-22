@@ -38,6 +38,7 @@
 #include "bit_operations.hpp"
 #include "canonization.hpp"
 #include "constructors.hpp"
+#include "hash.hpp"
 #include "isop.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
