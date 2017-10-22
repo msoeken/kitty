@@ -8,8 +8,8 @@ The header ``<kitty/dynamic_truth_table.hpp>`` implements a dynamic
 truth table.  A dynamic truth table can be initialized with a number
 of variables that is computed at runtime.
 
-The class ``dynamic_truth_table`` provides the following public member
-functions.
+The class :cpp:class:`kitty::dynamic_truth_table` provides the
+following public member functions.
 
 +-----------------------------------+----------------------------------------------------------------------------------+
 | Function                          | Description                                                                      |
@@ -38,8 +38,8 @@ of variables, i.e., up to 6 variables. Then a truth table fits into a
 single block of 64 bits. The interface makes this optimization
 intransparent to the user.
 
-The class ``static_truth_table<NumVars>`` provides the following
-public member functions.
+The class :cpp:class:`kitty::static_truth_table` provides the
+following public member functions.
 
 +--------------------------+----------------------------------------------------------------------------------+
 | Function                 | Description                                                                      |
