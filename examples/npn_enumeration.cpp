@@ -34,21 +34,24 @@ auto constexpr num_vars = 4;
 
 int main( int argc, char** argv )
 {
+  /* truth table type in this example */
+  using truth_table = kitty::static_truth_table<num_vars>;
+
   /* set to store all NPN representatives */
-  std::unordered_set<uint64_t> classes;
+  std::unordered_set<truth_table, kitty::hash<truth_table>> classes;
 
   /* initialize truth table (constant 0) */
-  kitty::static_truth_table<num_vars> tt;
+  truth_table tt;
 
   do
   {
     /* apply NPN canonization and add resulting representative to set */
     const auto res = kitty::exact_npn_canonization( tt );
-    classes.insert( std::get<0>( res )._bits );
+    classes.insert( std::get<0>( res ) );
 
     /* increment truth table */
     kitty::next_inplace( tt );
-  } while ( tt._bits );
+  } while ( !kitty::is_const0( tt ) );
 
   std::cout << "[i] enumerated "
             << ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "

@@ -9,7 +9,7 @@ input functions or on a selection of randomly generated functions.
 
 .. literalinclude:: ../examples/npn_enumeration.cpp
    :language: c++
-   :lines: 26-58
+   :lines: 26-61
    :caption: examples/npn_enumeration.cpp
 
 Output:
@@ -22,7 +22,7 @@ Output:
 
 .. literalinclude:: ../examples/npn_random.cpp
    :language: c++
-   :lines: 26-61
+   :lines: 26-64
    :caption: examples/npn_random.cpp
 
 Output:
