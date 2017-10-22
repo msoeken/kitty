@@ -44,4 +44,6 @@ Combination and manipulation
    swap_adjacent
    flip_inplace
    flip
+   min_base_inplace
+   expand_inplace
 
