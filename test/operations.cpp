@@ -439,3 +439,33 @@ INSTANTIATE_TEST_CASE_P( OperationsTestFlipInst,
                                                                 "f3bca58f110ef00ebf2d81e80ba5679f4f74a07643afd946195f6a372757e045" ),
                                             std::make_pair( 8u, "4f74a07643afd946195f6a372757e045f3bca58f110ef00ebf2d81e80ba5679f"
                                                                 "8725ca41421c7bba0ca86e26347847526fc346d7f3e79e76566a9493fbef11e2" ) ) );
+
+TEST_F( OperationsTest, min_base )
+{
+  {
+    auto tt = from_hex<3>( "a0" ); /* (ac) */
+    const auto support = min_base_inplace( tt );
+    EXPECT_EQ( support, std::vector<uint8_t>( {0, 2} ) );
+    EXPECT_EQ( tt, from_hex<3>( "88" ) );
+    expand_inplace( tt, support );
+    EXPECT_EQ( tt, from_hex<3>( "a0" ) );
+  }
+
+  {
+    auto tt = from_hex<4>( "3c3c" ); /* [bc] */
+    const auto support = min_base_inplace( tt );
+    EXPECT_EQ( support, std::vector<uint8_t>( {1, 2} ) );
+    EXPECT_EQ( tt, from_hex<4>( "6666" ) );
+    expand_inplace( tt, support );
+    EXPECT_EQ( tt, from_hex<4>( "3c3c" ) );
+  }
+
+  {
+    auto tt = from_hex<7>( "ff55ff55ff55ff555555555555555555" ); /* {!a(dg)} */
+    const auto support = min_base_inplace( tt );
+    EXPECT_EQ( support, std::vector<uint8_t>( {0, 3, 6} ) );
+    EXPECT_EQ( tt, from_hex<7>( "d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5" ) );
+    expand_inplace( tt, support );
+    EXPECT_EQ( tt, from_hex<7>( "ff55ff55ff55ff555555555555555555" ) );
+  }
+}
