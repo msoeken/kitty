@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-v0.1 (not yet released)
+v0.1 (October 22, 2017)
 -----------------------
 
 * Initial release
