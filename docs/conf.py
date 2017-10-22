@@ -184,6 +184,7 @@ breathe_default_project = "kitty"
 
 from docutils import nodes
 from docutils.parsers.rst import Directive
+from sphinx import addnodes
 
 def extract_brief(tree, name):
     node = tree.findtext("./compounddef/sectiondef/memberdef/[name='%s']/briefdescription/para" % name)
@@ -220,7 +221,13 @@ class DocBriefTableDirective(Directive):
             for elem in tree.findall("./compounddef/sectiondef/memberdef/[name='%s']" % query):
                 args = ', '.join(e.text for e in elem.findall("./param/declname"))
 
-                func = nodes.entry('', nodes.literal(text = '%s(%s)' % (name, args)))
+                ref = addnodes.pending_xref('', refdomain = 'cpp', refexplicit = False, reftype = 'func', reftarget = 'kitty::' + name)
+                ref += nodes.literal(text = '%s(%s)' % (name, args))
+
+                reft = nodes.paragraph()
+                reft.extend([ref])
+
+                func = nodes.entry('', reft)
                 desc = nodes.entry('', nodes.line(text = elem.findtext("./briefdescription/para")))
 
                 tbody += nodes.row('', func, desc)
@@ -234,3 +241,4 @@ def setup(app):
     app.doxyxml = ET.parse("doxyxml/xml/namespacekitty.xml")
     app.add_directive('doc_brief', DocBriefDirective)
     app.add_directive('doc_brief_table', DocBriefTableDirective)
+
