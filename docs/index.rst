@@ -10,6 +10,7 @@ Welcome to kitty's documentation!
    :maxdepth: 2
 
    introduction
+   installation
    changelog
    examples
    acknowledgments
@@ -18,6 +19,7 @@ Welcome to kitty's documentation!
    :maxdepth: 2
    :caption: Reference
 
+   truth_table_data_structures
    bit_operations
    constructors
    operations
