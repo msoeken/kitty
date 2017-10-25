@@ -90,7 +90,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   int best_swap = -1;
   int best_flip = -1;
 
-  for ( int i = 0; i < swaps.size(); ++i )
+  for ( std::size_t i = 0; i < swaps.size(); ++i )
   {
     const auto pos = swaps[i];
     swap_adjacent_inplace( t1, pos );
@@ -103,7 +103,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
     }
   }
 
-  for ( int j = 0; j < flips.size(); ++j )
+  for ( std::size_t j = 0; j < flips.size(); ++j )
   {
     const auto pos = flips[j];
     swap_adjacent_inplace( t1, 0 );
@@ -118,7 +118,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
       invo = tmin == t2;
     }
 
-    for ( int i = 0; i < swaps.size(); ++i )
+    for ( std::size_t i = 0; i < swaps.size(); ++i )
     {
       const auto pos = swaps[i];
       swap_adjacent_inplace( t1, pos );

@@ -44,7 +44,7 @@ TEST_F( IsopTest, isop_for_small )
 
   const auto cubes = isop( tt );
 
-  EXPECT_EQ( cubes.size(), 3 );
+  EXPECT_EQ( cubes.size(), 3u );
   EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 10 ) != std::end( cubes ) );
   EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 34 ) != std::end( cubes ) );
   EXPECT_TRUE( std::find( std::begin( cubes ), std::end( cubes ), 40 ) != std::end( cubes ) );

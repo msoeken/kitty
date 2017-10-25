@@ -325,7 +325,7 @@ bool has_var( const TT& tt, uint8_t var_index )
   else
   {
     const auto step = 1 << ( var_index - 6 );
-    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
     {
       for ( auto j = 0; j < step; ++j )
       {
@@ -368,7 +368,7 @@ void next_inplace( TT& tt )
   }
   else
   {
-    for ( auto i = 0; i < tt.num_blocks(); ++i )
+    for ( auto i = 0u; i < tt.num_blocks(); ++i )
     {
       /* If incrementing the word does not lead to an overflow, we're done*/
       if ( ++tt._bits[i] != 0 )
@@ -418,7 +418,7 @@ void cofactor0_inplace( TT& tt, uint8_t var_index )
   else
   {
     const auto step = 1 << ( var_index - 6 );
-    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
     {
       for ( auto j = 0; j < step; ++j )
       {
@@ -468,7 +468,7 @@ void cofactor1_inplace( TT& tt, uint8_t var_index )
   else
   {
     const auto step = 1 << ( var_index - 6 );
-    for ( auto i = 0; i < tt.num_blocks(); i += 2 * step )
+    for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
     {
       for ( auto j = 0; j < step; ++j )
       {

@@ -82,10 +82,10 @@ TEST( ConstructorsTest, create_constants )
   EXPECT_EQ( tt_s.num_bits(), 1 );
 
   create_from_hex_string( tt_s, "0" );
-  EXPECT_EQ( tt_s._bits, 0 );
+  EXPECT_EQ( tt_s._bits, 0x0u );
 
   create_from_hex_string( tt_s, "1" );
-  EXPECT_EQ( tt_s._bits, 1 );
+  EXPECT_EQ( tt_s._bits, 0x1u );
 }
 
 TEST( ConstructorsTest, create_one_variable_functions )
@@ -95,16 +95,16 @@ TEST( ConstructorsTest, create_one_variable_functions )
   EXPECT_EQ( tt_s.num_bits(), 2 );
 
   create_from_hex_string( tt_s, "0" );
-  EXPECT_EQ( tt_s._bits, 0 );
+  EXPECT_EQ( tt_s._bits, 0x0u );
 
   create_from_hex_string( tt_s, "1" );
-  EXPECT_EQ( tt_s._bits, 1 );
+  EXPECT_EQ( tt_s._bits, 0x1u );
 
   create_from_hex_string( tt_s, "2" );
-  EXPECT_EQ( tt_s._bits, 2 );
+  EXPECT_EQ( tt_s._bits, 0x2u );
 
   create_from_hex_string( tt_s, "3" );
-  EXPECT_EQ( tt_s._bits, 3 );
+  EXPECT_EQ( tt_s._bits, 0x3u );
 }
 
 TEST( ConstructorsTest, create_random )

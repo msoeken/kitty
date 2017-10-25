@@ -42,16 +42,16 @@ TYPED_TEST( BitOperationsTest, all_initially_zero )
 {
   TypeParam tt_s;
 
-  for ( auto i = 0; i < tt_s.num_bits(); ++i )
+  for ( auto i = 0u; i < tt_s.num_bits(); ++i )
   {
-    EXPECT_EQ( get_bit( tt_s, i ), 0 );
+    EXPECT_EQ( get_bit( tt_s, i ), 0u );
   }
 
   dynamic_truth_table tt_d( tt_s.num_vars() );
 
-  for ( auto i = 0; i < tt_d.num_bits(); ++i )
+  for ( auto i = 0u; i < tt_d.num_bits(); ++i )
   {
-    EXPECT_EQ( get_bit( tt_d, i ), 0 );
+    EXPECT_EQ( get_bit( tt_d, i ), 0u );
   }
 }
 
@@ -59,21 +59,21 @@ TYPED_TEST( BitOperationsTest, set_get_clear )
 {
   TypeParam tt_s;
 
-  for ( auto i = 0; i < tt_s.num_bits(); ++i )
+  for ( auto i = 0u; i < tt_s.num_bits(); ++i )
   {
     set_bit( tt_s, i );
-    EXPECT_EQ( get_bit( tt_s, i ), 1 );
+    EXPECT_EQ( get_bit( tt_s, i ), 1u );
     clear_bit( tt_s, i );
-    EXPECT_EQ( get_bit( tt_s, i ), 0 );
+    EXPECT_EQ( get_bit( tt_s, i ), 0u );
   }
 
   dynamic_truth_table tt_d( tt_s.num_vars() );
 
-  for ( auto i = 0; i < tt_d.num_bits(); ++i )
+  for ( auto i = 0u; i < tt_d.num_bits(); ++i )
   {
     set_bit( tt_d, i );
-    EXPECT_EQ( get_bit( tt_d, i ), 1 );
+    EXPECT_EQ( get_bit( tt_d, i ), 1u );
     clear_bit( tt_d, i );
-    EXPECT_EQ( get_bit( tt_d, i ), 0 );
+    EXPECT_EQ( get_bit( tt_d, i ), 0u );
   }
 }

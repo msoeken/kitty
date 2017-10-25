@@ -70,7 +70,7 @@ void create_nth_var( TT& tt, uint64_t var_index, bool complement = false )
     const auto c = 1 << ( var_index - 6 );
     const auto zero = uint64_t( 0 );
     const auto one = ~zero;
-    auto block = 0;
+    auto block = 0u;
 
     while ( block < tt.num_blocks() )
     {
