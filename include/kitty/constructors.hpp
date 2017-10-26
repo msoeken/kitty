@@ -208,6 +208,23 @@ void create_random( TT& tt )
   create_random( tt, std::chrono::system_clock::now().time_since_epoch().count() );
 }
 
+/*! \brief Constructs a truth table from a range of words
+
+  The range of words is given in terms of a begin and end iterator.
+  Hence, it's possible to copy words from a C++ container or a C
+  array.
+
+  \param tt Truth table
+  \param begin Begin iterator
+  \param end End iterator
+*/
+template<typename TT, typename InputIt>
+void create_from_words( TT& tt, InputIt begin, InputIt end )
+{
+  assert( std::distance( begin, end ) == tt.num_blocks() );
+  std::copy( begin, end, tt.begin() );
+}
+
 /*! \brief Creates truth table from cubes representation
 
   A sum-of-product is represented as a vector of products (called

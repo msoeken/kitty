@@ -7,6 +7,9 @@ v0.2 (not yet released)
 * Generic algorithms: ``for_each_block``, ``for_each_block_reversed``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
+* Constructors: ``create_from_words``
+  `#15 <https://github.com/msoeken/kitty/pull/15>`_
+
 * Moved generic operations from `operations.hpp` to `algorithm.hpp`
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
