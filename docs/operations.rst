@@ -3,16 +3,6 @@ Operations
 
 The header ``<kitty/operations.hpp>`` implements several operations on truth tables.
 
-Generic operations
-------------------
-
-.. doc_brief_table::
-   unary_operation
-   binary_operation
-   ternary_operation
-   binary_predicate
-   assign_operation
-
 Predicates
 ----------
 
