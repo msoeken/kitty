@@ -124,6 +124,21 @@ TEST( ConstructorsTest, create_random )
   EXPECT_TRUE( true ); /* a dummy test to enable the print out */
 }
 
+TEST( ConstructorsTest, create_from_words )
+{
+  std::vector<uint64_t> words_vec{0xfee8e880e8808000, 0xfffefee8fee8e880};
+  constexpr uint64_t words_arr[]{0xfee8e880e8808000, 0xfffefee8fee8e880};
+
+  static_truth_table<7> tt_v, tt_a, tt_s;
+
+  create_from_words( tt_v, words_vec.begin(), words_vec.end() );
+  create_from_words( tt_a, words_arr, words_arr + 2 );
+  create_majority( tt_s );
+
+  EXPECT_EQ( tt_v, tt_s );
+  EXPECT_EQ( tt_a, tt_s );
+}
+
 TEST( ConstructorsTest, create_majority5 )
 {
   static_truth_table<5> tt_s;
