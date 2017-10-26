@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+v0.2 (not yet released)
+-----------------------
+
+* Added iterators to all truth tables: ``begin``, ``end``, ``rbegin``, ``rend``, ``cbegin``, ``cend``, ``crbegin``, ``crend``
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
 v0.1 (October 22, 2017)
 -----------------------
 

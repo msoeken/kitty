@@ -79,6 +79,38 @@ struct dynamic_truth_table
    */
   inline auto num_bits() const noexcept { return uint64_t( 1 ) << _num_vars; }
 
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() noexcept { return _bits.begin(); }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() noexcept { return _bits.end(); }
+
+  /*! \brief Reverse begin iterator to bits.
+   */
+  inline auto rbegin() noexcept { return _bits.rbegin(); }
+
+  /*! \brief Reverse end iterator to bits.
+   */
+  inline auto rend() noexcept { return _bits.rend(); }
+
+  /*! \brief Constant begin iterator to bits.
+   */
+  inline auto cbegin() const noexcept { return _bits.cbegin(); }
+
+  /*! \brief Constant end iterator to bits.
+   */
+  inline auto cend() const noexcept { return _bits.cend(); }
+
+  /*! \brief Constant reverse begin iterator to bits.
+   */
+  inline auto crbegin() const noexcept { return _bits.crbegin(); }
+
+  /*! \brief Constant teverse end iterator to bits.
+   */
+  inline auto crend() const noexcept { return _bits.crend(); }
+
   /*! Masks the number of valid truth table bits.
 
     If the truth table has less than 6 variables, it may not use all
