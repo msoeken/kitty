@@ -21,9 +21,11 @@ Welcome to kitty's documentation!
 
    truth_table_data_structures
    bit_operations
+   algorithm
    constructors
    operations
    operators
+   print
    hash
    canonization
    isop

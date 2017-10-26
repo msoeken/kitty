@@ -24,33 +24,45 @@
  */
 
 /*!
-  \file kitty.hpp
-  \brief Main header for kitty
+  \file print.hpp
+  \brief Implements functions to print truth tables
 
   \author Mathias Soeken
 */
 
 #pragma once
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <iostream>
+#include <string>
 
 #include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "print.hpp"
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
+namespace kitty
+{
+
+/*! \brief Prints truth table in binary representation
+
+  The most-significant bit will be the first character of the string.
+
+  \param tt Truth table
+  \param os Output stream
 */
+template<typename TT>
+void print_binary( const TT& tt, std::ostream& os = std::cout )
+{
+  for_each_block_reversed( tt, [&tt, &os]( auto word ) {
+    std::string chunk( std::min<uint64_t>( tt.num_bits(), 64 ), '0' );
+    auto it = chunk.rbegin();
+    while ( word )
+    {
+      if ( word & 1 )
+      {
+        *it = '1';
+      }
+      ++it;
+      word >>= 1;
+    }
+    os << chunk;
+  } );
+}
+}

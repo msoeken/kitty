@@ -80,6 +80,38 @@ struct static_truth_table<NumVars, true>
    */
   inline auto num_bits() const noexcept { return NumBits; }
 
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() noexcept { return &_bits; }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() noexcept { return ( &_bits ) + 1; }
+
+  /*! \brief Reverse begin iterator to bits.
+   */
+  inline auto rbegin() noexcept { return &_bits; }
+
+  /*! \brief Reverse end iterator to bits.
+   */
+  inline auto rend() noexcept { return ( &_bits ) + 1; }
+
+  /*! \brief Constant begin iterator to bits.
+   */
+  inline auto cbegin() const noexcept { return &_bits; }
+
+  /*! \brief Constant end iterator to bits.
+   */
+  inline auto cend() const noexcept { return ( &_bits ) + 1; }
+
+  /*! \brief Constant reverse begin iterator to bits.
+   */
+  inline auto crbegin() const noexcept { return &_bits; }
+
+  /*! \brief Constant everse end iterator to bits.
+   */
+  inline auto crend() const noexcept { return ( &_bits ) + 1; }
+
   /*! Masks the number of valid truth table bits.
 
     If the truth table has less than 6 variables, it may not use all
@@ -139,6 +171,38 @@ struct static_truth_table<NumVars, false>
   /*! Returns number of bits.
    */
   inline auto num_bits() const noexcept { return NumBits; }
+
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() noexcept { return _bits.begin(); }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() noexcept { return _bits.end(); }
+
+  /*! \brief Reverse begin iterator to bits.
+   */
+  inline auto rbegin() noexcept { return _bits.rbegin(); }
+
+  /*! \brief Reverse end iterator to bits.
+   */
+  inline auto rend() noexcept { return _bits.rend(); }
+
+  /*! \brief Constant begin iterator to bits.
+   */
+  inline auto cbegin() const noexcept { return _bits.cbegin(); }
+
+  /*! \brief Constant end iterator to bits.
+   */
+  inline auto cend() const noexcept { return _bits.cend(); }
+
+  /*! \brief Constant reverse begin iterator to bits.
+   */
+  inline auto crbegin() const noexcept { return _bits.crbegin(); }
+
+  /*! \brief Constant teverse end iterator to bits.
+   */
+  inline auto crend() const noexcept { return _bits.crend(); }
 
   /*! Masks the number of valid truth table bits.
 

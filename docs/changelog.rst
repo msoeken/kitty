@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+v0.2 (not yet released)
+-----------------------
+
+* Generic algorithms: ``for_each_block``, ``for_each_block_reversed``
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
+* Moved generic operations from `operations.hpp` to `algorithm.hpp`
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
+* Print truth tables as string: ``print_binary``
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
+* Added iterators to all truth tables: ``begin``, ``end``, ``rbegin``, ``rend``, ``cbegin``, ``cend``, ``crbegin``, ``crend``
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
 v0.1 (October 22, 2017)
 -----------------------
 
