@@ -25,6 +25,7 @@ Welcome to kitty's documentation!
    constructors
    operations
    operators
+   print
    hash
    canonization
    isop

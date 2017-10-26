@@ -10,6 +10,9 @@ v0.2 (not yet released)
 * Moved generic operations from `operations.hpp` to `algorithm.hpp`
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
+* Print truth tables as string: ``print_binary``
+  `#14 <https://github.com/msoeken/kitty/pull/14>`_
+
 * Added iterators to all truth tables: ``begin``, ``end``, ``rbegin``, ``rend``, ``cbegin``, ``cend``, ``crbegin``, ``crend``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
