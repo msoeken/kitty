@@ -376,7 +376,7 @@ void swap_adjacent_inplace( TT& tt, uint8_t var_index )
       const auto tmp = *it;
       auto it2 = it + 1;
       *it = ( tmp & 0xffffffff ) | ( *it2 << 0x20 );
-      *it2 = ( *it2 & 0xffffffff00000000 ) | ( tmp >> 0x20 );
+      *it2 = ( *it2 & UINT64_C( 0xffffffff00000000 ) ) | ( tmp >> 0x20 );
       it += 2;
     }
   }

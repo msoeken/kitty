@@ -126,8 +126,8 @@ TEST( ConstructorsTest, create_random )
 
 TEST( ConstructorsTest, create_from_words )
 {
-  std::vector<uint64_t> words_vec{0xfee8e880e8808000, 0xfffefee8fee8e880};
-  constexpr uint64_t words_arr[]{0xfee8e880e8808000, 0xfffefee8fee8e880};
+  std::vector<uint64_t> words_vec{UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 )};
+  constexpr uint64_t words_arr[]{UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 )};
 
   static_truth_table<7> tt_v, tt_a, tt_s;
 
@@ -157,8 +157,8 @@ TEST( ConstructorsTest, create_majority7 )
   static_truth_table<7> tt_s;
   create_majority( tt_s );
 
-  EXPECT_EQ( tt_s._bits[0u], 0xfee8e880e8808000 );
-  EXPECT_EQ( tt_s._bits[1u], 0xfffefee8fee8e880 );
+  EXPECT_EQ( tt_s._bits[0u], UINT64_C( 0xfee8e880e8808000 ) );
+  EXPECT_EQ( tt_s._bits[1u], UINT64_C( 0xfffefee8fee8e880 ) );
 
   dynamic_truth_table tt_d( 7 );
   create_majority( tt_d );

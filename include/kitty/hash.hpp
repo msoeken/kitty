@@ -49,7 +49,7 @@ inline std::size_t hash_block( uint64_t word )
 inline void hash_combine( std::size_t& seed, std::size_t other )
 {
   /* from boost::hash_detail::hash_combine_impl */
-  const uint64_t m = 0xc6a4a7935bd1e995;
+  const uint64_t m = UINT64_C( 0xc6a4a7935bd1e995 );
   const int r = 47;
 
   other *= m;
