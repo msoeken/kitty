@@ -23,35 +23,14 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/kitty.hpp>
 
-#pragma once
+using namespace kitty;
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
-
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "canonization.hpp"
-#include "constructors.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
-
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+TEST( SpectralTest, datatypes )
+{
+  detail::spectral_operation op;
+  EXPECT_EQ( sizeof( op ), 2u );
+}
