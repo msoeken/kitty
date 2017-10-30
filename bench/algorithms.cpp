@@ -31,25 +31,56 @@ using namespace kitty;
 
 void BM_exact_npn_canonization_static( benchmark::State& state )
 {
+  static_truth_table<6> tt;
   while ( state.KeepRunning() )
   {
-    static_truth_table<6> tt;
-    create_from_hex_string( tt, "17cad20f55459c3f" );
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
     exact_npn_canonization( tt );
   }
 }
 
 void BM_exact_npn_canonization_dynamic( benchmark::State& state )
 {
+  dynamic_truth_table tt( 6 );
   while ( state.KeepRunning() )
   {
-    dynamic_truth_table tt( 6 );
-    create_from_hex_string( tt, "17cad20f55459c3f" );
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
     exact_npn_canonization( tt );
+  }
+}
+
+void BM_isop_static( benchmark::State& state )
+{
+  static_truth_table<6> tt;
+  while ( state.KeepRunning() )
+  {
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
+    isop( tt );
+  }
+}
+
+void BM_isop_dynamic( benchmark::State& state )
+{
+  dynamic_truth_table tt( 6 );
+  while ( state.KeepRunning() )
+  {
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
+    isop( tt );
   }
 }
 
 BENCHMARK( BM_exact_npn_canonization_static );
 BENCHMARK( BM_exact_npn_canonization_dynamic );
+
+BENCHMARK( BM_isop_static );
+BENCHMARK( BM_isop_dynamic );
 
 BENCHMARK_MAIN()
