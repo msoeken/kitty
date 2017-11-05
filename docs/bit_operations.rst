@@ -8,3 +8,7 @@ The header ``<kitty/bit_operations.hpp>`` implements bit manipulation on truth t
    get_bit
    clear_bit
    clear
+   find_first_one_bit
+   find_last_one_bit
+   find_first_bit_difference
+   find_last_bit_difference
