@@ -35,6 +35,8 @@
 #include <algorithm>
 #include <cassert>
 
+#include "bit_operations.hpp"
+#include "detail/constants.hpp"
 #include "static_truth_table.hpp"
 
 namespace kitty
@@ -224,5 +226,81 @@ template<typename TT, typename Fn>
 void for_each_block_reversed( const TT& tt, Fn&& op )
 {
   std::for_each( tt.crbegin(), tt.crend(), op );
+}
+
+/*! \cond PRIVATE */
+template<typename TT, typename Fn>
+void for_each_one_bit_naive( const TT& tt, Fn&& op )
+{
+  for ( uint64_t bit = 0u; bit < tt.num_bits(); ++bit )
+  {
+    if ( get_bit( tt, bit ) )
+    {
+      op( bit );
+    }
+  }
+}
+/*! \endcond */
+
+/*! \cond PRIVATE */
+template<typename TT, typename Fn>
+void for_each_one_bit_jump( const TT& tt, Fn&& op )
+{
+  uint64_t offset = 0, low_bit, value;
+
+  for ( auto block : tt._bits )
+  {
+    while ( block )
+    {
+      low_bit = value = block - ( block & ( block - 1 ) );
+
+      value |= value >> 1;
+      value |= value >> 2;
+      value |= value >> 4;
+      value |= value >> 8;
+      value |= value >> 16;
+      value |= value >> 32;
+      op( offset + detail::de_bruijn64[( ( uint64_t )( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
+
+      block ^= low_bit;
+    }
+    offset += 64;
+  }
+}
+
+template<int NumVars, typename Fn>
+void for_each_one_bit_jump( const static_truth_table<NumVars, true>& tt, Fn&& op )
+{
+  uint64_t block = tt._bits, low_bit, value;
+
+  while ( block )
+  {
+    low_bit = value = block - ( block & ( block - 1 ) );
+
+    value |= value >> 1;
+    value |= value >> 2;
+    value |= value >> 4;
+    value |= value >> 8;
+    value |= value >> 16;
+    value |= value >> 32;
+    op( detail::de_bruijn64[( ( uint64_t )( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
+
+    block ^= low_bit;
+  }
+}
+/*! \endcond */
+
+/*! \brief Iterates through each 1-bit in the truth table
+
+  The functor `op` is called for every bit position of the truth table
+  for which the bit is assigned 1.
+
+  \param tt Truth table
+  \param op Unary operation that takes as input a word (`uint64_t`) and returns void
+*/
+template<typename TT, typename Fn>
+inline void for_each_one_bit( const TT& tt, Fn&& op )
+{
+  for_each_one_bit_naive( tt, op );
 }
 }

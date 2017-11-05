@@ -97,3 +97,44 @@ TEST_F( AlgorithmTest, for_each_dynamic_small )
   EXPECT_TRUE( blocks.size() == 1 );
   EXPECT_EQ( blocks.front(), tt._bits.front() );
 }
+
+TEST_F( AlgorithmTest, for_each_one_bit_static_small )
+{
+  static_truth_table<3> tt;
+  create_majority( tt );
+
+  std::vector<uint64_t> bits;
+  for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
+  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
+}
+
+TEST_F( AlgorithmTest, for_each_one_bit_dynamic_small )
+{
+  dynamic_truth_table tt( 3 );
+  create_majority( tt );
+
+  std::vector<uint64_t> bits;
+  for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
+  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
+}
+
+TEST_F( AlgorithmTest, for_each_one_bit_static_large )
+{
+  static_truth_table<9> tt, tt2;
+  create_majority( tt );
+
+  for_each_one_bit( tt, [&tt2]( auto bit ) { set_bit( tt2, bit ); } );
+
+  EXPECT_EQ( tt, tt2 );
+}
+
+TEST_F( AlgorithmTest, for_each_one_bit_dynamic_large )
+{
+  dynamic_truth_table tt( 9 ), tt2( 9 );
+  create_majority( tt );
+
+  for_each_one_bit( tt, [&tt2]( auto bit ) { set_bit( tt2, bit ); } );
+
+  EXPECT_EQ( tt, tt2 );
+}
+
