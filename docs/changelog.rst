@@ -21,7 +21,7 @@ v0.2 (not yet released)
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
 * Find bits: ``find_first_one_bit``, ``find_last_one_bit``, ``find_first_bit_difference``, ``find_last_bit_difference``
-  `#16 <https://github.com/msoeken/kitty/pull/16>`_
+  `#17 <https://github.com/msoeken/kitty/pull/17>`_
 
 v0.1 (October 22, 2017)
 -----------------------
