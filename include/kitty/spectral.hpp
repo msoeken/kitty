@@ -64,8 +64,31 @@ struct spectral_operation
   };
 };
 
-void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
+inline void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
 {
+  unsigned k{};
+  int t{};
+
+  for ( auto m = 1u; m < s.size(); m <<= 1u )
+  {
+    for ( auto i = 0u; i < s.size(); i += ( m << 1u ) )
+    {
+      for ( auto j = i, p = k = i + m; j < p; ++j, ++k )
+      {
+        t = s[j];
+        s[j] += s[k];
+        s[k] = t - s[k];
+      }
+    }
+  }
+
+  if ( reverse )
+  {
+    for ( auto i = 0u; i < s.size(); ++i )
+    {
+      s[i] /= static_cast<int>( s.size() );
+    }
+  }
 }
 
 class spectrum
@@ -92,6 +115,7 @@ public:
   static spectrum from_truth_table( const TT& tt )
   {
     std::vector<int32_t> _s( tt.num_bits(), 1 );
+    for_each_one_bit( tt, [&_s]( auto bit ) { _s[bit] = -1; } );
     fast_hadamard_transform( _s );
     return spectrum( _s );
   }
@@ -102,7 +126,7 @@ public:
     auto copy = _s;
     fast_hadamard_transform( copy, true );
 
-    auto tt = TT::construct();
+    TT tt;
     for ( auto i = 0u; i < copy.size(); ++i )
     {
       if ( copy[i] == -1 )
@@ -114,9 +138,82 @@ public:
   }
 
   // void apply( const trans_t& trans );
-  // trans_t trans1( unsigned i, unsigned j ); /* xi <-> xj */
-  // trans_t trans2( unsigned i ); /* xi <- !xi */
-  // trans_t trans3(); /* f <- !f */
+  spectral_operation permutation( unsigned i, unsigned j )
+  {
+    spectral_operation op( spectral_operation::kind::permutation, i, j );
+
+    i = 1 << i;
+    j = 1 << j;
+    for ( auto k = 0u; k < _s.size(); ++k )
+    {
+      if ( ( k & i ) > 0 && ( k & j ) == 0 )
+      {
+        std::swap( _s[k], _s[k - i + j] );
+      }
+    }
+
+    return op;
+  }
+
+  spectral_operation input_negation( unsigned i )
+  {
+    spectral_operation op( spectral_operation::kind::input_negation, i );
+    i = 1 << i;
+    for ( auto k = 0u; k < _s.size(); ++k )
+    {
+      if ( ( k & i ) > 0 )
+      {
+        _s[k] = -_s[k];
+      }
+    }
+
+    return op;
+  }
+
+  spectral_operation output_negation()
+  {
+    for ( auto k = 0u; k < _s.size(); ++k )
+    {
+      _s[k] = -_s[k];
+    }
+    return spectral_operation( spectral_operation::kind::output_negation );
+  }
+
+  spectral_operation spectral_translation( int i, int j )
+  {
+    spectral_operation op( spectral_operation::kind::spectral_translation, i, j );
+
+    i = 1 << i;
+    j = 1 << j;
+
+    for ( auto k = 0u; k < _s.size(); ++k )
+    {
+      if ( ( k & i ) > 0 && ( k & j ) == 0 )
+      {
+        std::swap( _s[k], _s[k + j] );
+      }
+    }
+
+    return op;
+  }
+
+  spectral_operation disjoint_translation( int i )
+  {
+    spectral_operation op( spectral_operation::kind::disjoint_translation, i );
+
+    i = 1 << i;
+
+    for ( auto k = 0u; k < _s.size(); ++k )
+    {
+      if ( ( k & i ) > 0 )
+      {
+        std::swap( _s[k], _s[k - i] );
+      }
+    }
+
+    return op;
+  }
+
   // trans_t trans4( unsigned i, unsigned j ); /* xi <- xi XOR xj */
   // trans_t trans5( unsigned i ); /* f <- f XOR xi */
 
