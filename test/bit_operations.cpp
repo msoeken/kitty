@@ -27,18 +27,23 @@
 
 #include <kitty/kitty.hpp>
 
+#include "utility.hpp"
+
 using namespace kitty;
 
-template<typename NumVars>
-class BitOperationsTest : public ::testing::Test
+class BitOperationsTest : public kitty::testing::Test
 {
-public:
+};
+
+template<typename NumVars>
+class BitOperationsTestT : public ::testing::Test
+{
 };
 
 typedef ::testing::Types<static_truth_table<5>, static_truth_table<7>, static_truth_table<9>> truth_table_types;
-TYPED_TEST_CASE( BitOperationsTest, truth_table_types );
+TYPED_TEST_CASE( BitOperationsTestT, truth_table_types );
 
-TYPED_TEST( BitOperationsTest, all_initially_zero )
+TYPED_TEST( BitOperationsTestT, all_initially_zero )
 {
   TypeParam tt_s;
 
@@ -55,7 +60,7 @@ TYPED_TEST( BitOperationsTest, all_initially_zero )
   }
 }
 
-TYPED_TEST( BitOperationsTest, set_get_clear )
+TYPED_TEST( BitOperationsTestT, set_get_clear )
 {
   TypeParam tt_s;
 
@@ -77,3 +82,58 @@ TYPED_TEST( BitOperationsTest, set_get_clear )
     EXPECT_EQ( get_bit( tt_d, i ), 0u );
   }
 }
+
+TEST_F( BitOperationsTest, find_first_bit )
+{
+  EXPECT_EQ( find_first_one_bit( from_hex<3>( "00" ) ), -1 );
+  EXPECT_EQ( find_first_one_bit( ~from_hex<3>( "00" ) ), 0 );
+
+  EXPECT_EQ( find_first_one_bit( nth<6>( 0 ) ), 1 );
+  EXPECT_EQ( find_first_one_bit( nth<6>( 1 ) ), 2 );
+  EXPECT_EQ( find_first_one_bit( nth<6>( 2 ) ), 4 );
+  EXPECT_EQ( find_first_one_bit( nth<6>( 3 ) ), 8 );
+  EXPECT_EQ( find_first_one_bit( nth<6>( 4 ) ), 16 );
+  EXPECT_EQ( find_first_one_bit( nth<6>( 5 ) ), 32 );
+  EXPECT_EQ( find_first_one_bit( nth<7>( 6 ) ), 64 );
+  EXPECT_EQ( find_first_one_bit( nth<8>( 7 ) ), 128 );
+}
+
+TEST_F( BitOperationsTest, find_last_bit )
+{
+  EXPECT_EQ( find_last_one_bit( from_hex<3>( "00" ) ), -1 );
+  EXPECT_EQ( find_last_one_bit( ~from_hex<3>( "00" ) ), 7 );
+
+  EXPECT_EQ( find_last_one_bit( nth<6>( 0 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<6>( 1 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<6>( 2 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<6>( 3 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<6>( 4 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<6>( 5 ) ), 63 );
+  EXPECT_EQ( find_last_one_bit( nth<7>( 6 ) ), 127 );
+  EXPECT_EQ( find_last_one_bit( nth<8>( 7 ) ), 255 );
+}
+
+TEST_F( BitOperationsTest, find_first_bit_difference )
+{
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 0 ), nth<6>( 0 ) ), find_first_one_bit( nth<6>( 0 ) ^ nth<6>( 0 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 1 ), nth<6>( 0 ) ), find_first_one_bit( nth<6>( 1 ) ^ nth<6>( 0 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 2 ), nth<6>( 1 ) ), find_first_one_bit( nth<6>( 2 ) ^ nth<6>( 1 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 3 ), nth<6>( 2 ) ), find_first_one_bit( nth<6>( 3 ) ^ nth<6>( 2 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 4 ), nth<6>( 3 ) ), find_first_one_bit( nth<6>( 4 ) ^ nth<6>( 3 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<6>( 5 ), nth<6>( 4 ) ), find_first_one_bit( nth<6>( 5 ) ^ nth<6>( 4 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<7>( 6 ), nth<7>( 5 ) ), find_first_one_bit( nth<7>( 6 ) ^ nth<7>( 5 ) ) );
+  EXPECT_EQ( find_first_bit_difference( nth<8>( 7 ), nth<8>( 6 ) ), find_first_one_bit( nth<8>( 7 ) ^ nth<8>( 6 ) ) );
+}
+
+TEST_F( BitOperationsTest, find_last_bit_difference )
+{
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 0 ), nth<6>( 0 ) ), find_last_one_bit( nth<6>( 0 ) ^ nth<6>( 0 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 1 ), nth<6>( 0 ) ), find_last_one_bit( nth<6>( 1 ) ^ nth<6>( 0 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 2 ), nth<6>( 1 ) ), find_last_one_bit( nth<6>( 2 ) ^ nth<6>( 1 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 3 ), nth<6>( 2 ) ), find_last_one_bit( nth<6>( 3 ) ^ nth<6>( 2 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 4 ), nth<6>( 3 ) ), find_last_one_bit( nth<6>( 4 ) ^ nth<6>( 3 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<6>( 5 ), nth<6>( 4 ) ), find_last_one_bit( nth<6>( 5 ) ^ nth<6>( 4 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<7>( 6 ), nth<7>( 5 ) ), find_last_one_bit( nth<7>( 6 ) ^ nth<7>( 5 ) ) );
+  EXPECT_EQ( find_last_bit_difference( nth<8>( 7 ), nth<8>( 6 ) ), find_last_one_bit( nth<8>( 7 ) ^ nth<8>( 6 ) ) );
+}
+
