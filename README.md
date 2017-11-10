@@ -7,6 +7,8 @@
 
 kitty is a C++-14 truth table library.  It provides efficient implementations for basic truth table manipulations and various algorithms.
 
+[Read the full documentation.](http://libkitty.readthedocs.io/en/latest/?badge=latest)
+
 ## Example
 
 The following code snippet generates truth tables for the 3-variable functions `sum` and `carry` for a 1-bit full-adder with carry.

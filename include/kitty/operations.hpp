@@ -129,7 +129,7 @@ inline bool less_than( const static_truth_table<NumVars, true>& first, const sta
 {
   return first._bits < second._bits;
 }
-/*! \endcond PRIVATE */
+/*! \endcond */
 
 /*! \brief Checks whether truth table is contant 0
 
