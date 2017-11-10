@@ -53,7 +53,7 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
   for_each_block_reversed( tt, [&tt, &os]( auto word ) {
     std::string chunk( std::min<uint64_t>( tt.num_bits(), 64 ), '0' );
     auto it = chunk.rbegin();
-    while ( word )
+    while ( word && it < chunk.rend() )
     {
       if ( word & 1 )
       {
