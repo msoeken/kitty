@@ -118,12 +118,11 @@ public:
   }
 
   template<typename TT>
-  TT to_truth_table() const
+  void to_truth_table( TT& tt ) const
   {
     auto copy = _s;
     fast_hadamard_transform( copy, true );
 
-    TT tt;
     for ( auto i = 0u; i < copy.size(); ++i )
     {
       if ( copy[i] == -1 )
@@ -131,7 +130,6 @@ public:
         set_bit( tt, i );
       }
     }
-    return tt;
   }
 
   auto permutation( unsigned i, unsigned j )
@@ -282,7 +280,10 @@ public:
   {
     order = get_initial_coeffecient_order();
     normalize();
-    return spec.to_truth_table<TT>();
+
+    TT tt = func.construct();
+    spec.to_truth_table<TT>( tt );
+    return tt;
   }
 
 private:

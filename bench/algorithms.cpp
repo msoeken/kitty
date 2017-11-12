@@ -53,6 +53,30 @@ void BM_exact_npn_canonization_dynamic( benchmark::State& state )
   }
 }
 
+void BM_exact_spectral_canonization_static( benchmark::State& state )
+{
+  static_truth_table<4> tt;
+  while ( state.KeepRunning() )
+  {
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
+    exact_spectral_canonization( tt );
+  }
+}
+
+void BM_exact_spectral_canonization_dynamic( benchmark::State& state )
+{
+  dynamic_truth_table tt( 4 );
+  while ( state.KeepRunning() )
+  {
+    state.PauseTiming();
+    create_random( tt );
+    state.ResumeTiming();
+    exact_spectral_canonization( tt );
+  }
+}
+
 void BM_isop_static( benchmark::State& state )
 {
   static_truth_table<6> tt;
@@ -79,6 +103,9 @@ void BM_isop_dynamic( benchmark::State& state )
 
 BENCHMARK( BM_exact_npn_canonization_static );
 BENCHMARK( BM_exact_npn_canonization_dynamic );
+
+BENCHMARK( BM_exact_spectral_canonization_static );
+BENCHMARK( BM_exact_spectral_canonization_dynamic );
 
 BENCHMARK( BM_isop_static );
 BENCHMARK( BM_isop_dynamic );

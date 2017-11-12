@@ -48,7 +48,9 @@ TEST_F( SpectralTest, to_and_from_truth_table )
   {
     create_random( tt );
     const auto s = detail::spectrum::from_truth_table( tt );
-    EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
   }
 }
 
@@ -63,7 +65,9 @@ TEST_F( SpectralTest, apply_permutation )
     s.permutation( 2, 3 );
     swap_inplace( tt, 2, 3 );
 
-    EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
   }
 }
 
@@ -78,7 +82,9 @@ TEST_F( SpectralTest, apply_input_negation )
     s.input_negation( 2 );
     flip_inplace( tt, 2 );
 
-    EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
   }
 }
 
@@ -93,7 +99,9 @@ TEST_F( SpectralTest, apply_output_negation )
     s.output_negation();
     tt = ~tt;
 
-    EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
   }
 }
 
@@ -109,7 +117,9 @@ TEST_F( SpectralTest, apply_disjoint_translation )
 
     tt ^= nth<5>( 3 );
 
-    EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
   }
 }
 
