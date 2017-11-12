@@ -51,7 +51,7 @@ int main( int argc, char** argv )
     if ( it == classes_npn.end() )
     {
       classes_npn.insert( f_npn );
-      classes.insert( kitty::exact_spectral_canonization( f_npn ) );
+      classes.insert( kitty::exact_spectral_canonization( tt ) );
     }
 
     /* increment truth table */

@@ -325,7 +325,7 @@ private:
       if ( abs( lspec[j] ) > abs( best_spec[j] ) ||
            ( abs( lspec[j] ) == abs( best_spec[j] ) && lspec[j] > best_spec[j] ) )
       {
-        update_best( lspec );
+        update_best();
         return;
       }
 
@@ -338,50 +338,50 @@ private:
 
     if ( transformation_costs( transforms ) < transformation_costs( best_transforms ) )
     {
-      update_best( lspec );
+      update_best();
     }
   }
 
-  void normalize_rec( spectrum& lspec, unsigned v )
+  void normalize_rec( unsigned v )
   {
     if ( v == num_vars ) /* leaf case */
     {
       /* invert function if necessary */
-      if ( lspec[0u] < 0 )
+      if ( spec[0u] < 0 )
       {
-        insert( lspec.output_negation() );
+        insert( spec.output_negation() );
       }
       /* invert any variable as necessary */
       for ( auto i = 0u; i < num_vars; ++i )
       {
-        if ( lspec[1 << i] < 0 )
+        if ( spec[1 << i] < 0 )
         {
-          insert( lspec.input_negation( i ) );
+          insert( spec.input_negation( i ) );
         }
       }
 
-      closer( lspec );
+      closer( spec );
       return;
     }
-    const auto max = std::accumulate( lspec.cbegin() + ( 1 << v ), lspec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
+    const auto max = std::accumulate( spec.cbegin() + ( 1 << v ), spec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
 
     if ( max == 0 )
     {
-      normalize_rec( lspec, num_vars );
+      normalize_rec( num_vars );
     }
     else
     {
-      for ( auto i = 1u; i < lspec.size(); ++i )
+      for ( auto i = 1u; i < spec.size(); ++i )
       {
         auto j = order[i];
-        if ( abs( lspec[j] ) != max )
+        if ( abs( spec[j] ) != max )
           continue;
 
         /* find first one bit in j starting from pos v */
         auto k = v;
         for ( ; k < num_vars; ++k )
         {
-          if ( ( 1 << k ) & j )
+          if ( ( j >> k ) & 1 ) /* if bit k is set */
             break;
         }
         if ( k == num_vars )
@@ -395,7 +395,7 @@ private:
         {
           if ( j & 1 )
             {
-              insert( lspec.spectral_translation( k, p ) );
+              insert( spec.spectral_translation( k, p ) );
             }
           ++p;
           j >>= 1;
@@ -403,11 +403,11 @@ private:
 
         if ( k != v )
         {
-          insert( lspec.permutation( k, v ) );
+          insert( spec.permutation( k, v ) );
         }
 
         const auto save = transform_index;
-        normalize_rec( lspec, v + 1 );
+        normalize_rec( v + 1 );
         transform_index = save;
       }
     }
@@ -446,8 +446,8 @@ private:
       insert( spec.disjoint_translation( k ) );
     }
 
-    update_best( spec );
-    normalize_rec( spec, 0u );
+    update_best();
+    normalize_rec( 0u );
     spec = best_spec;
   }
 
@@ -457,9 +457,9 @@ private:
     transforms[transform_index++] = trans;
   }
 
-  void update_best( const spectrum& lbest )
+  void update_best()
   {
-    best_spec = lbest;
+    best_spec = spec;
     best_transforms.resize( transform_index );
     std::copy( transforms.begin(), transforms.begin() + transform_index, best_transforms.begin() );
   }
