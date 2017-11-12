@@ -56,9 +56,9 @@ struct spectral_operation
   spectral_operation() : _kind( kind::none ), _var1( 0 ), _var2( 0 ) {}
   spectral_operation( kind _kind, uint16_t _var1 = 0, uint16_t _var2 = 0 ) : _kind( _kind ), _var1( _var1 ), _var2( _var2 ) {}
 
-  kind _kind : 4;
-  uint16_t _var1 : 6;
-  uint16_t _var2 : 6;
+  kind _kind;
+  uint16_t _var1;
+  uint16_t _var2;
 };
 
 inline void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
@@ -136,8 +136,6 @@ public:
   {
     spectral_operation op( spectral_operation::kind::permutation, i, j );
 
-    i = 1 << i;
-    j = 1 << j;
     for ( auto k = 0u; k < _s.size(); ++k )
     {
       if ( ( k & i ) > 0 && ( k & j ) == 0 )
@@ -152,7 +150,6 @@ public:
   auto input_negation( unsigned i )
   {
     spectral_operation op( spectral_operation::kind::input_negation, i );
-    i = 1 << i;
     for ( auto k = 0u; k < _s.size(); ++k )
     {
       if ( ( k & i ) > 0 )
@@ -177,9 +174,6 @@ public:
   {
     spectral_operation op( spectral_operation::kind::spectral_translation, i, j );
 
-    i = 1 << i;
-    j = 1 << j;
-
     for ( auto k = 0u; k < _s.size(); ++k )
     {
       if ( ( k & i ) > 0 && ( k & j ) == 0 )
@@ -194,8 +188,6 @@ public:
   auto disjoint_translation( int i )
   {
     spectral_operation op( spectral_operation::kind::disjoint_translation, i );
-
-    i = 1 << i;
 
     for ( auto k = 0u; k < _s.size(); ++k )
     {
@@ -269,6 +261,7 @@ public:
   explicit miller_spectral_canonization_impl( const TT& func )
       : func( func ),
         num_vars( func.num_vars() ),
+        num_vars_exp( 1 << num_vars ),
         spec( spectrum::from_truth_table( func ) ),
         best_spec( spec ),
         transforms( 100u ),
@@ -345,7 +338,7 @@ private:
 
   void normalize_rec( unsigned v )
   {
-    if ( v == num_vars ) /* leaf case */
+    if ( v == num_vars_exp ) /* leaf case */
     {
       /* invert function if necessary */
       if ( spec[0u] < 0 )
@@ -353,9 +346,9 @@ private:
         insert( spec.output_negation() );
       }
       /* invert any variable as necessary */
-      for ( auto i = 0u; i < num_vars; ++i )
+      for ( auto i = 1u; i < num_vars_exp; i <<= 1 )
       {
-        if ( spec[1 << i] < 0 )
+        if ( spec[i] < 0 )
         {
           insert( spec.input_negation( i ) );
         }
@@ -364,11 +357,11 @@ private:
       closer( spec );
       return;
     }
-    const auto max = std::accumulate( spec.cbegin() + ( 1 << v ), spec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
+    const auto max = std::accumulate( spec.cbegin() + v, spec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
 
     if ( max == 0 )
     {
-      normalize_rec( num_vars );
+      normalize_rec( num_vars_exp );
     }
     else
     {
@@ -378,28 +371,18 @@ private:
         if ( abs( spec[j] ) != max )
           continue;
 
-        /* find first one bit in j starting from pos v */
-        auto k = v;
-        for ( ; k < num_vars; ++k )
-        {
-          if ( ( j >> k ) & 1 ) /* if bit k is set */
-            break;
-        }
-        if ( k == num_vars )
-          continue;
-
-        j ^= 1 << k; /* remove bit k from j */
+        /* k = first one bit in j starting from pos v */
+        auto k = j & ~( v - 1 );       /* remove 1 bits until v */
+        if ( k == 0 ) continue;        /* are there bit left? */
+        k = k - ( k & ( k - 1 ) );     /* extract lowest bit */
+        j ^= k;                        /* remove bit k from j */
 
         /* spectral translation to all other 1s in j */
-        auto p = 0u;
-        while ( j > 0 )
+        while ( j )
         {
-          if ( j & 1 )
-            {
-              insert( spec.spectral_translation( k, p ) );
-            }
-          ++p;
-          j >>= 1;
+          auto p = j - ( j & ( j - 1 ) );
+          insert( spec.spectral_translation( k, p ) );
+          j ^= p;
         }
 
         if ( k != v )
@@ -408,7 +391,7 @@ private:
         }
 
         const auto save = transform_index;
-        normalize_rec( v + 1 );
+        normalize_rec( v << 1 );
         transform_index = save;
       }
     }
@@ -416,39 +399,26 @@ private:
 
   void normalize()
   {
-    /* find maximum absolute element in spectrum (by order) */
-    auto max = abs( spec[0u] );
-    auto j = 0u;
-    for ( auto i = 1u; i < spec.size(); ++i )
-    {
-      auto p = order[i];
-      if ( abs( spec[p] ) > max )
-      {
-        max = abs( spec[p] );
-        j = p;
-      }
-    }
+    /* find maximum absolute element index in spectrum (by order) */
+    auto j = *std::max_element( order.cbegin(), order.cend(), [this]( auto p1, auto p2 ) { return abs( spec[p1] ) < abs( spec[p2] ); } );
 
     /* if max element is not the first element */
-    if ( j > 0 )
+    if ( j )
     {
-      auto k = 0u;
-      for ( ; ( ( 1 << k ) & j ) == 0; ++k )
-        ;
-      j -= 1 << k;
-      while ( j > 0 )
+      auto k = j - ( j & ( j - 1 ) );     /* LSB of j */
+      j ^= k;                             /* delete bit in j */
+
+      while ( j )
       {
-        auto p = k + 1;
-        for ( ; ( ( 1 << p ) & j ) == 0; ++p )
-          ;
-        j -= 1 << p;
+        auto p = j - ( j & ( j - 1 ) );   /* next LSB of j */
+        j ^= p;                           /* delete bit in j */
         insert( spec.spectral_translation( k, p ) );
       }
       insert( spec.disjoint_translation( k ) );
     }
 
     update_best();
-    normalize_rec( 0u );
+    normalize_rec( 1 );
     spec = best_spec;
   }
 
@@ -489,6 +459,7 @@ private:
   const TT& func;
 
   unsigned num_vars;
+  unsigned num_vars_exp;
   spectrum spec;
   spectrum best_spec;
 

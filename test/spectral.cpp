@@ -35,12 +35,6 @@ class SpectralTest : public kitty::testing::Test
 {
 };
 
-TEST_F( SpectralTest, datatypes )
-{
-  detail::spectral_operation op;
-  EXPECT_EQ( sizeof( op ), 2u );
-}
-
 TEST_F( SpectralTest, to_and_from_truth_table )
 {
   static_truth_table<5> tt;
@@ -62,7 +56,7 @@ TEST_F( SpectralTest, apply_permutation )
     create_random( tt );
     auto s = detail::spectrum::from_truth_table( tt );
 
-    s.permutation( 2, 3 );
+    s.permutation( 1 << 2, 1 << 3 );
     swap_inplace( tt, 2, 3 );
 
     auto tt2 = tt.construct();
@@ -79,7 +73,7 @@ TEST_F( SpectralTest, apply_input_negation )
     create_random( tt );
     auto s = detail::spectrum::from_truth_table( tt );
 
-    s.input_negation( 2 );
+    s.input_negation( 1 << 2 );
     flip_inplace( tt, 2 );
 
     auto tt2 = tt.construct();
@@ -113,7 +107,7 @@ TEST_F( SpectralTest, apply_disjoint_translation )
     create_random( tt );
     auto s = detail::spectrum::from_truth_table( tt );
 
-    s.disjoint_translation( 3 );
+    s.disjoint_translation( 1 << 3 );
 
     tt ^= nth<5>( 3 );
 
