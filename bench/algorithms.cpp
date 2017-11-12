@@ -55,7 +55,7 @@ void BM_exact_npn_canonization_dynamic( benchmark::State& state )
 
 void BM_exact_spectral_canonization_static( benchmark::State& state )
 {
-  static_truth_table<4> tt;
+  static_truth_table<6> tt;
   while ( state.KeepRunning() )
   {
     state.PauseTiming();
@@ -67,7 +67,7 @@ void BM_exact_spectral_canonization_static( benchmark::State& state )
 
 void BM_exact_spectral_canonization_dynamic( benchmark::State& state )
 {
-  dynamic_truth_table tt( 4 );
+  dynamic_truth_table tt( 6 );
   while ( state.KeepRunning() )
   {
     state.PauseTiming();

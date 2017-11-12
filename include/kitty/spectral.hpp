@@ -454,7 +454,11 @@ private:
 
   void insert( const spectral_operation& trans )
   {
-    assert( transform_index < 100u );
+    if ( transform_index >= transforms.size() )
+    {
+      transforms.resize( 1 << transforms.size() );
+    }
+    assert( transform_index < transforms.size() );
     transforms[transform_index++] = trans;
   }
 
