@@ -112,3 +112,9 @@ TEST_F( SpectralTest, apply_disjoint_translation )
     EXPECT_EQ( tt, s.to_truth_table<static_truth_table<5>>() );
   }
 }
+
+TEST_F( SpectralTest, canonization )
+{
+  EXPECT_EQ( exact_spectral_canonization( from_hex<3>( "57" ) ), from_hex<3>( "80" ) );
+}
+

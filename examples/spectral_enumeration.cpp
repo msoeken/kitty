@@ -38,7 +38,7 @@ int main( int argc, char** argv )
   using truth_table = kitty::static_truth_table<num_vars>;
 
   /* set to store all NPN representatives */
-  std::unordered_set<truth_table, kitty::hash<truth_table>> classes;
+  std::unordered_set<truth_table, kitty::hash<truth_table>> classes_npn, classes;
 
   /* initialize truth table (constant 0) */
   truth_table tt;
@@ -46,8 +46,13 @@ int main( int argc, char** argv )
   do
   {
     /* apply NPN canonization and add resulting representative to set */
-    const auto res = kitty::exact_spectral_canonization( tt );
-    classes.insert( res );
+    const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt ) );
+    const auto it = classes_npn.find( f_npn );
+    if ( it == classes_npn.end() )
+    {
+      classes_npn.insert( f_npn );
+      classes.insert( kitty::exact_spectral_canonization( f_npn ) );
+    }
 
     /* increment truth table */
     kitty::next_inplace( tt );

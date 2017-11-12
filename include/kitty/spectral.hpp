@@ -34,6 +34,8 @@
 
 #include "bit_operations.hpp"
 
+#include <iomanip>
+
 namespace kitty
 {
 
@@ -43,6 +45,7 @@ struct spectral_operation
 {
   enum class kind : uint16_t
   {
+    none,
     permutation,
     input_negation,
     output_negation,
@@ -50,18 +53,12 @@ struct spectral_operation
     disjoint_translation
   };
 
-  spectral_operation() : _data( 0 ) {}
+  spectral_operation() : _kind( kind::none ), _var1( 0 ), _var2( 0 ) {}
   spectral_operation( kind _kind, uint16_t _var1 = 0, uint16_t _var2 = 0 ) : _kind( _kind ), _var1( _var1 ), _var2( _var2 ) {}
 
-  union {
-    struct
-    {
-      kind _kind : 4;
-      uint16_t _var1 : 6;
-      uint16_t _var2 : 6;
-    };
-    uint16_t _data;
-  };
+  kind _kind : 4;
+  uint16_t _var1 : 6;
+  uint16_t _var2 : 6;
 };
 
 inline void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
@@ -102,7 +99,7 @@ public:
   {
     if ( this != &other )
     {
-      _s = this->_s;
+      _s = other._s;
     }
     return *this;
   }
@@ -217,6 +214,9 @@ public:
   {
     switch ( op._kind )
     {
+    case spectral_operation::kind::none:
+      assert( false );
+      break;
     case spectral_operation::kind::permutation:
       permutation( op._var1, op._var2 );
       break;
@@ -248,6 +248,16 @@ public:
   inline auto size() const
   {
     return _s.size();
+  }
+
+  inline auto cbegin() const
+  {
+    return _s.cbegin();
+  }
+
+  inline auto cend() const
+  {
+    return _s.cend();
   }
 
 private:
@@ -353,20 +363,11 @@ private:
       closer( lspec );
       return;
     }
-    const auto locked = ( 1 << v ) - 1;
-    auto max = -1;
-
-    for ( auto i = 1u; i < lspec.size(); ++i )
-    {
-      if ( ( locked & i ) == i )
-        continue;
-      max = std::max( max, abs( lspec[i] ) );
-    }
+    const auto max = std::accumulate( lspec.cbegin() + ( 1 << v ), lspec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
 
     if ( max == 0 )
     {
-      auto spec2 = lspec;
-      normalize_rec( spec2, num_vars );
+      normalize_rec( lspec, num_vars );
     }
     else
     {
@@ -376,32 +377,37 @@ private:
         if ( abs( lspec[j] ) != max )
           continue;
 
-        const auto save = transform_index;
-        auto spec2 = lspec;
-        auto k = 0u;
+        /* find first one bit in j starting from pos v */
+        auto k = v;
         for ( ; k < num_vars; ++k )
         {
-          if ( ( 1 << k ) & locked )
-            continue;
           if ( ( 1 << k ) & j )
             break;
         }
         if ( k == num_vars )
           continue;
-        j -= 1 << k;
+
+        j ^= 1 << k; /* remove bit k from j */
+
+        /* spectral translation to all other 1s in j */
+        auto p = 0u;
         while ( j > 0 )
         {
-          auto p = 0u;
-          for ( ; ( ( 1 << p ) & j ) == 0; ++p )
-            ;
-          j -= 1 << p;
-          insert( spec2.spectral_translation( k, p ) );
+          if ( j & 1 )
+            {
+              insert( lspec.spectral_translation( k, p ) );
+            }
+          ++p;
+          j >>= 1;
         }
+
         if ( k != v )
         {
-          insert( spec2.permutation( k, v ) );
+          insert( lspec.permutation( k, v ) );
         }
-        normalize_rec( spec2, v + 1 );
+
+        const auto save = transform_index;
+        normalize_rec( lspec, v + 1 );
         transform_index = save;
       }
     }
@@ -456,6 +462,22 @@ private:
     best_spec = lbest;
     best_transforms.resize( transform_index );
     std::copy( transforms.begin(), transforms.begin() + transform_index, best_transforms.begin() );
+  }
+
+  std::ostream& print_spectrum( std::ostream& os )
+  {
+    os << "[i]";
+
+    for ( auto i = 0u; i < spec.size(); ++i )
+    {
+      auto j = order[i];
+      if ( j > 0 && __builtin_popcount( order[i - 1] ) < __builtin_popcount( j ) )
+      {
+        os << " |";
+      }
+      os << " " << std::setw( 3 ) << spec[j];
+    }
+    return os << std::endl;
   }
 
 private:
