@@ -314,22 +314,22 @@ private:
     return costs;
   }
 
-  void closer( spectrum& lspec )
+  void closer()
   {
-    for ( auto i = 0u; i < lspec.size(); ++i )
+    for ( auto i = 0u; i < spec.size(); ++i )
     {
       const auto j = order[i];
-      if ( lspec[j] == best_spec[j] )
+      if ( spec[j] == best_spec[j] )
         continue;
-      if ( abs( lspec[j] ) > abs( best_spec[j] ) ||
-           ( abs( lspec[j] ) == abs( best_spec[j] ) && lspec[j] > best_spec[j] ) )
+      if ( abs( spec[j] ) > abs( best_spec[j] ) ||
+           ( abs( spec[j] ) == abs( best_spec[j] ) && spec[j] > best_spec[j] ) )
       {
         update_best();
         return;
       }
 
-      if ( abs( lspec[j] ) < abs( best_spec[j] ) ||
-           ( abs( lspec[j] ) == abs( best_spec[j] ) && lspec[j] < best_spec[j] ) )
+      if ( abs( spec[j] ) < abs( best_spec[j] ) ||
+           ( abs( spec[j] ) == abs( best_spec[j] ) && spec[j] < best_spec[j] ) )
       {
         return;
       }
@@ -359,7 +359,7 @@ private:
         }
       }
 
-      closer( spec );
+      closer();
       return;
     }
     const auto max = std::accumulate( spec.cbegin() + v, spec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
