@@ -35,7 +35,7 @@
 
 using namespace kitty;
 
-class CanonizationTest : public kitty::testing::Test
+class NPNTest : public kitty::testing::Test
 {
 protected:
   template<int NumVars>
@@ -48,7 +48,7 @@ protected:
   }
 };
 
-TEST_F( CanonizationTest, random_functions )
+TEST_F( NPNTest, random_functions )
 {
   using pair_vec_t = std::vector<std::pair<std::string, std::string>>;
 

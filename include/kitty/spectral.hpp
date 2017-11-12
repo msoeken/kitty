@@ -27,6 +27,11 @@
   \file spectral.hpp
   \brief Implements methods for spectral classification
 
+  Original implementation by D. Michael Miller (University of
+  Victoria, BC, Canada).  Modified C++ implementation and integration
+  into kitty by Mathias Soeken.
+
+  \author D. Michael Miller
   \author Mathias Soeken
 */
 
@@ -470,6 +475,10 @@ private:
 };
 } // namespace detail
 
+/*! \brief Exact spectral canonization
+
+  \param tt Truth table
+ */
 template<typename TT>
 inline TT exact_spectral_canonization( const TT& tt )
 {

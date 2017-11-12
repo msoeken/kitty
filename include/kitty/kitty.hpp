@@ -37,10 +37,10 @@
 
 #include "algorithm.hpp"
 #include "bit_operations.hpp"
-#include "canonization.hpp"
 #include "constructors.hpp"
 #include "hash.hpp"
 #include "isop.hpp"
+#include "npn.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "print.hpp"

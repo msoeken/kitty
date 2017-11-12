@@ -24,8 +24,8 @@
  */
 
 /*!
-  \file canonization.hpp
-  \brief Implements canonization algorithms
+  \file non.hpp
+  \brief Implements NPN canonization algorithms
 
   \author Mathias Soeken
 */
