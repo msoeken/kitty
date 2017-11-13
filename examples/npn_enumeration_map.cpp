@@ -40,7 +40,7 @@ int main( int argc, char** argv )
   using truth_table = kitty::static_truth_table<num_vars>;
 
   /* set to store all NPN representatives (dynamic to store bits on heap) */
-  kitty::dynamic_truth_table<truth_table::NumBits> map;
+  kitty::dynamic_truth_table map( truth_table::NumBits );
 
   /* invert bits: 1 means not classified yet */
   std::transform( map.cbegin(), map.cend(), map.begin(), []( auto word ) { return ~word; } );
