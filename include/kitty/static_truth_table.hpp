@@ -58,7 +58,7 @@ struct static_truth_table<NumVars, true>
   /*! \cond PRIVATE */
   enum
   {
-    NumBits = 1 << NumVars
+    NumBits = uint64_t( 1 ) << NumVars
   };
   /*! \endcond */
 
