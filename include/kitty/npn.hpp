@@ -40,6 +40,17 @@
 namespace kitty
 {
 
+/*! \cond PRIVATE */
+
+namespace detail
+{
+template<typename TT>
+void exact_npn_canonization_null_callback( const TT& )
+{
+}
+}
+/*! \endcond */
+
 /*! \brief Exact NPN canonization
 
   Given a truth table, this function finds the lexicographically
@@ -59,8 +70,8 @@ namespace kitty
   \param tt The truth table
   \return NPN configuration
 */
-template<typename TT>
-std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT& tt )
+template<typename TT, typename Callback = decltype( detail::exact_npn_canonization_null_callback<TT> )>
+std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT& tt, Callback&& fn = detail::exact_npn_canonization_null_callback<TT> )
 {
   const auto num_vars = tt.num_vars();
 
@@ -75,7 +86,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   if ( num_vars == 1 )
   {
     const auto bit1 = get_bit( tt, 1 );
-    return std::make_tuple( unary_not_if( tt, bit1 ), bit1 << 1, std::vector<uint8_t>{ 0 } );
+    return std::make_tuple( unary_not_if( tt, bit1 ), bit1 << 1, std::vector<uint8_t>{0} );
   }
 
   assert( num_vars >= 2 && num_vars <= 6u );
@@ -83,6 +94,9 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   auto t1 = tt, t2 = ~tt;
   auto tmin = std::min( t1, t2 );
   auto invo = tmin == t2;
+
+  fn( t1 );
+  fn( t2 );
 
   const auto& swaps = detail::swaps[num_vars - 2u];
   const auto& flips = detail::flips[num_vars - 2u];
@@ -95,6 +109,10 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
     const auto pos = swaps[i];
     swap_adjacent_inplace( t1, pos );
     swap_adjacent_inplace( t2, pos );
+
+    fn( t1 );
+    fn( t2 );
+
     if ( t1 < tmin || t2 < tmin )
     {
       best_swap = i;
@@ -110,6 +128,10 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
     flip_inplace( t1, pos );
     swap_adjacent_inplace( t2, 0 );
     flip_inplace( t2, pos );
+
+    fn( t1 );
+    fn( t2 );
+
     if ( t1 < tmin || t2 < tmin )
     {
       best_swap = -1;
@@ -123,6 +145,10 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
       const auto pos = swaps[i];
       swap_adjacent_inplace( t1, pos );
       swap_adjacent_inplace( t2, pos );
+
+      fn( t1 );
+      fn( t2 );
+
       if ( t1 < tmin || t2 < tmin )
       {
         best_swap = i;
@@ -173,7 +199,8 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   /* input permutations */
   for ( auto i = 0; i < num_vars; ++i )
   {
-    if ( perm[i] == i ) continue;
+    if ( perm[i] == i )
+      continue;
 
     int k = i;
     while ( perm[k] != i )
@@ -193,7 +220,6 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
       flip_inplace( res, i );
     }
   }
-
 
   return res;
 }
