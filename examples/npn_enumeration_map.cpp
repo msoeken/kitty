@@ -39,10 +39,13 @@ int main( int argc, char** argv )
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;
 
-  /* set to store all NPN representatives */
-  kitty::static_truth_table<truth_table::NumBits> map;
+  /* set to store all NPN representatives (dynamic to store bits on heap) */
+  kitty::dynamic_truth_table<truth_table::NumBits> map;
+
+  /* invert bits: 1 means not classified yet */
   std::transform( map.cbegin(), map.cend(), map.begin(), []( auto word ) { return ~word; } );
 
+  /* hash set to store all NPN classes */
   std::unordered_set<truth_table, kitty::hash<truth_table>> classes;
 
   /* start from 0 */
@@ -51,16 +54,21 @@ int main( int argc, char** argv )
 
   while ( index != -1 )
   {
-    /* apply NPN canonization and add resulting representative to set */
+    /* create truth table from index value */
     kitty::create_from_words( tt, &index, &index + 1 );
+
+    /* apply NPN canonization and add resulting representative to set;
+       while canonization, mark all encountered truth tables in map
+     */
     const auto res = kitty::exact_npn_canonization( tt, [&map]( const auto& tt ) { kitty::clear_bit( map, *tt.cbegin() ); } );
     classes.insert( std::get<0>( res ) );
 
+    /* find next non-classified truth table */
     index = find_first_one_bit( map );
   }
 
   std::cout << "[i] enumerated "
-            << ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
+            << map.num_bits() << " functions into "
             << classes.size() << " classes." << std::endl;
 
   return 0;
