@@ -37,7 +37,7 @@ int main( int argc, char** argv )
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;
 
-  /* set to store all NPN representatives */
+  /* set to store all NPN and spectral representatives */
   using truth_table_set = std::unordered_set<truth_table, kitty::hash<truth_table>>;
   truth_table_set classes_npn, classes;
 
