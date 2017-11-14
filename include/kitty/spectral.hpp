@@ -362,7 +362,15 @@ private:
       closer();
       return;
     }
-    const auto max = std::accumulate( spec.cbegin() + v, spec.cend(), -1, []( auto a, auto sv ) { return std::max( a, abs( sv ) ); } );
+
+    auto min = 0, max = 0;
+    const auto p = std::accumulate( spec.cbegin() + v, spec.cend(),
+                                    std::make_pair( min, max ),
+                                    []( auto a, auto sv ) {
+                                      return std::make_pair( std::min( a.first, abs( sv ) ), std::max( a.second, abs( sv ) ) );
+                                    } );
+    min = p.first;
+    max = p.second;
 
     if ( max == 0 )
     {
@@ -377,10 +385,11 @@ private:
           continue;
 
         /* k = first one bit in j starting from pos v */
-        auto k = j & ~( v - 1 );       /* remove 1 bits until v */
-        if ( k == 0 ) continue;        /* are there bit left? */
-        k = k - ( k & ( k - 1 ) );     /* extract lowest bit */
-        j ^= k;                        /* remove bit k from j */
+        auto k = j & ~( v - 1 ); /* remove 1 bits until v */
+        if ( k == 0 )
+          continue; /* are there bit left? */
+        k = k - ( k & ( k - 1 ) ); /* extract lowest bit */
+        j ^= k; /* remove bit k from j */
 
         /* spectral translation to all other 1s in j */
         while ( j )
@@ -397,6 +406,9 @@ private:
 
         const auto save = transform_index;
         normalize_rec( v << 1 );
+
+        if ( v == 1 && min == max )
+          return;
         transform_index = save;
       }
     }
@@ -410,13 +422,13 @@ private:
     /* if max element is not the first element */
     if ( j )
     {
-      auto k = j - ( j & ( j - 1 ) );     /* LSB of j */
-      j ^= k;                             /* delete bit in j */
+      auto k = j - ( j & ( j - 1 ) ); /* LSB of j */
+      j ^= k; /* delete bit in j */
 
       while ( j )
       {
-        auto p = j - ( j & ( j - 1 ) );   /* next LSB of j */
-        j ^= p;                           /* delete bit in j */
+        auto p = j - ( j & ( j - 1 ) ); /* next LSB of j */
+        j ^= p; /* delete bit in j */
         insert( spec.spectral_translation( k, p ) );
       }
       insert( spec.disjoint_translation( k ) );
