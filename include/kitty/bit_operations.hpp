@@ -207,11 +207,12 @@ inline int64_t find_last_bit_in_word( uint64_t word )
   Returns -1, if truth table is constant 0.
 
   \param tt Truth table
+  \param start Bit to start from (default is 0)
 */
 template<typename TT>
-int64_t find_first_one_bit( const TT& tt )
+int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
 {
-  const auto it = std::find_if( tt.cbegin(), tt.cend(), []( auto word ) { return word != 0; } );
+  const auto it = std::find_if( tt.cbegin() + ( start >> 6 ), tt.cend(), []( auto word ) { return word != 0; } );
 
   if ( it == tt.cend() )
   {
