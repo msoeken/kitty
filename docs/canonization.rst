@@ -1,10 +1,15 @@
 Canonization
 ============
 
-The header ``<kitty/canonization.hpp>`` implements canonization algorithms.
+The header ``<kitty/npn.hpp>`` implements NPN canonization algorithms.
 
 .. doc_brief_table::
    exact_npn_canonization
    create_from_npn_config
 
+The header ``<kitty/spectral.hpp>`` implements canonization algorithms
+based on spectral transformations.
+
+.. doc_brief_table::
+   exact_spectral_canonization
 

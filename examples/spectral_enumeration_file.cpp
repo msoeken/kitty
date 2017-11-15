@@ -23,35 +23,44 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <cstdint>
+#include <fstream>
+#include <iostream>
+#include <unordered_set>
 
-  \author Mathias Soeken
-*/
+#include <kitty/kitty.hpp>
 
-#pragma once
+/* compile time constant for the number of variables */
+auto constexpr num_vars = 4;
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+int main( int argc, char** argv )
+{
+  static_assert( num_vars <= 5, "number of variables is limited to 5" );
 
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "constructors.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+  /* truth table type in this example */
+  using truth_table = kitty::static_truth_table<num_vars>;
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+  /* set to store all NPN and spectral representatives */
+  using truth_table_set = std::unordered_set<truth_table, kitty::hash<truth_table>>;
+  truth_table_set classes;
+
+  truth_table tt;
+  auto ctr = 0u;
+
+  std::ifstream in( argv[1] );
+
+  std::string line;
+  while ( std::getline( in, line ) )
+  {
+    create_from_hex_string( tt, line );
+    classes.insert( kitty::exact_spectral_canonization( tt ) );
+
+    ++ctr;
+  }
+
+  std::cout << "[i] enumerated "
+            << ctr << " functions into "
+            << classes.size() << " classes." << std::endl;
+
+  return 0;
+}
