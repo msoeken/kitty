@@ -40,6 +40,7 @@
 #include "bit_operations.hpp"
 
 #include <iomanip>
+#include <unordered_map>
 
 namespace kitty
 {
@@ -374,7 +375,8 @@ private:
 
     if ( max == 0 )
     {
-      auto spec2 = lspec;
+      auto& spec2 = specs.at( num_vars_exp );
+      spec2 = lspec;
       normalize_rec( spec2, num_vars_exp );
     }
     else
@@ -392,7 +394,8 @@ private:
         k = k - ( k & ( k - 1 ) ); /* extract lowest bit */
         j ^= k; /* remove bit k from j */
 
-        auto spec2 = lspec;
+        auto& spec2 = specs.at( v << 1 );
+        spec2 = lspec;
 
         /* spectral translation to all other 1s in j */
         while ( j )
@@ -435,6 +438,11 @@ private:
         insert( spec.spectral_translation( k, p ) );
       }
       insert( spec.disjoint_translation( k ) );
+    }
+
+    for ( auto v = 1u; v <= num_vars_exp; v <<= 1 )
+    {
+      specs.insert( {v, spec} );
     }
 
     update_best( spec );
@@ -482,6 +490,7 @@ private:
   unsigned num_vars_exp;
   spectrum spec;
   spectrum best_spec;
+  std::unordered_map<uint64_t, spectrum> specs;
 
   std::vector<unsigned> order;
   std::vector<spectral_operation> transforms;
