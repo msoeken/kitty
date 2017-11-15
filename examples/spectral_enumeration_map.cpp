@@ -73,7 +73,7 @@ int main( int argc, char** argv )
   }
 
   std::cout << "[i] enumerated "
-            << ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
+            << map.num_bits() << " functions into "
             << classes.size() << " classes." << std::endl;
 
   return 0;
