@@ -31,7 +31,7 @@
 #include <kitty/kitty.hpp>
 
 /* compile time constant for the number of variables */
-auto constexpr num_vars = 5;
+auto constexpr num_vars = 4;
 
 int main( int argc, char** argv )
 {
@@ -47,8 +47,6 @@ int main( int argc, char** argv )
   truth_table tt;
   auto ctr = 0u;
 
-  // auto lctr = 0, bctr = 0;
-
   std::ifstream in( argv[1] );
 
   std::string line;
@@ -56,13 +54,6 @@ int main( int argc, char** argv )
   {
     create_from_hex_string( tt, line );
     classes.insert( kitty::exact_spectral_canonization( tt ) );
-
-    // std::cout << ".";
-    // if ( ++lctr == 100 )
-    // {
-    //   std::cout << " " << ++bctr << std::endl;
-    //   lctr = 0;
-    // }
 
     ++ctr;
   }

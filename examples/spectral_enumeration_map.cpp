@@ -39,7 +39,7 @@ int main( int argc, char** argv )
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;
 
-  /* set to store all NPN representatives (dynamic to store bits on heap) */
+  /* set to store all visited functions during NPN canonization (dynamic to store bits on heap) */
   kitty::dynamic_truth_table map( truth_table::NumBits );
 
   /* invert bits: 1 means not classified yet */
@@ -58,10 +58,11 @@ int main( int argc, char** argv )
     /* create truth table from index value */
     kitty::create_from_words( tt, &index, &index + 1 );
 
-    /* apply NPN canonization and add resulting representative to set */
+    /* apply NPN canonization and add resulting representative to set;
+       also cross out all the visited functions */
     const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt, [&map]( const auto& tt ) { kitty::clear_bit( map, *tt.cbegin() ); } ) );
     const truth_table_set::const_iterator it = classes_npn.find( f_npn );
-    if ( it == classes_npn.end() )
+    if ( it == classes_npn.end() ) /* should always be true */
     {
       classes_npn.insert( f_npn );
       classes.insert( kitty::exact_spectral_canonization( tt ) );
