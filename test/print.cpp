@@ -51,3 +51,21 @@ TEST_F( PrintTest, print_binary )
   EXPECT_EQ( to_binary( from_hex<3>( "e8" ) ), "11101000" );
   EXPECT_EQ( to_binary( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "11111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
 }
+
+TEST_F( PrintTest, print_raw )
+{
+  static_truth_table<8> tt, tt2;
+
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    create_random( tt );
+
+    std::stringstream ss;
+    print_raw( tt, ss );
+    ss.seekg( 0 );
+
+    create_from_raw( tt2, ss );
+
+    EXPECT_EQ( tt, tt2 );
+  }
+}
