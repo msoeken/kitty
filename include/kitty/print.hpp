@@ -65,4 +65,20 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
     os << chunk;
   } );
 }
+
+/*! \brief Prints truth table in raw binary presentation (for file I/O)
+
+  This function is useful to store large truth tables in binary files
+  or `std::stringstream`. Each word is stored into 8 characters.
+
+  \param tt Truth table
+  \param os Output stream
+*/
+template<typename TT>
+void print_raw( const TT& tt, std::ostream& os )
+{
+  for_each_block( tt, [&os]( auto word ) {
+      os.write( reinterpret_cast<char*>( &word ), sizeof( word ) );
+    } );
+}
 }

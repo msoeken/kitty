@@ -7,6 +7,7 @@ The header ``<kitty/constructors.hpp>`` implements operations to construct truth
    create_nth_var
    create_from_binary_string
    create_from_hex_string
+   create_from_raw
    create_random
    create_from_words
    create_from_cubes

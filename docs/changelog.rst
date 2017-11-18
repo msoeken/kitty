@@ -8,14 +8,16 @@ v0.2 (not yet released)
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
   `#16 <https://github.com/msoeken/kitty/pull/16>`_
 
-* Constructors: ``create_from_words``
+* Constructors: ``create_from_words``, ``create_from_raw``
   `#15 <https://github.com/msoeken/kitty/pull/15>`_
+  `#20 <https://github.com/msoeken/kitty/pull/20>`_
 
 * Moved generic operations from `operations.hpp` to `algorithm.hpp`
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
-* Print truth tables as string: ``print_binary``
+* Print truth tables as string: ``print_binary``, ``print_raw``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
+  `#20 <https://github.com/msoeken/kitty/pull/20>`_
 
 * Added iterators to all truth tables: ``begin``, ``end``, ``rbegin``, ``rend``, ``cbegin``, ``cend``, ``crbegin``, ``crend``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_

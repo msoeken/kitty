@@ -177,6 +177,20 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   }
 }
 
+/*! Creates string from raw character data
+
+  Can create a truth table from the data that is produced by
+  `print_raw`, e.g., from binary files or `std::stringstream`.
+
+  \param tt Truth table
+  \param in Input stream
+*/
+template<typename TT>
+void create_from_raw( TT& tt, std::istream& in )
+{
+  std::for_each( tt.begin(), tt.end(), [&in]( auto& word ) { in.read( reinterpret_cast<char*>( &word ), sizeof( word ) ); } );
+}
+
 /*! \brief Constructs a truth table from random value
 
   Computes random words and assigns them to the truth table.  The
