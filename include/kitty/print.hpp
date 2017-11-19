@@ -66,6 +66,37 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
   } );
 }
 
+/*! \brief Prints truth table in hexadecimal representation
+
+  The most-significant bit will be the first character of the string.
+
+  \param tt Truth table
+  \param os Output stream
+*/
+template<typename TT>
+void print_hex( const TT& tt, std::ostream& os = std::cout )
+{
+  for_each_block_reversed( tt, [&tt, &os]( auto word ) {
+    std::string chunk( std::min<uint64_t>( tt.num_bits() >> 2, 16 ), '0' );
+    auto it = chunk.rbegin();
+    while ( word && it != chunk.rend() )
+    {
+      auto hex = word & 0xf;
+      if ( hex < 10 )
+      {
+        *it = '0' + hex;
+      }
+      else
+      {
+        *it = 'a' + ( hex - 10 );
+      }
+      ++it;
+      word >>= 4;
+    }
+    os << chunk;
+  } );
+}
+
 /*! \brief Prints truth table in raw binary presentation (for file I/O)
 
   This function is useful to store large truth tables in binary files
@@ -78,7 +109,7 @@ template<typename TT>
 void print_raw( const TT& tt, std::ostream& os )
 {
   for_each_block( tt, [&os]( auto word ) {
-      os.write( reinterpret_cast<char*>( &word ), sizeof( word ) );
-    } );
+    os.write( reinterpret_cast<char*>( &word ), sizeof( word ) );
+  } );
 }
 }
