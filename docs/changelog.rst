@@ -29,7 +29,7 @@ v0.2 (not yet released)
 * Find bits: ``find_first_one_bit``, ``find_last_one_bit``, ``find_first_bit_difference``, ``find_last_bit_difference``
   `#17 <https://github.com/msoeken/kitty/pull/17>`_
 
-* Spectral canonization: ``exact_spectral_canonization``
+* Spectral canonization: ``exact_spectral_canonization``, ``print_spectrum``
   `#19 <https://github.com/msoeken/kitty/pull/19>`_
 
 v0.1 (October 22, 2017)

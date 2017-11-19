@@ -94,7 +94,9 @@ int main( int argc, char** argv )
 
   for ( const auto& p : classes )
   {
-    print_binary( p.first );
+    print_hex( p.first );
+    std::cout << "   ";
+    print_spectrum( p.first );
     std::cout << " " << std::setw( 8 ) << p.second.first << " " << std::setw( 8 ) << p.second.second << std::endl;
   }
 

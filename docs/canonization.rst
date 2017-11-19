@@ -12,4 +12,5 @@ based on spectral transformations.
 
 .. doc_brief_table::
    exact_spectral_canonization
+   print_spectrum
 

@@ -257,9 +257,39 @@ public:
     return _s.cend();
   }
 
+  void print( std::ostream& os, const std::vector<uint32_t>& order ) const
+  {
+    os << std::setw( 4 ) << _s[order.front()];
+
+    for ( auto it = order.begin() + 1; it != order.end(); ++it )
+    {
+      os << " " << std::setw( 4 ) << _s[*it];
+    }
+  }
+
 private:
   std::vector<int32_t> _s;
 };
+
+inline std::vector<uint32_t> get_rw_coeffecient_order( uint32_t num_vars )
+{
+  auto size = uint32_t( 1 ) << num_vars;
+  std::vector<uint32_t> map( size, 0u );
+  auto p = std::begin( map ) + 1;
+
+  for ( uint32_t i = 1u; i <= num_vars; ++i )
+  {
+    for ( uint32_t j = 1u; j < size; ++j )
+    {
+      if ( __builtin_popcount( j ) == static_cast<int>( i ) )
+      {
+        *p++ = j;
+      }
+    }
+  }
+
+  return map;
+}
 
 template<typename TT>
 class miller_spectral_canonization_impl
@@ -278,7 +308,7 @@ public:
 
   TT run()
   {
-    order = get_initial_coeffecient_order();
+    order = get_rw_coeffecient_order( num_vars );
     normalize();
 
     TT tt = func.construct();
@@ -287,25 +317,6 @@ public:
   }
 
 private:
-  std::vector<unsigned> get_initial_coeffecient_order()
-  {
-    std::vector<unsigned> map( spec.size(), 0u );
-    auto p = std::begin( map ) + 1;
-
-    for ( auto i = 1u; i <= num_vars; ++i )
-    {
-      for ( auto j = 1u; j < spec.size(); ++j )
-      {
-        if ( __builtin_popcount( j ) == static_cast<int>( i ) )
-        {
-          *p++ = j;
-        }
-      }
-    }
-
-    return map;
-  }
-
   unsigned transformation_costs( const std::vector<spectral_operation>& transforms )
   {
     auto costs = 0u;
@@ -493,7 +504,7 @@ private:
   spectrum best_spec;
   std::unordered_map<uint64_t, spectrum> specs;
 
-  std::vector<unsigned> order;
+  std::vector<uint32_t> order;
   std::vector<spectral_operation> transforms;
   std::vector<spectral_operation> best_transforms;
   unsigned transform_index = 0u;
@@ -509,6 +520,18 @@ inline TT exact_spectral_canonization( const TT& tt )
 {
   detail::miller_spectral_canonization_impl<TT> impl( tt );
   return impl.run();
+}
+
+/*! \brief Print spectral representation of a function in RW order
+
+  \param tt Truth table
+  \param os Output stream
+ */
+template<typename TT>
+inline void print_spectrum( const TT& tt, std::ostream& os = std::cout )
+{
+  const auto spectrum = detail::spectrum::from_truth_table( tt );
+  spectrum.print( os, detail::get_rw_coeffecient_order( tt.num_vars() ) );
 }
 
 } // namespace kitty
