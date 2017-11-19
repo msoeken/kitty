@@ -46,12 +46,15 @@ int main( int argc, char** argv )
   std::transform( map.cbegin(), map.cend(), map.begin(), []( auto word ) { return ~word; } );
 
   /* set to store all NPN and spectral representatives */
-  using truth_table_set = std::unordered_set<truth_table, kitty::hash<truth_table>>;
-  truth_table_set classes_npn, classes;
+  using truth_table_map = std::unordered_map<truth_table, std::pair<uint64_t, uint64_t>, kitty::hash<truth_table>>;
+  truth_table_map classes;
 
   /* start from 0 */
   int64_t index = 0;
   truth_table tt;
+
+  /* for counting the classes and functions */
+  uint64_t ones = map.num_bits();
 
   while ( index != -1 )
   {
@@ -61,11 +64,22 @@ int main( int argc, char** argv )
     /* apply NPN canonization and add resulting representative to set;
        also cross out all the visited functions */
     const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt, [&map]( const auto& tt ) { kitty::clear_bit( map, *tt.cbegin() ); } ) );
-    const truth_table_set::const_iterator it = classes_npn.find( f_npn );
-    if ( it == classes_npn.end() ) /* should always be true */
+
+    auto new_ones = count_ones( map );
+    auto func_count = ones - new_ones;
+    ones = new_ones;
+
+    const auto spectral = kitty::exact_spectral_canonization( f_npn );
+    auto it = classes.find( spectral );
+
+    if ( it == classes.end() )
     {
-      classes_npn.insert( f_npn );
-      classes.insert( kitty::exact_spectral_canonization( tt ) );
+      classes[spectral] = {1u, func_count};
+    }
+    else
+    {
+      it->second.first++;
+      it->second.second += func_count;
     }
 
     /* find next non-classified truth table */
@@ -75,6 +89,14 @@ int main( int argc, char** argv )
   std::cout << "[i] enumerated "
             << map.num_bits() << " functions into "
             << classes.size() << " classes." << std::endl;
+
+  std::cout << "[i] detailed classes:" << std::endl;
+
+  for ( const auto& p : classes )
+  {
+    print_binary( p.first );
+    std::cout << " " << std::setw( 8 ) << p.second.first << " " << std::setw( 8 ) << p.second.second << std::endl;
+  }
 
   return 0;
 }
