@@ -43,6 +43,14 @@ protected:
     print_binary( tt, ss );
     return ss.str();
   }
+
+  template<typename TT>
+  std::string to_hex( const TT& tt ) const
+  {
+    std::stringstream ss;
+    print_hex( tt, ss );
+    return ss.str();
+  }
 };
 
 TEST_F( PrintTest, print_binary )
@@ -50,6 +58,13 @@ TEST_F( PrintTest, print_binary )
   EXPECT_EQ( to_binary( from_hex<2>( "8" ) ), "1000" );
   EXPECT_EQ( to_binary( from_hex<3>( "e8" ) ), "11101000" );
   EXPECT_EQ( to_binary( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "11111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
+}
+
+TEST_F( PrintTest, print_hex )
+{
+  EXPECT_EQ( to_hex( from_hex<2>( "8" ) ), "8" );
+  EXPECT_EQ( to_hex( from_hex<3>( "e8" ) ), "e8" );
+  EXPECT_EQ( to_hex( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "fffefee8fee8e880fee8e880e8808000" );
 }
 
 TEST_F( PrintTest, print_raw )
