@@ -87,6 +87,14 @@ struct dynamic_truth_table
    */
   inline auto end() noexcept { return _bits.end(); }
 
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() const noexcept { return _bits.begin(); }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() const noexcept { return _bits.end(); }
+
   /*! \brief Reverse begin iterator to bits.
    */
   inline auto rbegin() noexcept { return _bits.rbegin(); }

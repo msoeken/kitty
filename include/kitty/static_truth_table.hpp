@@ -88,6 +88,14 @@ struct static_truth_table<NumVars, true>
    */
   inline auto end() noexcept { return ( &_bits ) + 1; }
 
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() const noexcept { return &_bits; }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() const noexcept { return ( &_bits ) + 1; }
+
   /*! \brief Reverse begin iterator to bits.
    */
   inline auto rbegin() noexcept { return &_bits; }
@@ -179,6 +187,14 @@ struct static_truth_table<NumVars, false>
   /*! \brief End iterator to bits.
    */
   inline auto end() noexcept { return _bits.end(); }
+
+  /*! \brief Begin iterator to bits.
+   */
+  inline auto begin() const noexcept { return _bits.begin(); }
+
+  /*! \brief End iterator to bits.
+   */
+  inline auto end() const noexcept { return _bits.end(); }
 
   /*! \brief Reverse begin iterator to bits.
    */

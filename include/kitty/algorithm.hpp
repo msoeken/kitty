@@ -165,7 +165,7 @@ bool binary_predicate( const TT& first, const TT& second, Fn&& op )
 {
   assert( first.num_vars() == second.num_vars() );
 
-  return std::equal( first.cbegin(), first.cend(), second.cbegin(), op );
+  return std::equal( first.begin(), first.end(), second.begin(), op );
 }
 
 /*! \cond PRIVATE */
