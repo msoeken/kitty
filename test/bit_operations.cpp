@@ -137,3 +137,38 @@ TEST_F( BitOperationsTest, find_last_bit_difference )
   EXPECT_EQ( find_last_bit_difference( nth<8>( 7 ), nth<8>( 6 ) ), find_last_one_bit( nth<8>( 7 ) ^ nth<8>( 6 ) ) );
 }
 
+TEST_F( BitOperationsTest, count_ones_small )
+{
+  static_truth_table<5> tt;
+
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    create_random( tt );
+
+    auto ctr = 0u;
+    for ( uint64_t i = 0u; i < tt.num_bits(); ++i )
+    {
+      ctr += get_bit( tt, i );
+    }
+
+    EXPECT_EQ( ctr, count_ones( tt ) );
+  }
+}
+
+TEST_F( BitOperationsTest, count_ones_large )
+{
+  static_truth_table<9> tt;
+
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    create_random( tt );
+
+    auto ctr = 0u;
+    for ( uint64_t i = 0u; i < tt.num_bits(); ++i )
+    {
+      ctr += get_bit( tt, i );
+    }
+
+    EXPECT_EQ( ctr, count_ones( tt ) );
+  }
+}

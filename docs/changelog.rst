@@ -22,6 +22,9 @@ v0.2 (not yet released)
 * Added iterators to all truth tables: ``begin``, ``end``, ``rbegin``, ``rend``, ``cbegin``, ``cend``, ``crbegin``, ``crend``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
 
+* Count number of ones in truth table: ``count_ones``
+  `#21 <https://github.com/msoeken/kitty/pull/21>`_
+
 * Find bits: ``find_first_one_bit``, ``find_last_one_bit``, ``find_first_bit_difference``, ``find_last_bit_difference``
   `#17 <https://github.com/msoeken/kitty/pull/17>`_
 
