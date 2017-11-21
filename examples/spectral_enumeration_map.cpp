@@ -35,9 +35,6 @@ auto constexpr num_vars = 5;
 /* truth table type in this example */
 using truth_table = kitty::static_truth_table<num_vars>;
 
-/* spectral class type */
-using class_entry = std::tuple<truth_table, uint64_t, uint64_t>;
-
 int main( int argc, char** argv )
 {
   static_assert( num_vars <= 5, "number of variables is limited to 5" );
@@ -49,16 +46,15 @@ int main( int argc, char** argv )
   std::transform( map.cbegin(), map.cend(), map.begin(), []( auto word ) { return ~word; } );
 
   /* set to store all NPN and spectral representatives */
-  using truth_table_vec = std::vector<class_entry>;
-  truth_table_vec classes;
-  classes.reserve( 48 );
+  using truth_table_map = std::unordered_map<truth_table, std::pair<uint64_t, uint64_t>, kitty::hash<truth_table>>;
+  truth_table_map classes;
 
   /* start from 0 */
   int64_t index = 0;
   truth_table tt;
 
   /* for counting the classes and functions */
-  uint64_t ones = map.num_bits();
+  //uint64_t ones = map.num_bits();
 
   auto ctr = 0, bctr = 0;
 
@@ -69,25 +65,29 @@ int main( int argc, char** argv )
 
     /* apply NPN canonization and add resulting representative to set;
        also cross out all the visited functions */
-    const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt, [&map]( const auto& tt ) { kitty::clear_bit( map, *tt.cbegin() ); } ) );
+    auto func_count = 0u;
+    const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt,
+                                                                   [&map, &func_count]( const auto& tt ) {
+                                                                     func_count += kitty::get_bit( map, *tt.cbegin() );
+                                                                     kitty::clear_bit( map, *tt.cbegin() ); }
+                                                                   ) );
 
-    auto new_ones = count_ones( map );
-    auto func_count = ones - new_ones;
-    ones = new_ones;
+    //auto new_ones = count_ones( map );
+    //auto func_count = ones - new_ones;
+    //ones = new_ones;
 
     const auto spectral = kitty::exact_spectral_canonization( f_npn );
 
-    auto it = std::find_if( classes.begin(), classes.end(),
-                            [&spectral]( const auto& entry ) { return std::get<0>( entry ) == spectral; } );
+    auto it = classes.find( spectral );
 
     if ( it == classes.end() )
     {
-      classes.emplace_back( spectral, 1u, func_count );
+      classes[spectral] = {1u, func_count};
     }
     else
     {
-      std::get<1>( *it )++;
-      std::get<2>( *it ) += func_count;
+      it->second.first++;
+      it->second.second += func_count;
     }
 
     std::cout << ".";
@@ -102,6 +102,8 @@ int main( int argc, char** argv )
     index = find_first_one_bit( map, index );
   }
 
+  std::cout << std::endl;
+
   std::cout << "[i] enumerated "
             << map.num_bits() << " functions into "
             << classes.size() << " classes." << std::endl;
@@ -110,10 +112,10 @@ int main( int argc, char** argv )
 
   for ( const auto& p : classes )
   {
-    print_hex( std::get<0>( p ) );
+    print_hex( p.first );
     std::cout << "   ";
-    print_spectrum( std::get<0>( p ) );
-    std::cout << " " << std::setw( 8 ) << std::get<1>( p ) << " " << std::setw( 8 ) << std::get<2>( p ) << std::endl;
+    print_spectrum( p.first );
+    std::cout << " " << std::setw( 8 ) << p.second.first << " " << std::setw( 8 ) << p.second.second << std::endl;
   }
 
   return 0;
