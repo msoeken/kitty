@@ -87,8 +87,14 @@ inline void operator^=( TT& first, const TT& second )
 }
 
 /*! \brief Operator for equal */
-template<typename TT>
-inline bool operator==( const TT& first, const TT& second )
+inline bool operator==( const dynamic_truth_table& first, const dynamic_truth_table& second )
+{
+  return equal( first, second );
+}
+
+/*! \brief Operator for equal */
+template<int NumVars>
+inline bool operator==( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
 {
   return equal( first, second );
 }
