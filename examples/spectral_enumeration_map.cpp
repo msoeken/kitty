@@ -30,14 +30,17 @@
 #include <kitty/kitty.hpp>
 
 /* compile time constant for the number of variables */
-auto constexpr num_vars = 4;
+auto constexpr num_vars = 5;
+
+/* truth table type in this example */
+using truth_table = kitty::static_truth_table<num_vars>;
+
+/* spectral class type */
+using class_entry = std::tuple<truth_table, uint64_t, uint64_t>;
 
 int main( int argc, char** argv )
 {
   static_assert( num_vars <= 5, "number of variables is limited to 5" );
-
-  /* truth table type in this example */
-  using truth_table = kitty::static_truth_table<num_vars>;
 
   /* set to store all visited functions during NPN canonization (dynamic to store bits on heap) */
   kitty::dynamic_truth_table map( truth_table::NumBits );
@@ -46,8 +49,9 @@ int main( int argc, char** argv )
   std::transform( map.cbegin(), map.cend(), map.begin(), []( auto word ) { return ~word; } );
 
   /* set to store all NPN and spectral representatives */
-  using truth_table_map = std::unordered_map<truth_table, std::pair<uint64_t, uint64_t>, kitty::hash<truth_table>>;
-  truth_table_map classes;
+  using truth_table_vec = std::vector<class_entry>;
+  truth_table_vec classes;
+  classes.reserve( 48 );
 
   /* start from 0 */
   int64_t index = 0;
@@ -55,6 +59,8 @@ int main( int argc, char** argv )
 
   /* for counting the classes and functions */
   uint64_t ones = map.num_bits();
+
+  auto ctr = 0, bctr = 0;
 
   while ( index != -1 )
   {
@@ -70,20 +76,30 @@ int main( int argc, char** argv )
     ones = new_ones;
 
     const auto spectral = kitty::exact_spectral_canonization( f_npn );
-    auto it = classes.find( spectral );
+
+    auto it = std::find_if( classes.begin(), classes.end(),
+                            [&spectral]( const auto& entry ) { return std::get<0>( entry ) == spectral; } );
 
     if ( it == classes.end() )
     {
-      classes[spectral] = {1u, func_count};
+      classes.emplace_back( spectral, 1u, func_count );
     }
     else
     {
-      it->second.first++;
-      it->second.second += func_count;
+      std::get<1>( *it )++;
+      std::get<2>( *it ) += func_count;
+    }
+
+    std::cout << ".";
+
+    if ( ++ctr == 100 )
+    {
+      std::cout << " " << ++bctr << std::endl;
+      ctr = 0;
     }
 
     /* find next non-classified truth table */
-    index = find_first_one_bit( map );
+    index = find_first_one_bit( map, index );
   }
 
   std::cout << "[i] enumerated "
@@ -94,10 +110,10 @@ int main( int argc, char** argv )
 
   for ( const auto& p : classes )
   {
-    print_hex( p.first );
+    print_hex( std::get<0>( p ) );
     std::cout << "   ";
-    print_spectrum( p.first );
-    std::cout << " " << std::setw( 8 ) << p.second.first << " " << std::setw( 8 ) << p.second.second << std::endl;
+    print_spectrum( std::get<0>( p ) );
+    std::cout << " " << std::setw( 8 ) << std::get<1>( p ) << " " << std::setw( 8 ) << std::get<2>( p ) << std::endl;
   }
 
   return 0;
