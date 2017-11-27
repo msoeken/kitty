@@ -15,7 +15,7 @@ endif()
 
 set(CMAKE_CXX_FLAGS "-Wall")
 
-include_directories(include)
+add_subdirectory(include)
 
 if(KITTY_EXAMPLES)
   add_subdirectory(examples)

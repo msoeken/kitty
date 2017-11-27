@@ -13,6 +13,6 @@ foreach(FILENAME ${FILENAMES})
   set(TARGET_NAME bench_${BASENAME})
 
   add_executable(${TARGET_NAME} ${FILENAME})
-  target_link_libraries(${TARGET_NAME} benchmark)
+  target_link_libraries(${TARGET_NAME} benchmark kitty)
 endforeach()
 
