@@ -30,7 +30,10 @@
 #include <kitty/kitty.hpp>
 
 /* compile time constant for the number of variables */
-auto constexpr num_vars = 5;
+auto constexpr num_vars = 4;
+
+/* show progress? */
+auto constexpr progress = false;
 
 /* truth table type in this example */
 using truth_table = kitty::static_truth_table<num_vars>;
@@ -69,8 +72,7 @@ int main( int argc, char** argv )
     const auto f_npn = std::get<0>( kitty::exact_npn_canonization( tt,
                                                                    [&map, &func_count]( const auto& tt ) {
                                                                      func_count += kitty::get_bit( map, *tt.cbegin() );
-                                                                     kitty::clear_bit( map, *tt.cbegin() ); }
-                                                                   ) );
+                                                                     kitty::clear_bit( map, *tt.cbegin() ); } ) );
 
     //auto new_ones = count_ones( map );
     //auto func_count = ones - new_ones;
@@ -90,19 +92,25 @@ int main( int argc, char** argv )
       it->second.second += func_count;
     }
 
-    std::cout << ".";
-
-    if ( ++ctr == 100 )
+    if ( progress )
     {
-      std::cout << " " << ++bctr << std::endl;
-      ctr = 0;
+      std::cout << ".";
+
+      if ( ++ctr == 100 )
+      {
+        std::cout << " " << ++bctr << std::endl;
+        ctr = 0;
+      }
     }
 
     /* find next non-classified truth table */
     index = find_first_one_bit( map, index );
   }
 
-  std::cout << std::endl;
+  if ( progress )
+  {
+    std::cout << std::endl;
+  }
 
   std::cout << "[i] enumerated "
             << map.num_bits() << " functions into "
