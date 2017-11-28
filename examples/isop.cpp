@@ -60,17 +60,7 @@ int main( int argc, char** argv )
   /* print ISOP */
   for ( auto cube : cubes )
   {
-    for ( auto i = 0; i < tt.num_vars(); ++i )
-    {
-      if ( cube & 1 )
-        std::cout << "0";
-      else if ( ( cube >> 1 ) & 1 )
-        std::cout << "1";
-      else
-        std::cout << "-";
-
-      cube >>= 2;
-    }
+    cube.print( tt.num_vars() );
     std::cout << std::endl;
   }
 

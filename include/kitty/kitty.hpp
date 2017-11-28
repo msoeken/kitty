@@ -38,6 +38,8 @@
 #include "algorithm.hpp"
 #include "bit_operations.hpp"
 #include "constructors.hpp"
+#include "cube.hpp"
+#include "esop.hpp"
 #include "hash.hpp"
 #include "isop.hpp"
 #include "npn.hpp"
