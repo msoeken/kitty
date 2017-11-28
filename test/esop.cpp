@@ -23,37 +23,42 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <cstdint>
+#include <vector>
 
-  \author Mathias Soeken
-*/
+#include <gtest/gtest.h>
 
-#pragma once
+#include <kitty/kitty.hpp>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include "utility.hpp"
 
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+using namespace kitty;
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+class EsopTest : public kitty::testing::Test
+{
+};
+
+TEST_F( EsopTest, esop_for_small )
+{
+  const auto tt = from_hex<3>( "e8" );
+
+  const auto cubes = esop_from_optimum_pkrm( tt );
+
+  auto tt_copy = tt.construct();
+  create_from_cubes( tt_copy, cubes, true );
+  EXPECT_EQ( tt, tt_copy );
+}
+
+TEST_F( EsopTest, random_esop )
+{
+  static_truth_table<10> tt;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    const auto cubes = esop_from_optimum_pkrm( tt );
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes, true );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}

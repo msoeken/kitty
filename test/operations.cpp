@@ -117,7 +117,7 @@ TEST_F( OperationsTest, binary_for_large )
     {
       tt = binary_and( tt, nth<7>( i ) );
     }
-    EXPECT_EQ( tt, from_hex<7>( "8000000000000000" ) );
+    EXPECT_EQ( tt, from_hex<7>( "80000000000000000000000000000000" ) );
   }
 
   {
@@ -126,7 +126,7 @@ TEST_F( OperationsTest, binary_for_large )
     {
       tt = binary_and( tt, nth( 7, i ) );
     }
-    EXPECT_EQ( tt, from_hex( 7, "8000000000000000" ) );
+    EXPECT_EQ( tt, from_hex( 7, "80000000000000000000000000000000" ) );
   }
 }
 

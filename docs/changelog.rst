@@ -29,6 +29,12 @@ v0.2 (not yet released)
 * Find bits: ``find_first_one_bit``, ``find_last_one_bit``, ``find_first_bit_difference``, ``find_last_bit_difference``
   `#17 <https://github.com/msoeken/kitty/pull/17>`_
 
+* Compute ESOP expressions: ``esop_from_optimum_pkrm``
+  `#23 <https://github.com/msoeken/kitty/pull/23>`_
+
+* New data structure for cubes used by ISOP and ESOP computation: ``cube``
+  `#23 <https://github.com/msoeken/kitty/pull/23>`_
+
 * Spectral canonization: ``exact_spectral_canonization``, ``print_spectrum``
   `#19 <https://github.com/msoeken/kitty/pull/19>`_
 

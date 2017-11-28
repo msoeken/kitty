@@ -41,7 +41,7 @@ computes its ISOP, and prints it.
 
 .. literalinclude:: ../examples/isop.cpp
    :language: c++
-   :lines: 26-78
+   :lines: 26-68
    :caption: examples/isop.cpp
 
 Output:

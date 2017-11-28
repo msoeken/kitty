@@ -32,6 +32,7 @@
 
 #pragma once
 
+#include "cube.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 
@@ -40,7 +41,7 @@ namespace kitty
 
 /*! \cond PRIVATE */
 template<typename TT>
-TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<uint64_t>& cubes )
+TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& cubes )
 {
   assert( var_index <= tt.num_vars() );
   assert( is_const0( tt & ~dc ) );
@@ -50,7 +51,7 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<uint64_t
 
   if ( is_const0( ~dc ) )
   {
-    cubes.push_back( 0 );
+    cubes.push_back( cube() );
     return dc;
   }
 
@@ -86,11 +87,11 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<uint64_t
 
   for ( auto c = beg0; c < end0; ++c )
   {
-    cubes[c] |= 1 << ( 2 * var );
+    cubes[c].add_literal( var, false );
   }
   for ( auto c = end0; c < end1; ++c )
   {
-    cubes[c] |= 1 << ( 2 * var + 1 );
+    cubes[c].add_literal( var, true );
   }
 
   assert( is_const0( tt & ~res2 ) );
@@ -106,15 +107,12 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<uint64_t
   Minato-Morreale algorithm [S. Minato, IEEE Trans. CAD 15(4), 1996,
   377-384].
 
-  Check the function `create_from_cubes` for a detailed description of
-  the cubes representation.
-
   \param tt Truth table
 */
 template<typename TT>
-inline std::vector<uint64_t> isop( const TT& tt )
+inline std::vector<cube> isop( const TT& tt )
 {
-  std::vector<uint64_t> cubes;
+  std::vector<cube> cubes;
   isop_rec( tt, tt, tt.num_vars(), cubes );
   return cubes;
 }

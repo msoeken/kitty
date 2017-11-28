@@ -28,6 +28,8 @@ Welcome to kitty's documentation!
    print
    hash
    canonization
+   cube
+   esop
    isop
    reference
 

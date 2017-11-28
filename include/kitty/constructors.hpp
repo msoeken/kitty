@@ -37,6 +37,7 @@
 #include <random>
 
 #include "detail/constants.hpp"
+#include "cube.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "static_truth_table.hpp"
@@ -242,50 +243,52 @@ void create_from_words( TT& tt, InputIt begin, InputIt end )
 /*! \brief Creates truth table from cubes representation
 
   A sum-of-product is represented as a vector of products (called
-  cubes).  A product is represented as bit-mask, where odd indexes
-  correspond to negative literals, and positive indexes corrspond to
-  positive literals.  As an example the cube `38` which is `100110` in
-  binary represents the product \f$ x_2\bar x_1x_0 \f$.
+  cubes).
 
   An empty truth table is given as first argument to determine type
   and number of variables.  Literals in products that do not fit the
   number of variables of the truth table are ignored.
 
-  Since product terms are represented as 64-bit bit-masks, a cube
-  representation only allows truth table sizes up to 32 variables.
+  The cube representation only allows truth table sizes up to 32
+  variables.
 
   \param tt Truth table
   \param cubes Vector of cubes
+  \param esop Use ESOP instead of SOP
 */
 template<typename TT>
-void create_from_cubes( TT& tt, const std::vector<uint64_t>& cubes )
+void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = false )
 {
-  /* we collect product terms for an SOP, start with const0 */
+  /* we collect product terms for an (E)SOP, start with const0 */
   clear( tt );
 
   for ( auto cube : cubes )
   {
     auto product = ~tt.construct(); /* const1 of same size */
 
+    auto bits = cube._bits;
+    auto mask = cube._mask;
+
     for ( auto i = 0; i < tt.num_vars(); ++i )
     {
-      if ( cube & 1 ) /* negative literal */
+      if ( mask & 1 )
       {
         auto var = tt.construct();
-        create_nth_var( var, i, true );
+        create_nth_var( var, i, !( bits & 1 ) );
         product &= var;
       }
-      cube >>= 1;
-      if ( cube & 1 ) /* positive literal */
-      {
-        auto var = tt.construct();
-        create_nth_var( var, i );
-        product &= var;
-      }
-      cube >>= 1;
+      bits >>= 1;
+      mask >>= 1;
     }
 
-    tt |= product;
+    if ( esop )
+    {
+      tt ^= product;
+    }
+    else
+    {
+      tt |= product;
+    }
   }
 }
 

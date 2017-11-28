@@ -89,7 +89,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
     return std::make_tuple( unary_not_if( tt, bit1 ), bit1 << 1, std::vector<uint8_t>{0} );
   }
 
-  assert( num_vars >= 2 && num_vars <= 6u );
+  assert( num_vars >= 2 && num_vars <= 6 );
 
   auto t1 = tt, t2 = ~tt;
   auto tmin = std::min( t1, t2 );
