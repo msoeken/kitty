@@ -44,7 +44,7 @@ following public member functions.
 +-----------------------------------+----------------------------------------------------------------------------------+
 
 Static truth table
--------------------
+------------------
 
 The header ``<kitty/static_truth_table.hpp>`` implements a static
 truth table.  A static truth table must be initialized with a number
