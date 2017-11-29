@@ -68,7 +68,7 @@ public:
   /*! \brief Returns the distance to another cube */
   inline int distance( const cube& that ) const
   {
-    return ( _bits ^ that._bits ) | ( _mask ^ that._mask );
+    return __builtin_popcount( ( _bits ^ that._bits ) | ( _mask ^ that._mask ) );
   }
 
   /*! \brief Checks whether two cubes are equivalent */
