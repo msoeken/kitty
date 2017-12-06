@@ -5,6 +5,7 @@
 
 # kitty
 
+<img src="kitty.svg" width="64" height="64" align="left" style="margin-right: 12pt" />
 kitty is a C++-14 truth table library.  It provides efficient implementations for basic truth table manipulations and various algorithms.
 
 [Read the full documentation.](http://libkitty.readthedocs.io/en/latest/?badge=latest)
