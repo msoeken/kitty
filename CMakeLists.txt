@@ -8,8 +8,10 @@ option(KITTY_EXAMPLES "Build examples" ON)
 option(KITTY_BENCH "Build benchmarks" OFF)
 option(KITTY_TEST "Build tests" OFF)
 
-# clang specific compiler definitions
-if ("${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang$")
+# some specific compiler definitions
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-fcolor-diagnostics" HAS_FCOLOR_DIAGNOSTICS)
+if (HAS_FCOLOR_DIAGNOSTICS)
   add_definitions(-fcolor-diagnostics)
 endif()
 
