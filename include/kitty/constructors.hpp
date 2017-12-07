@@ -299,13 +299,25 @@ void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = fals
   \param tt Truth table
 */
 template<typename TT>
-void create_majority( TT& tt )
+inline void create_majority( TT& tt )
 {
-  const auto t = tt.num_vars() >> 1;
+  create_threshold( tt, tt.num_vars() >> 1 );
+}
 
+/*! \brief Constructs threshold function
+
+  The resulting function is true, if strictly more than t inputs are 1. The
+  number of variables is determined from the truth table.
+
+  \param tt Truth table
+  \param threshold threshold value
+*/
+template<typename TT>
+void create_threshold( TT& tt, uint8_t threshold )
+{
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
-    if ( __builtin_popcount( x ) > t )
+    if ( __builtin_popcount( x ) > threshold )
     {
       set_bit( tt, x );
     }
