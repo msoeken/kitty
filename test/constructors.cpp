@@ -165,3 +165,19 @@ TEST( ConstructorsTest, create_majority7 )
 
   EXPECT_TRUE( std::equal( std::begin( tt_d._bits ), std::end( tt_d._bits ), std::begin( tt_s._bits ), std::end( tt_s._bits ) ) );
 }
+
+TEST( ConstructorsTest, create_threshold7 )
+{
+  static_truth_table<9> t1, t2;
+
+  create_threshold( t1, 4 );
+  create_threshold( t2, 5 );
+
+  const auto t3 = t1 & ~t2;
+
+  EXPECT_EQ( count_ones( t3 ), uint64_t( 126 ) );
+
+  for_each_one_bit( t3, []( auto index ) {
+    EXPECT_EQ( __builtin_popcount( index ), 5 );
+  } );
+}
