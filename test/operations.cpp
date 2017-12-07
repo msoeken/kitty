@@ -469,3 +469,47 @@ TEST_F( OperationsTest, min_base )
     EXPECT_EQ( tt, from_hex<7>( "ff55ff55ff55ff555555555555555555" ) );
   }
 }
+
+TEST_F( OperationsTest, majority7 )
+{
+  const auto a = nth<7>( 0 );
+  const auto b = nth<7>( 1 );
+  const auto c = nth<7>( 2 );
+  const auto d = nth<7>( 3 );
+  const auto e = nth<7>( 4 );
+  const auto f = nth<7>( 5 );
+  const auto g = nth<7>( 6 );
+
+  static_truth_table<7> maj7;
+  create_majority( maj7 );
+
+  auto special_func = []( auto a, auto b, auto c, auto d, auto e, auto f ) {
+    return ternary_majority( ternary_majority( a, b, c ), d, ternary_majority( e, f, ternary_majority( a, b, c ) ) );
+  };
+
+  // special_func is symmetric in variables {a, b, c}
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, c, b, d, e, f ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( b, a, c, d, e, f ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( b, c, a, d, e, f ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( c, a, b, d, e, f ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( c, b, a, d, e, f ) );
+
+  // special func is symmetric in variables {d, e, f}
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, b, c, d, f, e ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, b, c, e, d, f ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, b, c, e, f, d ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, b, c, f, d, e ) );
+  EXPECT_EQ( special_func( a, b, c, d, e, f ), special_func( a, b, c, f, e, d ) );
+
+  const auto sf0 = special_func( a, b, c, d, e, f );
+  const auto sf1 = special_func( d, e, f, a, b, c );
+
+  const auto one = ~maj7.construct();
+
+  EXPECT_EQ( ~( maj7 & ~g ) | ( sf0 & sf1 ), one );
+  EXPECT_EQ( ~( ~maj7 & ~g ) | ( ~sf0 | ~sf1 ), one );
+  EXPECT_EQ( ~( maj7 & g ) | ( sf0 | sf1 ), one );
+  EXPECT_EQ( ~( ~maj7 & g ) | ( ~sf0 & ~sf1), one );
+  
+  EXPECT_EQ( ternary_majority( special_func( a, b, c, d, e, f ), g, special_func( d, e, f, a, b, c ) ), maj7 );
+}
