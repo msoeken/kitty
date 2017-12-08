@@ -506,10 +506,51 @@ TEST_F( OperationsTest, majority7 )
 
   const auto one = ~maj7.construct();
 
-  EXPECT_EQ( ~( maj7 & ~g ) | ( sf0 & sf1 ), one );
-  EXPECT_EQ( ~( ~maj7 & ~g ) | ( ~sf0 | ~sf1 ), one );
-  EXPECT_EQ( ~( maj7 & g ) | ( sf0 | sf1 ), one );
-  EXPECT_EQ( ~( ~maj7 & g ) | ( ~sf0 & ~sf1), one );
-  
-  EXPECT_EQ( ternary_majority( special_func( a, b, c, d, e, f ), g, special_func( d, e, f, a, b, c ) ), maj7 );
+  const auto th0 = cofactor0( maj7, 6 ); /* threshold-4 function (hamming weight >= 4) */
+  const auto th1 = cofactor1( maj7, 6 ); /* threshold-3 function (hamming weight >= 3) */
+  const auto te = th1 & ~th0; /* =3 function (hamming weight = 3) */
+
+  EXPECT_EQ( ~th0 | ( sf0 & sf1 ), one );
+  EXPECT_EQ( th0 | ( ~sf0 | ~sf1 ), one );
+  EXPECT_EQ( ~th1 | ( sf0 | sf1 ), one );
+  EXPECT_EQ( th1 | ( ~sf0 & ~sf1), one );
+
+  const auto factor1 = d ^ e ^ f;
+  const auto factor2 = a ^ b ^ c;
+  EXPECT_EQ( sf0, ( factor1 & th1 ) ^ ( ~factor1 & th0 ) );
+  EXPECT_EQ( sf1, ( factor1 & th0 ) ^ ( ~factor1 & th1 ) );
+  EXPECT_EQ( sf0, ( factor2 & th0 ) ^ ( ~factor2 & th1 ) );
+  EXPECT_EQ( sf1, ( factor2 & th1 ) ^ ( ~factor2 & th0 ) );
+
+  EXPECT_EQ( sf0, th0 | factor1 & te );
+  EXPECT_EQ( sf1, th0 | factor2 & te );
+
+  EXPECT_EQ( ternary_majority( sf0, g, sf1 ), maj7 );
+}
+
+TEST_F( OperationsTest, majority_conjecture_small )
+{
+  constexpr auto k = 7;
+  constexpr auto n = 2 * k + 1;
+
+  static_truth_table<n> maj;
+  create_majority( maj );
+
+  const auto th0 = cofactor0( maj, 2 * k ); /* threshold function (> k) */
+  const auto th1 = cofactor1( maj, 2 * k ); /* threshold function (>= k) */
+  const auto te = th1 & ~th0; /* function (= k) */
+
+  auto factor1 = maj.construct();
+  auto factor2 = maj.construct();
+
+  for ( auto i = 0; i < k; ++i )
+  {
+    factor1 ^= nth<n>( i );
+    factor2 ^= nth<n>( k + i );
+  }
+
+  const auto sf0 = th0 | factor1 & te;
+  const auto sf1 = th0 | factor2 & te;
+
+  EXPECT_EQ( ternary_majority( sf0, nth<n>( 2 * k ), sf1 ), maj );
 }
