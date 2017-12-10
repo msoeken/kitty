@@ -306,8 +306,8 @@ inline void create_majority( TT& tt )
 
 /*! \brief Constructs threshold function
 
-  The resulting function is true, if strictly more than t inputs are 1. The
-  number of variables is determined from the truth table.
+  The resulting function is true, if strictly more than `threshold` inputs are
+  1. The number of variables is determined from the truth table.
 
   \param tt Truth table
   \param threshold threshold value
@@ -318,6 +318,26 @@ void create_threshold( TT& tt, uint8_t threshold )
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
     if ( __builtin_popcount( x ) > threshold )
+    {
+      set_bit( tt, x );
+    }
+  }
+}
+
+/*! \brief Constructs equals-k function
+
+  The resulting function is true, if exactly `bitcount` bits are 1.  The number
+  of variables is determiend from the truth table.
+
+  \param tt Truth table
+  \param bitcount equals-k value
+*/
+template<typename TT>
+void create_equals( TT& tt, uint8_t bitcount )
+{
+  for ( uint64_t x = 0; x < tt.num_bits(); ++x )
+  {
+    if ( __builtin_popcount( x ) == bitcount )
     {
       set_bit( tt, x );
     }
