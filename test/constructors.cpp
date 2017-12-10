@@ -181,3 +181,20 @@ TEST( ConstructorsTest, create_threshold7 )
     EXPECT_EQ( __builtin_popcount( index ), 5 );
   } );
 }
+
+TEST( ConstructorsTest, create_equals )
+{
+  static_truth_table<9> total;
+  uint64_t total_bits{0};
+
+  for ( auto k = 0; k <= total.num_vars(); ++k )
+  {
+    auto tt = total.construct();
+    create_equals( tt, k );
+    total_bits += count_ones( tt );
+    total |= tt;
+  }
+
+  EXPECT_TRUE( is_const0( ~total ) );
+  EXPECT_EQ( total_bits, uint64_t( 1 ) << total.num_vars() );
+}
