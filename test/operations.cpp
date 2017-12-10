@@ -470,6 +470,28 @@ TEST_F( OperationsTest, min_base )
   }
 }
 
+TEST_F( OperationsTest, extend_to )
+{
+  static_truth_table<9> maj, th_extend;
+  static_truth_table<8> th;
+
+  create_majority( maj );
+  create_threshold( th, 4 );
+  extend_to( th_extend, th );
+
+  EXPECT_EQ( cofactor0( maj, 8 ), th_extend );
+}
+
+TEST_F( OperationsTest, extend_to_same )
+{
+  static_truth_table<9> tt1, tt2;
+
+  create_random( tt1 );
+  extend_to( tt2, tt1 );
+
+  EXPECT_EQ( tt1, tt2 );
+}
+
 TEST_F( OperationsTest, majority7 )
 {
   const auto a = nth<7>( 0 );

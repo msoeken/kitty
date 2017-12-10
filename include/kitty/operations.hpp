@@ -663,4 +663,17 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   }
 }
 
+template<typename TT, typename TTFrom>
+void extend_to( TT& tt, const TTFrom& from )
+{
+  assert( tt.num_vars() >= from.num_vars() );
+
+  auto it = tt.begin();
+  while ( it != tt.end() )
+  {
+    std::copy( from.cbegin(), from.cend(), it );
+    it += from.num_blocks();
+  }
+}
+
 } // namespace kitty

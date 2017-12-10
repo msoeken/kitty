@@ -36,4 +36,5 @@ Combination and manipulation
    flip
    min_base_inplace
    expand_inplace
+   extend_to
 
