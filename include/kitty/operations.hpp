@@ -668,12 +668,31 @@ void extend_to( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() >= from.num_vars() );
 
-  auto it = tt.begin();
-  while ( it != tt.end() )
+  if ( from.num_vars() < 6 )
   {
-    std::copy( from.cbegin(), from.cend(), it );
-    it += from.num_blocks();
+    clear( tt );
+    uint64_t from_index = 0;
+    for ( uint64_t i = 0; i < tt.num_bits(); ++i )
+    {
+      if ( get_bit( from, from_index ) )
+      {
+        set_bit( tt, i );
+      }
+
+      if ( ++from_index == from.num_bits() )
+      {
+        from_index = 0;
+      }
+    }
   }
+  else
+  {
+    auto it = tt.begin();
+    while ( it != tt.end() )
+    {
+      it = std::copy( from.cbegin(), from.cend(), it );
+    }
+  } 
 }
 
 } // namespace kitty

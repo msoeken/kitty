@@ -550,29 +550,98 @@ TEST_F( OperationsTest, majority7 )
   EXPECT_EQ( ternary_majority( sf0, g, sf1 ), maj7 );
 }
 
+template<typename TT>
+void majority_decomposition_even( TT& f1, TT& f2 )
+{
+  /* num_vars is even */
+  ASSERT_EQ( f1.num_vars() % 2, 0 ); 
+  
+  /* k is odd */
+  auto k = f1.num_vars() >> 1;
+  ASSERT_EQ( k % 2, 1 );
+
+  create_threshold( f1, k );
+  f2 = f1;
+
+  auto eq_k = f1.construct();
+  create_equals( eq_k, k );
+
+  auto factor1 = f1.construct();
+  auto factor2 = f2.construct();
+
+  for ( auto i = 0; i < k; ++i )
+  {
+    auto v1 = f1.construct();
+    create_nth_var( v1, i );
+    factor1 ^= v1;
+
+    auto v2 = f1.construct();
+    create_nth_var( v2, k + i );
+    factor2 ^= v2;
+  }
+
+  f1 |= eq_k & factor1;
+  f2 |= eq_k & factor2;
+}
+
 TEST_F( OperationsTest, majority_conjecture_small )
 {
   constexpr auto k = 7;
   constexpr auto n = 2 * k + 1;
 
+  static_truth_table<n> maj, f1_e, f2_e;
+  static_truth_table<n - 1> f1, f2;
+
+  create_majority( maj );
+  majority_decomposition_even( f1, f2 );
+
+  extend_to( f1_e, f1 );
+  extend_to( f2_e, f2 );
+
+  EXPECT_EQ( ternary_majority( f1_e, nth<n>( 2 * k ), f2_e ), maj );
+}
+
+TEST_F( OperationsTest, majority_odd_conjecture )
+{
+  constexpr auto k = 3;
+  constexpr auto n = 2 * k + 1;
+
   static_truth_table<n> maj;
   create_majority( maj );
 
-  const auto th0 = cofactor0( maj, 2 * k ); /* threshold function (> k) */
-  const auto th1 = cofactor1( maj, 2 * k ); /* threshold function (>= k) */
-  const auto te = th1 & ~th0; /* function (= k) */
+  /* create f1 */
+  static_truth_table<n - 2> f1_m3;
+  create_majority( f1_m3 );
+  static_truth_table<n - 1> f1;
+  extend_to( f1, f1_m3 );
 
-  auto factor1 = maj.construct();
-  auto factor2 = maj.construct();
+  /* create f2 */
+  static_truth_table<n - 1> f2, rem;
+  create_threshold( f2, k );
+  create_equals( rem, k );
+  f2 |= ~f1 & rem;
 
-  for ( auto i = 0; i < k; ++i )
+  print_hex( f2 ); std::cout << std::endl;
+
+
+  auto f2_alt = nth( n - 1, n - 3 );
+  for ( auto i = 4; i <= n; ++i )
   {
-    factor1 ^= nth<n>( i );
-    factor2 ^= nth<n>( k + i );
+    f2_alt = ternary_majority( nth( n - 1, n - i ), nth( n - 1, n - 2 ), f2_alt );
   }
+  print_hex( f2_alt ); std::cout << std::endl;
 
-  const auto sf0 = th0 | factor1 & te;
-  const auto sf1 = th0 | factor2 & te;
+  static_truth_table<n - 1> f2_alt2_p1, f2_alt2_p2;
+  create_threshold( f2_alt2_p1, k );
+  create_equals( f2_alt2_p2, k );
+  auto f2_alt2 = f2_alt2_p1 | ( f2_alt2_p2 & nth<n - 1>( n - 2 ) );
 
-  EXPECT_EQ( ternary_majority( sf0, nth<n>( 2 * k ), sf1 ), maj );
+  EXPECT_EQ( f2, f2_alt2 );
+  
+  /* create majority */
+  static_truth_table<n> f1_e, f2_e;
+  extend_to( f1_e, f1 );
+  extend_to( f2_e, f2 );
+
+  EXPECT_EQ( maj, ternary_majority( nth<n>( n - 1 ), f1_e, f2_e ) );
 }
