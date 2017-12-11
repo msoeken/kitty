@@ -544,8 +544,8 @@ TEST_F( OperationsTest, majority7 )
   EXPECT_EQ( sf0, ( factor2 & th0 ) ^ ( ~factor2 & th1 ) );
   EXPECT_EQ( sf1, ( factor2 & th1 ) ^ ( ~factor2 & th0 ) );
 
-  EXPECT_EQ( sf0, th0 | factor1 & te );
-  EXPECT_EQ( sf1, th0 | factor2 & te );
+  EXPECT_EQ( sf0, th0 | ( factor1 & te ) );
+  EXPECT_EQ( sf1, th0 | ( factor2 & te ) );
 
   EXPECT_EQ( ternary_majority( sf0, g, sf1 ), maj7 );
 }
