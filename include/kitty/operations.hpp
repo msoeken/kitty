@@ -679,20 +679,14 @@ void extend_to( TT& tt, const TTFrom& from )
 
   if ( from.num_vars() < 6 )
   {
-    clear( tt );
-    uint64_t from_index = 0;
-    for ( uint64_t i = 0; i < tt.num_bits(); ++i )
-    {
-      if ( get_bit( from, from_index ) )
-      {
-        set_bit( tt, i );
-      }
+    auto mask = *from.begin();
 
-      if ( ++from_index == from.num_bits() )
-      {
-        from_index = 0;
-      }
+    for ( auto i = from.num_vars(); i < std::min<uint8_t>( 6, tt.num_vars() ); ++i )
+    {
+      mask |= ( mask << ( 1 << i ) );
     }
+
+    std::fill( tt.begin(), tt.end(), mask );
   }
   else
   {
