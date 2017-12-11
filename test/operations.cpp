@@ -595,10 +595,7 @@ TEST_F( OperationsTest, majority_conjecture_small )
   create_majority( maj );
   majority_decomposition_even( f1, f2 );
 
-  extend_to( f1_e, f1 );
-  extend_to( f2_e, f2 );
-
-  EXPECT_EQ( ternary_majority( f1_e, nth<n>( 2 * k ), f2_e ), maj );
+  EXPECT_EQ( ternary_majority( extend_to<n>( f1 ), nth<n>( 2 * k ), extend_to<n>( f2 ) ), maj );
 }
 
 TEST_F( OperationsTest, majority_odd_conjecture )

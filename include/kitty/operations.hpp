@@ -663,6 +663,15 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   }
 }
 
+/*! \brief Extends smaller truth table to larger one
+
+  The most significant variables will not be in the functional support of the
+  resulting truth table, but the method is helpful to align a truth table when
+  being used with another one.
+
+  \param tt Larger truth table to create
+  \param tt Smaller truth table to copy from
+*/
 template<typename TT, typename TTFrom>
 void extend_to( TT& tt, const TTFrom& from )
 {
@@ -693,6 +702,23 @@ void extend_to( TT& tt, const TTFrom& from )
       it = std::copy( from.cbegin(), from.cend(), it );
     }
   } 
+}
+
+/*! \brief Extends smaller truth table to larger static one
+
+  This is a special version of extend_to that has the truth table as a return
+  value.  It only works for creating static truth tables.  The template
+  parameter `NumVars` must be equal or larger to the number of variables in
+  `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<int NumVars, typename TTFrom>
+inline static_truth_table<NumVars> extend_to( const TTFrom& from )
+{
+  static_truth_table<NumVars> tt;
+  extend_to( tt, from );
+  return tt;
 }
 
 } // namespace kitty
