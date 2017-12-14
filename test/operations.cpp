@@ -551,6 +551,35 @@ TEST_F( OperationsTest, majority7 )
 }
 
 template<typename TT>
+void majority_decomposition_acw( TT& f1, TT& f2 )
+{
+  /* num_vars is even */
+  ASSERT_EQ( f1.num_vars() % 2, 0 ); 
+  
+  /* k */
+  auto k = f1.num_vars() >> 1;
+
+  dynamic_truth_table lhs( 2 * k - 1 );
+  create_majority( lhs );
+  extend_to( f1, lhs );
+
+  dynamic_truth_table rhs1( 2 * k - 1 );
+  dynamic_truth_table rhs2( 2 * k - 1 );
+
+  create_threshold( rhs1, k );
+  create_threshold( rhs2, k - 2 );
+
+  auto rhs1_e = f2.construct();
+  auto rhs2_e = f2.construct();
+  extend_to( rhs1_e, rhs1 );
+  extend_to( rhs2_e, rhs2 );
+
+  create_nth_var( f2, 2 * k - 1 );
+
+  f2 = rhs1_e | ( f2 & rhs2_e );
+}
+
+template<typename TT>
 void majority_decomposition_even( TT& f1, TT& f2 )
 {
   /* num_vars is even */
@@ -584,9 +613,25 @@ void majority_decomposition_even( TT& f1, TT& f2 )
   f2 |= eq_k & factor2;
 }
 
+TEST_F( OperationsTest, majority_conjecture_small_acw )
+{
+  constexpr auto k = 4;
+  constexpr auto n = 2 * k + 1;
+
+  static_truth_table<n> maj, f1_e, f2_e;
+  static_truth_table<n - 1> f1, f2;
+
+  create_majority( maj );
+  majority_decomposition_acw( f1, f2 );
+
+  print_hex( f2 ); std::cout << std::endl;
+
+  EXPECT_EQ( ternary_majority( extend_to<n>( f1 ), nth<n>( 2 * k ), extend_to<n>( f2 ) ), maj );
+}
+
 TEST_F( OperationsTest, majority_conjecture_small )
 {
-  constexpr auto k = 7;
+  constexpr auto k = 3;
   constexpr auto n = 2 * k + 1;
 
   static_truth_table<n> maj, f1_e, f2_e;
@@ -618,15 +663,11 @@ TEST_F( OperationsTest, majority_odd_conjecture )
   create_equals( rem, k );
   f2 |= ~f1 & rem;
 
-  print_hex( f2 ); std::cout << std::endl;
-
-
   auto f2_alt = nth( n - 1, n - 3 );
   for ( auto i = 4; i <= n; ++i )
   {
     f2_alt = ternary_majority( nth( n - 1, n - i ), nth( n - 1, n - 2 ), f2_alt );
   }
-  print_hex( f2_alt ); std::cout << std::endl;
 
   static_truth_table<n - 1> f2_alt2_p1, f2_alt2_p2;
   create_threshold( f2_alt2_p1, k );
