@@ -261,6 +261,128 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> flip_swap_npn_canonization( const
   return std::make_tuple( npn, phase, perm );
 }
 
+/*! \cond PRIVATE */
+namespace detail
+{
+
+template<typename TT>
+void sifting_npn_canonization_loop( TT& npn, uint32_t& phase, std::vector<uint8_t>& perm )
+{
+  auto improvement = true;
+  auto forward = true;
+
+  const auto n = npn.num_vars();
+
+  while ( improvement )
+  {
+    improvement = false;
+
+    for ( int i = forward ? 0 : n - 2; forward ? i < static_cast<int>( n - 1 ) : i >= 0; forward ? ++i : --i )
+    {
+      auto local_improvement = false;
+      for ( auto k = 1u; k < 8u; ++k )
+      {
+        if ( k % 4u == 0u )
+        {
+          const auto next_t = swap( npn, i, i + 1 );
+          if ( next_t < npn )
+          {
+            npn = next_t;
+            std::swap( perm[i], perm[i + 1] );
+            local_improvement = true;
+          }
+        }
+        else if ( k % 2u == 0u )
+        {
+          const auto next_t = flip( npn, i + 1 );
+          if ( next_t < npn )
+          {
+            npn = next_t;
+            phase ^= 1 << perm[i + 1];
+            local_improvement = true;
+          }
+        }
+        else
+        {
+          const auto next_t = flip( npn, i );
+          if ( next_t < npn )
+          {
+            npn = next_t;
+            phase ^= 1 << perm[i];
+            local_improvement = true;
+          }
+        }
+      }
+
+      if ( local_improvement )
+      {
+        improvement = true;
+      }
+    }
+
+    forward = !forward;
+  }
+}
+}
+/*! \endcond */
+
+/*! \brief Sifting NPN heuristic
+
+  The algorithm will always consider two adjacent variables and try all possible
+  transformations on these two.  It will try once in forward direction and once
+  in backward direction.  It will try for the regular function and inverted
+  function.
+
+  The function returns a NPN configuration which contains the necessary
+  transformations to obtain the representative.  It is a tuple of
+
+  - the NPN representative
+  - input negations and output negation, output negation is stored as bit *n*,
+    where *n* is the number of variables in `tt`
+  - input permutation to apply
+
+  \param tt Truth table
+  \return NPN configuration
+*/
+template<typename TT>
+std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_npn_canonization( const TT& tt )
+{
+  const auto num_vars = tt.num_vars();
+
+  /* initialize permutation and phase */
+  std::vector<uint8_t> perm( num_vars );
+  std::iota( perm.begin(), perm.end(), 0u );
+  uint32_t phase{0u};
+
+  if ( num_vars < 2 )
+  {
+    return std::make_tuple( tt, phase, perm );
+  }
+
+  auto npn = tt;
+
+  detail::sifting_npn_canonization_loop( npn, phase, perm );
+
+  const auto best_perm = perm;
+  const auto best_phase = phase;
+  const auto best_npn = npn;
+
+  npn = ~tt;
+  phase = 1 << num_vars;
+  std::iota( perm.begin(), perm.end(), 0u );
+
+  detail::sifting_npn_canonization_loop( npn, phase, perm );
+
+  if ( best_npn < npn )
+  {
+    perm = best_perm;
+    phase = best_phase;
+    npn = best_npn;
+  }
+
+  return std::make_tuple( npn, phase, perm );
+}
+
 /*! \brief Obtain truth table from NPN configuration
 
   Given an NPN configuration, which contains a representative

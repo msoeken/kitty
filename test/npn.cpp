@@ -86,3 +86,15 @@ TEST_F( NPNTest, random_functions_flip_swap )
     EXPECT_EQ( create_from_npn_config( res ), tt );
   }
 }
+
+TEST_F( NPNTest, random_functions_sifting )
+{
+  kitty::static_truth_table<8> tt;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res = sifting_npn_canonization( tt );
+    EXPECT_EQ( create_from_npn_config( res ), tt );
+  }
+}
