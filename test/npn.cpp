@@ -48,7 +48,7 @@ protected:
   }
 };
 
-TEST_F( NPNTest, random_functions )
+TEST_F( NPNTest, random_functions_exact )
 {
   using pair_vec_t = std::vector<std::pair<std::string, std::string>>;
 
@@ -73,4 +73,28 @@ TEST_F( NPNTest, random_functions )
 
   check_npn<4>( "cafe", "011b" );
   check_npn<6>( "17cad20f55459c3f", "001b674bdf9ca7c3" );
+}
+
+TEST_F( NPNTest, random_functions_flip_swap )
+{
+  kitty::static_truth_table<8> tt;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res = flip_swap_npn_canonization( tt );
+    EXPECT_EQ( create_from_npn_config( res ), tt );
+  }
+}
+
+TEST_F( NPNTest, random_functions_sifting )
+{
+  kitty::static_truth_table<8> tt;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res = sifting_npn_canonization( tt );
+    EXPECT_EQ( create_from_npn_config( res ), tt );
+  }
 }
