@@ -40,6 +40,9 @@ v0.2 (not yet released)
 * New data structure for cubes used by ISOP and ESOP computation: ``cube``
   `#23 <https://github.com/msoeken/kitty/pull/23>`_
 
+* NPN canonization heuristics: ``flip_swap_npn_canonization``
+  `#27 <https://github.com/msoeken/kitty/pull/27>`_
+
 * Spectral canonization: ``exact_spectral_canonization``, ``print_spectrum``
   `#19 <https://github.com/msoeken/kitty/pull/19>`_
 
