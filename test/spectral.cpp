@@ -122,3 +122,29 @@ TEST_F( SpectralTest, canonization )
   EXPECT_EQ( exact_spectral_canonization( from_hex<3>( "57" ) ), from_hex<3>( "80" ) );
 }
 
+TEST_F( SpectralTest, transformations )
+{
+  static_truth_table<5> tt;
+  std::vector<detail::spectral_operation> transforms;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    auto tt_canon = exact_spectral_canonization( tt, [&transforms]( const std::vector<detail::spectral_operation>& best_transforms ) {
+      transforms = best_transforms;
+    } );
+
+    auto s = detail::spectrum::from_truth_table( tt );
+    std::for_each( transforms.begin(), transforms.end(), [&s]( const auto& t ) { s.apply( t ); } );
+
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt_canon, tt2 );
+
+    s = detail::spectrum::from_truth_table( tt2 );
+    std::for_each( transforms.rbegin(), transforms.rend(), [&s]( const auto& t ) { s.apply( t ); } );
+
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
+  }
+}

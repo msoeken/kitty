@@ -624,8 +624,6 @@ TEST_F( OperationsTest, majority_conjecture_small_acw )
   create_majority( maj );
   majority_decomposition_acw( f1, f2 );
 
-  print_hex( f2 ); std::cout << std::endl;
-
   EXPECT_EQ( ternary_majority( extend_to<n>( f1 ), nth<n>( 2 * k ), extend_to<n>( f2 ) ), maj );
 }
 

@@ -130,6 +130,7 @@ public:
     auto copy = _s;
     fast_hadamard_transform( copy, true );
 
+    clear( tt );
     for ( auto i = 0u; i < copy.size(); ++i )
     {
       if ( copy[i] == -1 )
@@ -306,10 +307,13 @@ public:
   {
   }
 
-  TT run()
+  template<typename Callback>
+  TT run( Callback&& fn )
   {
     order = get_rw_coeffecient_order( num_vars );
     normalize();
+
+    fn( best_transforms );
 
     TT tt = func.construct();
     spec.to_truth_table<TT>( tt );
@@ -409,6 +413,8 @@ private:
         auto& spec2 = specs.at( v << 1 );
         spec2 = lspec;
 
+        const auto save = transform_index;
+
         /* spectral translation to all other 1s in j */
         while ( j )
         {
@@ -422,7 +428,6 @@ private:
           insert( spec2.permutation( k, v ) );
         }
 
-        const auto save = transform_index;
         normalize_rec( spec2, v << 1 );
 
         if ( v == 1 && min == max )
@@ -509,17 +514,26 @@ private:
   std::vector<spectral_operation> best_transforms;
   unsigned transform_index = 0u;
 };
+
+inline void exact_spectral_canonization_null_callback( const std::vector<spectral_operation>& )
+{
+}
 } // namespace detail
 
 /*! \brief Exact spectral canonization
 
+  The function can be passed as second argument a callback that is called with a
+  vector of spectral operations necessary to transform the input function into
+  the representative.
+
   \param tt Truth table
+  \param fn Callback to retrieve list of transformations (optional)
  */
-template<typename TT>
-inline TT exact_spectral_canonization( const TT& tt )
+template<typename TT, typename Callback = decltype( detail::exact_spectral_canonization_null_callback )>
+inline TT exact_spectral_canonization( const TT& tt, Callback&& fn = detail::exact_spectral_canonization_null_callback )
 {
   detail::miller_spectral_canonization_impl<TT> impl( tt );
-  return impl.run();
+  return impl.run( fn );
 }
 
 /*! \brief Print spectral representation of a function in RW order
