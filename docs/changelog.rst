@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.2 (not yet released)
------------------------
+v0.2 (December 21, 2017)
+------------------------
 
 * Generic algorithms: ``for_each_block``, ``for_each_block_reversed``, ``for_each_one_bit``
   `#14 <https://github.com/msoeken/kitty/pull/14>`_
