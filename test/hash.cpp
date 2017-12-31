@@ -25,6 +25,7 @@
 
 #include <cstdlib>
 #include <limits>
+#include <unordered_map>
 
 #include <gtest/gtest.h>
 
@@ -41,4 +42,29 @@ class HashTest : public kitty::testing::Test
 TEST_F( HashTest, length_of_size_t )
 {
   EXPECT_EQ( std::numeric_limits<std::size_t>::digits, 64 );
+}
+
+TEST_F( HashTest, hash_static )
+{
+  std::unordered_map<static_truth_table<10>, uint64_t, hash<static_truth_table<10>>> counts;
+
+  for ( auto i = 0; i < 10; ++i )
+  {
+    static_truth_table<10> tt;
+    create_random( tt );
+    counts[tt] = count_ones( tt );
+  }
+}
+
+
+TEST_F( HashTest, hash_dynamic )
+{
+  std::unordered_map<dynamic_truth_table, uint64_t, hash<dynamic_truth_table>> counts;
+
+  for ( auto i = 0; i < 10; ++i )
+  {
+    dynamic_truth_table tt( 10u );
+    create_random( tt );
+    counts[tt] = count_ones( tt );
+  }
 }
