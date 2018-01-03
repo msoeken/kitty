@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+v0.3 (not yet released)
+-----------------------
+
+* Constructors: ``create_from_chain``
+  `#28 <https://github.com/msoeken/kitty/pull/28>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 

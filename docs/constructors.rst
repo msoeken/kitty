@@ -14,4 +14,6 @@ The header ``<kitty/constructors.hpp>`` implements operations to construct truth
    create_majority
    create_threshold
    create_equals
+   create_from_chain
+
 

@@ -26,6 +26,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <sstream>
 
 #include <kitty/kitty.hpp>
 
@@ -197,4 +198,57 @@ TEST( ConstructorsTest, create_equals )
 
   EXPECT_TRUE( is_const0( ~total ) );
   EXPECT_EQ( total_bits, uint64_t( 1 ) << total.num_vars() );
+}
+
+TEST( ConstructorsTest, create_from_chain_success )
+{
+  static_truth_table<3> maj, maj_v1, maj_v2, maj_v3, maj_s;
+
+  create_majority( maj );
+
+  EXPECT_TRUE( create_from_chain( maj_v1, {"x4 = x1 & x2", "x5 = x1 & x3", "x6 = x2 & x3", "x7 = x4 | x5", "x8 = x6 | x7"} ) );
+  EXPECT_TRUE( create_from_chain( maj_v2, {"x4=x1&x2", "x5=x1&x3", "x6=x2&x3", "x7=x4|x5", "x8=x6|x7"} ) );
+  EXPECT_TRUE( create_from_chain( maj_v3, {"x4=  x1 & x2", "x5=  x1 &   x3", "x6= x2   &  x3", "x7   = x4 |   x5", "  x8 = x6 | x7  "} ) );
+
+  std::string prog = "x4 = x1 & x2\nx5 = x1 & x3\n\nx6 = x2 & x3\nx7 = x4 | x5\nx8 = x6 | x7";
+  std::istringstream in( prog );
+  EXPECT_TRUE( create_from_chain( maj_s, in ) );
+
+  EXPECT_EQ( maj, maj_v1 );
+  EXPECT_EQ( maj, maj_v2 );
+  EXPECT_EQ( maj, maj_v3 );
+  EXPECT_EQ( maj, maj_s );
+
+  static_truth_table<2> xor_o, xor_v1, xor_v2, xor_v3;
+
+  create_from_binary_string( xor_o, "0110" );
+  EXPECT_TRUE( create_from_chain( xor_v1, {"x3 = x1 ^ x2"} ) );
+  EXPECT_TRUE( create_from_chain( xor_v2, {"x3 = x1 !& x2", "x4 = x1 !& x3", "x5 = x2 !& x3", "x6 = x4 !& x5"} ) );
+  EXPECT_TRUE( create_from_chain( xor_v3, {"x3 = x1 < x2", "x4 = x1 > x2", "x5 = x3 | x4"} ) );
+
+  EXPECT_EQ( xor_o, xor_v1 );
+  EXPECT_EQ( xor_o, xor_v2 );
+  EXPECT_EQ( xor_o, xor_v3 );
+}
+
+TEST( ConstructorsTest, create_from_chain_fail )
+{
+  auto check_for = []( const std::string& chain, const std::string& msg ) {
+    static_truth_table<3> tt;
+    std::istringstream in( chain );
+    std::string error;
+    EXPECT_FALSE( create_from_chain( tt, in, &error ) );
+    EXPECT_EQ( error, msg );
+  };
+
+  check_for( "y4 = x1 & x2", "error in \"y4 = x1 & x2\": variables must be prefixed with x" );
+  check_for( "x3 = x1 & x2", "error in \"x3 = x1 & x2\": steps are not in order" );
+  check_for( "x4", "error in \"x4\": no equal sign found" );
+  check_for( "x4 = ", "error in \"\": line uncompleted" );
+  check_for( "x4 = y1 & x2", "error in \"y1 & x2\": variables must be prefixed with x" );
+  check_for( "x4 = x4 & x2", "error in \"x4 & x2\": invalid operand index" );
+  check_for( "x4 = x3", "error in \"\": line uncompleted" );
+  check_for( "x4 = x1 & y2", "error in \"& y2\": variables must be prefixed with x" );
+  check_for( "x4 = x1 & x4", "error in \"x4\": invalid operand index" );
+  check_for( "x4 = x1 @ x2", "error in \"@\": invalid operator" );
 }
