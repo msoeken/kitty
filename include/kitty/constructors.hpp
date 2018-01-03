@@ -34,10 +34,12 @@
 
 #include <cctype>
 #include <chrono>
+#include <istream>
 #include <random>
 
-#include "detail/constants.hpp"
 #include "cube.hpp"
+#include "detail/constants.hpp"
+#include "detail/utils.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "static_truth_table.hpp"
@@ -341,6 +343,294 @@ void create_equals( TT& tt, uint8_t bitcount )
     {
       set_bit( tt, x );
     }
+  }
+}
+
+/*! \cond PRIVATE */
+template<typename TT, typename Fn>
+bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::string* error )
+{
+  /* in case of error (makes code more readable) */
+  auto fail_with = [&error]( const std::string& line, const std::string& message ) {
+    if ( error )
+    {
+      *error = "error in \"" + line + "\": " + message;
+    }
+    return false;
+  };
+
+  /* initialize variable steps */
+  steps.clear();
+  for ( auto i = 0; i < tt.num_vars(); ++i )
+  {
+    auto var = tt.construct();
+    create_nth_var( var, i );
+    steps.push_back( var );
+  }
+
+  auto next_step = tt.num_vars() + 1;
+
+  std::string line;
+  while ( !( line = next_line() ).empty() )
+  {
+    detail::trim( line );
+
+    /* first character must be an x */
+    if ( line[0] != 'x' )
+    {
+      return fail_with( line, "variables must be prefixed with x" );
+    }
+
+    /* find equals sign */
+    const auto eq = line.find( '=' );
+    if ( eq == std::string::npos )
+    {
+      return fail_with( line, "no equal sign found" );
+    }
+
+    /* next step id */
+    const auto step = std::stoi( line.substr( 1, eq - 1 ) );
+    if ( step != next_step )
+    {
+      return fail_with( line, "steps are not in order" );
+    }
+
+    line = detail::trim_copy( line.substr( eq + 1 ) );
+
+    if ( line.empty() )
+    {
+      return fail_with( line, "line uncompleted" );
+    }
+
+    /* first character must be an x */
+    if ( line[0] != 'x' )
+    {
+      return fail_with( line, "variables must be prefixed with x" );
+    }
+
+    std::size_t op_pos = 0;
+    const auto op1 = std::stoi( line.substr( 1 ), &op_pos );
+
+    if ( op1 < 1 || op1 >= step )
+    {
+      return fail_with( line, "invalid operand index" );
+    }
+
+    line = detail::trim_copy( line.substr( op_pos + 1 ) );
+
+    if ( line.empty() )
+    {
+      return fail_with( line, "line uncompleted" );
+    }
+
+    const auto next_x = line.find( 'x' );
+
+    if ( next_x == std::string::npos )
+    {
+      return fail_with( line, "variables must be prefixed with x" );
+    }
+
+    const auto op_code = detail::trim_copy( line.substr( 0, next_x ) );
+
+    line = detail::trim_copy( line.substr( next_x ) );
+
+    if ( line.empty() )
+    {
+      return fail_with( line, "line uncompleted" );
+    }
+
+    /* first character must be an x */
+    if ( line[0] != 'x' )
+    {
+      return fail_with( line, "variables must be prefixed with x" );
+    }
+
+    const auto op2 = std::stoi( line.substr( 1 ) );
+
+    if ( op2 < 1 || op2 >= step )
+    {
+      return fail_with( line, "invalid operand index" );
+    }
+
+    /* now process arguments */
+    auto tt_step = tt.construct();
+
+    if ( op_code == "!|" )
+    {
+      tt_step = ~binary_or( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == ">" )
+    {
+      tt_step = binary_and( steps[op1 - 1], ~steps[op2 - 1] );
+    }
+    else if ( op_code == "<" )
+    {
+      tt_step = binary_and( ~steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == "^" )
+    {
+      tt_step = binary_xor( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == "!&" )
+    {
+      tt_step = ~binary_and( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == "&" )
+    {
+      tt_step = binary_and( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == "=" )
+    {
+      tt_step = ~binary_xor( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == "<=" )
+    {
+      tt_step = binary_or( ~steps[op1 - 1], steps[op2 - 1] );
+    }
+    else if ( op_code == ">=" )
+    {
+      tt_step = binary_or( steps[op1 - 1], ~steps[op2 - 1] );
+    }
+    else if ( op_code == "|" )
+    {
+      tt_step = binary_or( steps[op1 - 1], steps[op2 - 1] );
+    }
+    else
+    {
+      return fail_with( op_code, "invalid operator" );
+    }
+    steps.push_back( tt_step );
+    ++next_step;
+  }
+
+  return true;
+}
+/*! \endcond */
+
+/*! \brief Constructs truth table from Boolean chain
+
+  If ``tt`` has \f$n\f$ variables, then each string in ``steps`` is of the form
+
+  \verbatim embed:rst
+      ::
+
+        x<i> = x<j> <op> x<k>
+  \endverbatim
+
+  where ``<i>`` is an increasing number starting from \f$n + 1\f$, and ``<j>``
+  and ``<k>`` refer to previous steps or primary inputs where \f$j < i\f$ and
+  \f$k < i\f$.  Primary inputs are indexed from \f$1\f$ to \f$n\f$.  The last
+  computed step will be assigned to ``tt``.  The following operators are
+  supported:
+
+  \verbatim embed:rst
+      +----------+-------------------------+-------------+
+      | ``<op>`` | Operation               | Truth table |
+      +==========+=========================+=============+
+      | ``"!|"`` | Nondisjunction          | 0001        |
+      +----------+-------------------------+-------------+
+      | ``">"``  | Nonimplication          | 0010        |
+      +----------+-------------------------+-------------+
+      | ``"<"``  | Converse nonimplication | 0100        |
+      +----------+-------------------------+-------------+
+      | ``"^"``  | Exclusive disjunction   | 0110        |
+      +----------+-------------------------+-------------+
+      | ``"!&"`` | Nonconjunction          | 0111        |
+      +----------+-------------------------+-------------+
+      | ``"&"``  | Conjunction             | 1000        |
+      +----------+-------------------------+-------------+
+      | ``"="``  | Equivalence             | 1001        |
+      +----------+-------------------------+-------------+
+      | ``">="`` | Nonimplication          | 1011        |
+      +----------+-------------------------+-------------+
+      | ``"<="`` | Implication             | 1101        |
+      +----------+-------------------------+-------------+
+      | ``"|"``  | Disjunction             | 1110        |
+      +----------+-------------------------+-------------+
+  \endverbatim
+
+  The following example will generate the majority function:
+
+  \verbatim embed:rst
+      .. code-block:: cpp
+      
+         kitty::static_truth_table<3> tt;
+         kitty::create_from_chain( tt, {"x4 = x1 & x2",
+                                        "x5 = x1 & x3",
+                                        "x6 = x2 & x3",
+                                        "x7 = x4 | x5",
+                                        "x8 = x6 | x7"} );
+  \endverbatim
+
+  If parsing fails, the function returns ``false``, and if ``error`` is not
+  ``nullptr``, it contains a descriptive reason, why parsing failed.  Otherwise,
+  the function returns ``true``.
+
+  \param tt Truth table
+  \param steps Vector of steps
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::string* error = nullptr )
+{
+  std::vector<TT> vec_steps;
+  auto it = steps.begin();
+  if ( !create_from_chain( tt, [&it, &steps]() {
+         return ( it != steps.end() ) ? *it++ : std::string();
+       },
+                           vec_steps, error ) )
+  {
+    return false;
+  }
+  else
+  {
+    tt = vec_steps.back();
+    return true;
+  }
+}
+
+/*! \brief Constructs truth table from Boolean chain
+
+  Like the other ``create_from_chain`` function, but reads chain from an input
+  stream instead of a vector of strings.  Lines are separated by a new line.
+  Empty lines are skipped over.
+
+  \param tt Truth table
+  \param in Input stream to read chain
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
+{
+  std::vector<TT> vec_steps;
+  if ( !create_from_chain( tt, [&in]() {
+    std::string line;
+    while ( true )
+    {
+      if ( std::getline( in, line ) )
+      {
+        detail::trim( line );
+        if ( !line.empty() )
+        {
+          return line;
+        }
+      }
+      else
+      {
+        return std::string();
+      }
+    } }, vec_steps, error ) )
+  {
+    return false;
+  }
+  else
+  {
+    tt = vec_steps.back();
+    return true;
   }
 }
 } // namespace kitty
