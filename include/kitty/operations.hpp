@@ -86,7 +86,7 @@ inline TT ternary_majority( const TT& first, const TT& second, const TT& third )
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & ( b ^ c ) ) ^ ( b & c ); } );
 }
 
-/*! Performs ternary if-then-else of three truth tables.
+/*! \brief Performs ternary if-then-else of three truth tables
 
   \param first Truth table for condition
   \param second Truth table for then-case
@@ -670,7 +670,7 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   being used with another one.
 
   \param tt Larger truth table to create
-  \param tt Smaller truth table to copy from
+  \param from Smaller truth table to copy from
 */
 template<typename TT, typename TTFrom>
 void extend_to( TT& tt, const TTFrom& from )
