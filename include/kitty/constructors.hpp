@@ -180,7 +180,7 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   }
 }
 
-/*! Creates string from raw character data
+/*! \brief Creates string from raw character data
 
   Can create a truth table from the data that is produced by
   `print_raw`, e.g., from binary files or `std::stringstream`.
