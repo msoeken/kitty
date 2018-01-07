@@ -112,7 +112,7 @@ public:
   }
 
 private:
-  spectrum( const std::vector<int32_t>& _s ) : _s( _s ) {}
+  explicit spectrum( const std::vector<int32_t>& _s ) : _s( _s ) {}
 
 public:
   template<typename TT>

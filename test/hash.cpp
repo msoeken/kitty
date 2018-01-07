@@ -54,6 +54,8 @@ TEST_F( HashTest, hash_static )
     create_random( tt );
     counts[tt] = count_ones( tt );
   }
+
+  EXPECT_LE( counts.size(), 10 );
 }
 
 
@@ -67,4 +69,6 @@ TEST_F( HashTest, hash_dynamic )
     create_random( tt );
     counts[tt] = count_ones( tt );
   }
+
+  EXPECT_LE( counts.size(), 10 );
 }
