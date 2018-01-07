@@ -271,11 +271,12 @@ void for_each_one_bit_jump( const TT& tt, Fn&& op )
 template<int NumVars, typename Fn>
 void for_each_one_bit_jump( const static_truth_table<NumVars, true>& tt, Fn&& op )
 {
-  uint64_t block = tt._bits, value;
+  uint64_t block = tt._bits;
 
   while ( block )
   {
-    uint64_t low_bit = value = block - ( block & ( block - 1 ) );
+    uint64_t low_bit = block - ( block & ( block - 1 ) );
+    uint64_t value = low_bit;
 
     value |= value >> 1;
     value |= value >> 2;

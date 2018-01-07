@@ -55,7 +55,7 @@ TEST_F( HashTest, hash_static )
     counts[tt] = count_ones( tt );
   }
 
-  EXPECT_LE( counts.size(), 10 );
+  EXPECT_LE( counts.size(), 10u );
 }
 
 
@@ -70,5 +70,5 @@ TEST_F( HashTest, hash_dynamic )
     counts[tt] = count_ones( tt );
   }
 
-  EXPECT_LE( counts.size(), 10 );
+  EXPECT_LE( counts.size(), 10u );
 }
