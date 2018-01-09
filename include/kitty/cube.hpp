@@ -93,23 +93,23 @@ public:
   /*! \brief Adds literal to cube */
   inline void add_literal( uint8_t var_index, bool polarity = true )
   {
-    _mask |= 1 << var_index;
+    set_mask( var_index );
 
     if ( polarity )
     {
-      _bits |= 1 << var_index;
+      set_bit( var_index );
     }
     else
     {
-      _bits &= ~( 1 << var_index );
+      clear_bit( var_index );
     }
   }
 
   /*! \brief Removes literal from cube */
   inline void remove_literal( uint8_t var_index )
   {
-    _mask &= ~( 1 << var_index );
-    _bits &= ~( 1 << var_index );
+    clear_mask( var_index );
+    clear_bit( var_index );
   }
 
   /*! \brief Constructs the elementary cube representing a single variable */
@@ -138,8 +138,44 @@ public:
   {
     for ( auto i = 0u; i < length; ++i )
     {
-      os << ( ( ( _mask >> i ) & 1 ) ? ( ( ( _bits >> i ) & 1 ) ? '1' : '0' ) : '-' );
+      os << ( get_mask( i ) ? ( get_bit( i ) ? '1' : '0' ) : '-' );
     }
+  }
+
+  /*! \brief Gets bit at index */
+  inline bool get_bit( uint8_t index ) const
+  {
+    return ( ( _bits >> index ) & 1 );
+  }
+
+  /*! \brief Gets mask at index */
+  inline bool get_mask( uint8_t index ) const
+  {
+    return ( ( _mask >> index ) & 1 );
+  }
+
+  /*! \brief Sets bit at index */
+  inline void set_bit( uint8_t index )
+  {
+    _bits |= ( 1 << index );
+  }
+
+  /*! \brief Sets mask at index */
+  inline void set_mask( uint8_t index )
+  {
+    _mask |= ( 1 << index );
+  }
+
+  /*! \brief Clears bit at index */
+  inline void clear_bit( uint8_t index )
+  {
+    _bits &= ~( 1 << index );
+  }
+
+  /*! \brief Clears mask at index */
+  inline void clear_mask( uint8_t index )
+  {
+    _mask &= ~( 1 << index );
   }
 
   /* cube data */

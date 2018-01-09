@@ -66,3 +66,25 @@ TEST_F( CubeTest, pos_neg_cube )
     EXPECT_EQ( to_string( cube::neg_cube( i ), i ), std::string( i, '0' ) );
   }
 }
+
+TEST_F( CubeTest, set_get_clear_cube )
+{
+  for ( auto i = 1; i <= 32; ++i )
+  {
+    auto c = cube::neg_cube( i );
+    for ( auto j = 0; j < i; ++j )
+    {
+      EXPECT_EQ( c.get_bit( j ), false );
+      c.set_bit( j );
+      EXPECT_EQ( c.get_bit( j ), true );
+      c.clear_bit( j );
+      EXPECT_EQ( c.get_bit( j ), false );
+
+      EXPECT_EQ( c.get_mask( j ), true );
+      c.clear_mask( j );
+      EXPECT_EQ( c.get_mask( j ), false );
+      c.set_mask( j );
+      EXPECT_EQ( c.get_mask( j ), true );
+    }
+  }
+}
