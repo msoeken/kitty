@@ -119,6 +119,20 @@ public:
     return cube( _bits, _bits );
   }
 
+  /*! \brief Constructs the elementary cube containing the first k positive literals */
+  static cube pos_cube( uint8_t k )
+  {
+    const uint32_t _bits = ( uint64_t( 1 ) << k ) - 1;
+    return cube( _bits, _bits );
+  }
+
+  /*! \brief Constructs the elementary cube containing the first k negative literals */
+  static cube neg_cube( uint8_t k )
+  {
+    const uint32_t _bits = ( uint64_t( 1 ) << k ) - 1;
+    return cube( 0u, _bits );
+  }
+
   /*! \brief Prints a cube */
   inline void print( unsigned length = 32u, std::ostream& os = std::cout ) const
   {
