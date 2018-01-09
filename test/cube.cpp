@@ -58,3 +58,11 @@ TEST_F( CubeTest, distance )
   EXPECT_EQ( cube().distance( cube( 0, 2 ) ), 1 );
 }
 
+TEST_F( CubeTest, pos_neg_cube )
+{
+  for ( auto i = 0; i <= 32; ++i )
+  {
+    EXPECT_EQ( to_string( cube::pos_cube( i ), i ), std::string( i, '1' ) );
+    EXPECT_EQ( to_string( cube::neg_cube( i ), i ), std::string( i, '0' ) );
+  }
+}
