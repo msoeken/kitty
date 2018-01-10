@@ -10,6 +10,9 @@ v0.3 (not yet released)
 * Cube constructors: ``pos_cube``, ``neg_cube``
   `#29 <https://github.com/msoeken/kitty/pull/29>`_
 
+* Cube methods: ``get_bit``, ``get_mask``, ``set_bit``, ``set_mask``, ``clear_bit``, ``clear_mask`` (contributed by Heinz Riener)
+  `#30 <https://github.com/msoeken/kitty/pull/30>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
