@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/msoeken/kitty.svg?branch=master)](https://travis-ci.org/msoeken/kitty)
 [![Documentation Status](https://readthedocs.org/projects/libkitty/badge/?version=latest)](http://libkitty.readthedocs.io/en/latest/?badge=latest)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4c1fc5fbf68b48e79d9ae91a63b5af87)](https://www.codacy.com/app/msoeken/kitty?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=msoeken/kitty&amp;utm_campaign=Badge_Grade)
+[![Latest release](https://img.shields.io/github/release/msoeken/kitty.svg)](https://github.com/msoeken/kitty/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 
 # kitty
 
