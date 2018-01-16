@@ -53,6 +53,17 @@ TEST_F( CubeTest, constructing_and_printing )
   EXPECT_EQ( to_string( cube( 0, 2 ), 2 ), "-0" );
 }
 
+TEST_F( CubeTest, construction_from_string )
+{
+  EXPECT_EQ( to_string( cube( "010" ), 3 ), "010" );
+  EXPECT_EQ( to_string( cube( "-1-" ), 3 ), "-1-" );
+  EXPECT_EQ( to_string( cube( "*00" ), 3 ), "-00" );
+
+  EXPECT_EQ( to_string( cube( "" ), 0 ), "" );
+  EXPECT_EQ( to_string( cube( std::string( 32, '1' ) ), 32 ), std::string( 32, '1' ) ); 
+  EXPECT_EQ( to_string( cube( std::string( 33, '1' ) ), 32 ), std::string( 32, '1' ) ); 
+}
+
 TEST_F( CubeTest, distance )
 {
   EXPECT_EQ( cube().distance( cube( 0, 2 ) ), 1 );

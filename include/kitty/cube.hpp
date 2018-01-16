@@ -34,6 +34,7 @@
 
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include "hash.hpp"
 
@@ -58,6 +59,40 @@ public:
     \param mask Care bitmask of variables (1: part of cube, 0: not part of cube)
   */
   cube( uint32_t bits, uint32_t mask ) : _bits( bits ), _mask( mask ) {}
+
+  /*! \brief Constructs a cube from a string
+
+    Each character corresponds to one literal in the cube.  Only up to first 32
+    characters of the string will be considered, since this data structure
+    cannot represent cubes with more than 32 literals.  A '1' in the string
+    corresponds to a postive literal, a '0' corresponds to a negative literal.
+    All other characters represent don't care, but it is customary to use '-'.
+
+    \param str String representing a cube
+  */
+  cube( const std::string& str )
+  {
+    _bits = _mask = 0u;
+
+    auto p = str.begin();
+
+    for ( uint64_t i = 1; i <= ( uint64_t( 1u ) << 32u ); i <<= 1 )
+    {
+      switch ( *p )
+      {
+        default: /* don't care */
+          break;
+        case '1':
+          _bits |= i;
+          /* no break on purpose, jump to 0 and set mask */
+        case '0':
+          _mask |= i;
+          break;
+      }
+
+      if ( ++p == str.end() ) return;
+    }
+  }
 
   /*! \brief Returns number of literals */
   inline int num_literals() const
