@@ -70,7 +70,7 @@ public:
 
     \param str String representing a cube
   */
-  cube( const std::string& str )
+  explicit cube( const std::string& str )
   {
     _bits = _mask = 0u;
 
