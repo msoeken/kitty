@@ -200,6 +200,21 @@ TEST( ConstructorsTest, create_equals )
   EXPECT_EQ( total_bits, uint64_t( 1 ) << total.num_vars() );
 }
 
+TEST( ConstructorsTest, create_from_cubes )
+{
+  std::vector<cube> cubes;
+  cubes.emplace_back( "11--" );
+  cubes.emplace_back( "00--" );
+  cubes.emplace_back( "--00" );
+  cubes.emplace_back( "--11" );
+
+  kitty::dynamic_truth_table tt( 4u );
+  kitty::create_random( tt ); /* fill with noise */
+  kitty::create_from_cubes( tt, cubes, true );
+
+  EXPECT_EQ( tt._bits[0u], 0x6996u );
+}
+
 TEST( ConstructorsTest, create_from_chain_success )
 {
   static_truth_table<3> maj, maj_v1, maj_v2, maj_v3, maj_s;
