@@ -70,7 +70,8 @@ public:
 
     \param str String representing a cube
   */
-  explicit cube( const std::string& str )
+  // cppcheck-suppress noExplicitConstructor
+  cube( const std::string& str )
   {
     _bits = _mask = 0u;
 
