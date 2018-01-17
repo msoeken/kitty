@@ -59,7 +59,7 @@ void create_nth_var( TT& tt, uint64_t var_index, bool complement = false )
   if ( tt.num_vars() <= 6 )
   {
     /* assign from precomputed table */
-    tt._bits[0] = complement ? !detail::projections[var_index] : detail::projections[var_index];
+    tt._bits[0] = complement ? ~detail::projections[var_index] : detail::projections[var_index];
 
     /* mask if truth table does not require all bits */
     tt.mask_bits();
