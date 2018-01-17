@@ -99,6 +99,19 @@ inline bool operator==( const static_truth_table<NumVars>& first, const static_t
   return equal( first, second );
 }
 
+/*! \brief Operator for not equals (!equal) */
+inline bool operator!=( const dynamic_truth_table& first, const dynamic_truth_table& second )
+{
+  return !equal( first, second );
+}
+
+/*! \brief Operator for not equals (!equal) */
+template<int NumVars>
+inline bool operator!=( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return !equal( first, second );
+}
+
 /*! \brief Operator for less_than */
 template<typename TT>
 inline bool operator<( const TT& first, const TT& second )

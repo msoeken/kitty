@@ -14,6 +14,9 @@ v0.3 (not yet released)
 * Cube methods: ``get_bit``, ``get_mask``, ``set_bit``, ``set_mask``, ``clear_bit``, ``clear_mask`` (contributed by Heinz Riener)
   `#30 <https://github.com/msoeken/kitty/pull/30>`_
 
+* Operators: ``!=``
+  `#32 <https://github.com/msoeken/kitty/pull/32>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
