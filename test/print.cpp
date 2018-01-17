@@ -35,22 +35,6 @@ using namespace kitty;
 
 class PrintTest : public kitty::testing::Test
 {
-protected:
-  template<typename TT>
-  std::string to_binary( const TT& tt ) const
-  {
-    std::stringstream ss;
-    print_binary( tt, ss );
-    return ss.str();
-  }
-
-  template<typename TT>
-  std::string to_hex( const TT& tt ) const
-  {
-    std::stringstream ss;
-    print_hex( tt, ss );
-    return ss.str();
-  }
 };
 
 TEST_F( PrintTest, print_binary )

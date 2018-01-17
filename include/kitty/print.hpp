@@ -33,6 +33,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "algorithm.hpp"
@@ -112,4 +113,33 @@ void print_raw( const TT& tt, std::ostream& os )
     os.write( reinterpret_cast<char*>( &word ), sizeof( word ) );
   } );
 }
+
+/*! \brief Returns truth table as a string in binary representation
+
+  Calls `print_binary` internally on a string stream.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline std::string to_binary( const TT& tt )
+{
+  std::stringstream st;
+  print_binary( tt, st );
+  return st.str();
+}
+
+/*! \brief Returns truth table as a string in hexadecimal representation
+
+  Calls `print_hex` internally on a string stream.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline std::string to_hex( const TT& tt )
+{
+  std::stringstream st;
+  print_hex( tt, st );
+  return st.str();
+}
+
 }
