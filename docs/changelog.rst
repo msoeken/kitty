@@ -7,8 +7,9 @@ v0.3 (not yet released)
 * Constructors: ``create_from_chain``
   `#28 <https://github.com/msoeken/kitty/pull/28>`_
 
-* Cube constructors: ``pos_cube``, ``neg_cube``
+* Cube constructors: ``pos_cube``, ``neg_cube``, constructor to create cube from string
   `#29 <https://github.com/msoeken/kitty/pull/29>`_
+  `#31 <https://github.com/msoeken/kitty/pull/31>`_
 
 * Cube methods: ``get_bit``, ``get_mask``, ``set_bit``, ``set_mask``, ``clear_bit``, ``clear_mask`` (contributed by Heinz Riener)
   `#30 <https://github.com/msoeken/kitty/pull/30>`_
