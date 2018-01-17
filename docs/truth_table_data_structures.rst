@@ -43,6 +43,9 @@ following public member functions.
 | ``mask_bits()``                   | Masks the number of valid truth table bits.                                      |
 +-----------------------------------+----------------------------------------------------------------------------------+
 
+.. doxygenstruct:: kitty::dynamic_truth_table
+   :members:
+
 Static truth table
 ------------------
 
@@ -88,3 +91,6 @@ following public member functions.
 +--------------------------+---------------------------------------------------------------------------------+
 | ``mask_bits()``          | Masks the number of valid truth table bits.                                     |
 +--------------------------+---------------------------------------------------------------------------------+
+
+.. doxygenstruct:: kitty::static_truth_table
+   :members:
