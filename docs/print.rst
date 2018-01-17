@@ -7,3 +7,5 @@ The header ``<kitty/print.hpp>`` implements functions to print truth tables.
    print_binary
    print_hex
    print_raw
+   to_binary
+   to_hex

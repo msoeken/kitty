@@ -17,6 +17,9 @@ v0.3 (not yet released)
 * Operators: ``!=``
   `#32 <https://github.com/msoeken/kitty/pull/32>`_
 
+* Return truth table as string: ``to_binary``, ``to_hex``
+  `#33 <https://github.com/msoeken/kitty/pull/33>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
