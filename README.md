@@ -28,7 +28,7 @@ const auto sum = a ^ b ^ c;
 const auto carry = ternary_majority( a, b, c );
 ```
 
-One can use `static_truth_table` instead of `dynamic_truth_table`, if the number of variables are known at compile-time.  The interface stays the same.
+One can use `static_truth_table` instead of `dynamic_truth_table`, if the number of variables is known at compile-time.  The interface stays the same.
 
 ```c++
 #include <kitty/kitty.hpp>
