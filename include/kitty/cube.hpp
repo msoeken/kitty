@@ -119,6 +119,12 @@ public:
     return _value != that._value;
   }
 
+  /*! \brief Default comparison operator */
+  inline bool operator<( const cube& that ) const
+  {
+    return _value < that._value;
+  }
+
   /*! \brief Merges two cubes of distance-1 */
   inline cube merge( const cube& that ) const
   {
