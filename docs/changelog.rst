@@ -20,6 +20,9 @@ v0.3 (not yet released)
 * Return truth table as string: ``to_binary``, ``to_hex``
   `#33 <https://github.com/msoeken/kitty/pull/33>`_
 
+* Default comparison for cubes (contributed by Heinz Riener)
+  `#34 <https://github.com/msoeken/kitty/pull/34>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
