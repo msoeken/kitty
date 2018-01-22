@@ -29,7 +29,9 @@
 #include <string>
 #include <vector>
 
-#include <kitty/kitty.hpp>
+#include <kitty/constructors.hpp>
+#include <kitty/npn.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

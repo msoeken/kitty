@@ -28,7 +28,9 @@
 #include <algorithm>
 #include <sstream>
 
-#include <kitty/kitty.hpp>
+#include <kitty/constructors.hpp>
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/static_truth_table.hpp>
 
 using namespace kitty;
 

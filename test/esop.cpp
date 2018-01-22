@@ -28,7 +28,8 @@
 
 #include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/constructors.hpp>
+#include <kitty/esop.hpp>
 
 #include "utility.hpp"
 

@@ -27,7 +27,8 @@
 
 #include <sstream>
 
-#include <kitty/kitty.hpp>
+#include <kitty/print.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

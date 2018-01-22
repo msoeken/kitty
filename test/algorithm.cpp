@@ -28,7 +28,9 @@
 #include <algorithm>
 #include <queue>
 
-#include <kitty/kitty.hpp>
+#include <kitty/algorithm.hpp>
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

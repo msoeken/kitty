@@ -30,7 +30,7 @@
 
 #include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/cube.hpp>
 
 #include "utility.hpp"
 

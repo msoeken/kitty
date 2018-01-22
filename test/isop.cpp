@@ -28,7 +28,9 @@
 
 #include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/constructors.hpp>
+#include <kitty/isop.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

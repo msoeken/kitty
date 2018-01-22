@@ -25,7 +25,8 @@
 
 #include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/spectral.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

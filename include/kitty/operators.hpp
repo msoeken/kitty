@@ -32,7 +32,9 @@
 
 #pragma once
 
+#include "dynamic_truth_table.hpp"
 #include "operations.hpp"
+#include "static_truth_table.hpp"
 
 namespace kitty
 {

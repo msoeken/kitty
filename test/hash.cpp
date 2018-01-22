@@ -29,7 +29,9 @@
 
 #include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/hash.hpp>
+#include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
 

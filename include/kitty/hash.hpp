@@ -35,6 +35,8 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include "static_truth_table.hpp"
+
 namespace kitty
 {
 
