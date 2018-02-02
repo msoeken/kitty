@@ -23,38 +23,38 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/static_truth_table.hpp>
+#include <kitty/implicant.hpp>
 
-#pragma once
+#include "utility.hpp"
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+using namespace kitty;
 
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+class ImplicantTest : public kitty::testing::Test
+{
+};
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+TEST_F( ImplicantTest, get_minterms )
+{
+  auto minterms = get_minterms( from_hex<3>( "e8") );
+  EXPECT_EQ( minterms, ( std::vector<uint32_t>{3u, 5u, 6u, 7u} ) );
+}
+
+TEST_F( ImplicantTest, get_jbuddies )
+{
+  auto minterms = get_minterms( from_hex<3>( "e8" ) );
+
+  auto buddies = get_jbuddies( minterms, 0 );
+  EXPECT_EQ( buddies.size(), 1u );
+  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 2, 3 ) ) );
+
+  buddies = get_jbuddies( minterms, 1 );
+  EXPECT_EQ( buddies.size(), 1u );
+  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 1, 3 ) ) );
+
+  buddies = get_jbuddies( minterms, 2 );
+  EXPECT_EQ( buddies.size(), 1u );
+  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 0, 3 ) ) );
+}
