@@ -4,8 +4,9 @@ Change Log
 v0.3 (not yet released)
 -----------------------
 
-* Constructors: ``create_from_chain``
+* Constructors: ``create_from_chain``, ``create_symmetric``
   `#28 <https://github.com/msoeken/kitty/pull/28>`_
+  `#35 <https://github.com/msoeken/kitty/pull/35>`_
 
 * Cube constructors: ``pos_cube``, ``neg_cube``, constructor to create cube from string
   `#29 <https://github.com/msoeken/kitty/pull/29>`_

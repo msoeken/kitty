@@ -202,6 +202,35 @@ TEST( ConstructorsTest, create_equals )
   EXPECT_EQ( total_bits, uint64_t( 1 ) << total.num_vars() );
 }
 
+TEST( ConstructorsTest, create_symmetric )
+{
+  static_truth_table<2> small;
+
+  create_symmetric( small, 0 );
+  EXPECT_EQ( small._bits, 0x0u );
+
+  create_symmetric( small, 1 );
+  EXPECT_EQ( small._bits, 0x1u );
+
+  create_symmetric( small, 2 );
+  EXPECT_EQ( small._bits, 0x6u );
+
+  create_symmetric( small, 3 );
+  EXPECT_EQ( small._bits, 0x7u );
+
+  create_symmetric( small, 4 );
+  EXPECT_EQ( small._bits, 0x8u );
+
+  create_symmetric( small, 5 );
+  EXPECT_EQ( small._bits, 0x9u );
+
+  create_symmetric( small, 6 );
+  EXPECT_EQ( small._bits, 0xeu );
+
+  create_symmetric( small, 7 );
+  EXPECT_EQ( small._bits, 0xfu );
+}
+
 TEST( ConstructorsTest, create_from_cubes )
 {
   std::vector<cube> cubes;

@@ -317,6 +317,8 @@ inline void create_majority( TT& tt )
 template<typename TT>
 void create_threshold( TT& tt, uint8_t threshold )
 {
+  clear( tt );
+
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
     if ( __builtin_popcount( x ) > threshold )
@@ -337,9 +339,34 @@ void create_threshold( TT& tt, uint8_t threshold )
 template<typename TT>
 void create_equals( TT& tt, uint8_t bitcount )
 {
+  clear( tt );
+
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
     if ( __builtin_popcount( x ) == bitcount )
+    {
+      set_bit( tt, x );
+    }
+  }
+}
+
+/*! \brief Constructs symmetric function
+
+  Bits in `counts` are numbered from 0 to 63.  If bit `i` is set in `counts`,
+  the created truth table will evaluate to true, if `i` bits are set in the
+  input assignment.
+
+  \param tt Truth table
+  \param counts Bitcount mask
+*/
+template<typename TT>
+void create_symmetric( TT& tt, uint64_t counts )
+{
+  clear( tt );
+
+  for ( uint64_t x = 0; x < tt.num_bits(); ++x )
+  {
+    if ( ( counts >> __builtin_popcount( x ) ) & 1 )
     {
       set_bit( tt, x );
     }
