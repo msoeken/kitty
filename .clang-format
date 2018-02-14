@@ -31,7 +31,6 @@ BraceWrapping:
   BeforeCatch:     true
   BeforeElse:      true
   IndentBraces:    false
-  SplitEmptyFunctionBody: true
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Allman
 BreakBeforeInheritanceComma: false
