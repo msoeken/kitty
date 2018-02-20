@@ -24,6 +24,9 @@ v0.3 (not yet released)
 * Default comparison for cubes (contributed by Heinz Riener)
   `#34 <https://github.com/msoeken/kitty/pull/34>`_
 
+* Linear and affine canonization: ``exact_linear_canonization``, ``exact_linear_output_canonization``, ``exact_affine_canonization``, ``exact_affine_output_canonization``
+  `#36 <https://github.com/msoeken/kitty/pull/36>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
