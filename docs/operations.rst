@@ -37,4 +37,6 @@ Combination and manipulation
    min_base_inplace
    expand_inplace
    extend_to
+   shift_left_inplace
+   shift_left
 

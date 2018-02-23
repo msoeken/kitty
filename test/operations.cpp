@@ -494,6 +494,17 @@ TEST_F( OperationsTest, extend_to_same )
   EXPECT_EQ( tt1, tt2 );
 }
 
+TEST_F( OperationsTest, shift_left )
+{
+  EXPECT_EQ( shift_left( from_hex<3>( "e8"), 1 ), from_hex<3>( "d0" ) );
+  EXPECT_EQ( shift_left( from_hex<4>( "cafe"), 4 ), from_hex<4>( "afe0" ) );
+  EXPECT_EQ( shift_left( from_hex<7>( "cafeaffe12345678acabacab91837465" ), 4 ), from_hex<7>( "afeaffe12345678acabacab918374650" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 8 ), from_hex( 7, "feaffe12345678acabacab9183746500" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 64 ), from_hex( 7, "acabacab918374650000000000000000" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 0 ), from_hex( 7, "cafeaffe12345678acabacab91837465" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 128 ), from_hex( 7, "00000000000000000000000000000000" ) );
+}
+
 TEST_F( OperationsTest, majority7 )
 {
   const auto a = nth<7>( 0 );
