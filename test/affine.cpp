@@ -58,6 +58,20 @@ protected:
 
     return funcs.size();
   }
+
+  uint64_t canonization( unsigned num_vars, const class_func_t<dynamic_truth_table>& class_func ) const
+  {
+    std::unordered_set<dynamic_truth_table, hash<dynamic_truth_table>> funcs;
+
+    for ( auto i = 0u; i < ( uint64_t( 1 ) << ( 1 << num_vars ) ); ++i )
+    {
+      dynamic_truth_table tt( num_vars );
+      create_from_words( tt, &i, &i + 1 );
+      funcs.insert( class_func( tt ) );
+    }
+
+    return funcs.size();
+  }
 };
 
 TEST_F( AffineTest, delta_swap )
@@ -87,6 +101,33 @@ TEST_F( AffineTest, count_affine_output_static )
 {
   EXPECT_EQ( canonization<2>( exact_affine_output_canonization<static_truth_table<2>> ), 3u );
   EXPECT_EQ( canonization<3>( exact_affine_output_canonization<static_truth_table<3>> ), 6u );
+}
+
+TEST_F( AffineTest, count_affine_output_dynamic )
+{
+  EXPECT_EQ( canonization( 2u, exact_affine_output_canonization<dynamic_truth_table> ), 3u );
+  EXPECT_EQ( canonization( 3u, exact_affine_output_canonization<dynamic_truth_table> ), 6u );
+}
+
+TEST_F( AffineTest, all_two_affine_dynamic )
+{
+  std::unordered_set<dynamic_truth_table, hash<dynamic_truth_table>> functions;
+
+  for ( auto i = 0; i < 16; ++i )
+  {
+    dynamic_truth_table tt( 2 );
+    create_from_words( tt, &i, &i + 1 );
+
+    const auto cls = exact_affine_output_canonization( tt );
+
+    functions.insert( cls );
+  }
+
+  EXPECT_EQ( functions.size(), 3u );
+
+  EXPECT_TRUE( functions.count( from_hex( 2, "0" ) ) );
+  EXPECT_TRUE( functions.count( from_hex( 2, "1" ) ) );
+  EXPECT_TRUE( functions.count( from_hex( 2, "3" ) ) );
 }
 
 TEST_F( AffineTest, all_three_affine_static )

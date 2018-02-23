@@ -15,8 +15,12 @@ v0.3 (not yet released)
 * Cube methods: ``get_bit``, ``get_mask``, ``set_bit``, ``set_mask``, ``clear_bit``, ``clear_mask`` (contributed by Heinz Riener)
   `#30 <https://github.com/msoeken/kitty/pull/30>`_
 
-* Operators: ``!=``
+* Operations: ``shift_left``, ``shift_left_inplace``
+  `#37 <https://github.com/msoeken/kitty/pull/37>`_
+
+* Operators: ``!=``, ``<<``, ``<<=``
   `#32 <https://github.com/msoeken/kitty/pull/32>`_
+  `#37 <https://github.com/msoeken/kitty/pull/37>`_
 
 * Return truth table as string: ``to_binary``, ``to_hex``
   `#33 <https://github.com/msoeken/kitty/pull/33>`_

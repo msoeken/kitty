@@ -169,4 +169,30 @@ inline bool operator<( const static_truth_table<NumVars>& first, const static_tr
   return less_than( first, second );
 }
 
+/*! \brief Operator for left_shift */
+inline dynamic_truth_table operator<<( const dynamic_truth_table& tt, uint64_t shift )
+{
+  return shift_left( tt, shift );
+}
+
+/*! \brief Operator for left_shift */
+template<int NumVars>
+inline static_truth_table<NumVars> operator<<( const static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  return shift_left( tt, shift );
+}
+
+/*! \brief Operator for left_shift_inplace */
+inline void operator<<=( dynamic_truth_table& tt, uint64_t shift )
+{
+  shift_left_inplace( tt, shift );
+}
+
+/*! \brief Operator for left_shift_inplace */
+template<int NumVars>
+inline void operator<<=( static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  shift_left_inplace( tt, shift );
+}
+
 } // namespace kitty
