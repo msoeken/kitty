@@ -43,83 +43,48 @@
 namespace kitty
 {
 
-/*! \brief Applies delta-swap operation
-
-  The delta-swap operation swaps all position pairs \f$(i, i+\delta)\f$, for
-  which \f$\omega\f$ is set 1 at position \f$i\f$.
-
-  See also Eq. 7.1.3-(69) in The Art of Computer Programming.
-
-  \param tt Truth table
-  \param delta Index distance delta
-  \param omega Enable mask
-*/
+/*! \cond PRIVATE */
+namespace detail
+{
+/* all delta-swap operations have been optimized to work with integer masks omega */
 template<typename TT>
-inline void delta_swap_inplace( TT& tt, uint64_t delta, uint64_t omega )
+inline void delta_swap_inplace_opt( TT& tt, uint64_t delta, uint64_t omega )
 {
   assert( tt.num_vars() <= 6u );
   const uint64_t y = ( tt._bits[0] ^ ( tt._bits[0] >> delta ) ) & omega;
   tt._bits[0] = tt._bits[0] ^ y ^ ( y << delta );
 }
 
-/*! \cond PRIVATE */
 template<int NumVars>
-inline void delta_swap_inplace( static_truth_table<NumVars, true>& tt, uint64_t delta, uint64_t omega )
+inline void delta_swap_inplace_opt( static_truth_table<NumVars, true>& tt, uint64_t delta, uint64_t omega )
 {
   assert ( NumVars <= 6 );
   const uint64_t y = ( tt._bits ^ ( tt._bits >> delta ) ) & omega;
   tt._bits = tt._bits ^ y ^ ( y << delta );
 }
-/*! \endcond */
 
-/*! \brief Applies delta-swap operation
-
-  Out-of-place variant for `delta_swap_inplace`.
-*/
 template<typename TT>
-TT delta_swap( const TT& tt, uint64_t delta, uint64_t omega )
-{
-  auto copy = tt;
-  delta_swap_inplace( copy, delta, omega );
-  return copy;
-}
-
-/*! \brief Permutes a truth table using a sequence of delta-swaps
-
-  Masks is an array containing the \f$\omega\f$ masks.  The \f$\delta\f$ values
-  are chosen as increasing and decreasing powers of 2, as described in Eq.
-  7.1.3-(71) of The Art of Computer Programming.
-
-  \param tt Truth table
-  \param masks Array of omega-masks
-*/
-template<typename TT>
-void permute_with_masks_inplace( TT& tt, uint64_t const* masks )
+void permute_with_masks_inplace_opt( TT& tt, uint64_t const* masks )
 {
   for ( auto k = 0; k < tt.num_vars(); ++k )
   {
-    delta_swap_inplace( tt, uint64_t( 1 ) << k, masks[k] );
+    delta_swap_inplace_opt( tt, uint64_t( 1 ) << k, masks[k] );
   }
 
   for ( int k = tt.num_vars() - 2, i = tt.num_vars(); k >= 0; --k, ++i )
   {
-    delta_swap_inplace( tt, uint64_t( 1 ) << k, masks[i] );
+    delta_swap_inplace_opt( tt, uint64_t( 1 ) << k, masks[i] );
   }
 }
 
-/*! \brief Permutes a truth table using a sequence of delta-swaps
-
-  Out-of-place variant of `permute_with_masks_inplace`.
-*/
 template<typename TT>
-TT permute_with_masks( const TT& tt, uint64_t const* masks )
+TT permute_with_masks_opt( const TT& tt, uint64_t const* masks )
 {
   auto copy = tt;
-  permute_with_masks_inplace( copy, masks );
+  permute_with_masks_inplace_opt( copy, masks );
   return copy;
 }
 
-/*! \cond PRIVATE */
 template<typename Fn>
 inline void for_each_permutation_mask( unsigned num_vars, Fn&& fn )
 {
@@ -134,6 +99,7 @@ inline void for_each_permutation_mask( unsigned num_vars, Fn&& fn )
   {
     fn( &detail::linear_masks[i] );
   }
+}
 }
 /*! \endcond */
 
@@ -150,8 +116,8 @@ TT exact_linear_canonization( const TT& tt )
 {
   auto min = tt;
 
-  for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask ) {
-    min = std::min( min, permute_with_masks( tt, mask ) );
+  detail::for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask ) {
+    min = std::min( min, detail::permute_with_masks_opt( tt, mask ) );
   });
 
   return min;

@@ -74,11 +74,6 @@ protected:
   }
 };
 
-TEST_F( AffineTest, delta_swap )
-{
-  EXPECT_EQ( delta_swap( from_hex<2>( "1" ), 3, 1 ), from_hex<2>( "8") );
-}
-
 TEST_F( AffineTest, count_linear_static )
 {
   EXPECT_EQ( canonization<2>( exact_linear_canonization<static_truth_table<2>> ), 8u );

@@ -46,6 +46,7 @@
 #include "npn.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
+#include "permutation.hpp"
 #include "print.hpp"
 #include "spectral.hpp"
 

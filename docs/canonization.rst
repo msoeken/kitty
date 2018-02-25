@@ -20,10 +20,6 @@ The header ``<kitty/affine.hpp>`` implements canonization algorithms based on
 linear and affine transformations.
 
 .. doc_brief_table::
-   delta_swap_inplace
-   delta_swap
-   permute_with_masks_inplace
-   permute_with_masks
    exact_linear_canonization
    exact_linear_output_canonization
    exact_affine_canonization

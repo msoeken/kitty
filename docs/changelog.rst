@@ -33,8 +33,11 @@ v0.3 (not yet released)
 * Linear and affine canonization: ``exact_linear_canonization``, ``exact_linear_output_canonization``, ``exact_affine_canonization``, ``exact_affine_output_canonization``
   `#36 <https://github.com/msoeken/kitty/pull/36>`_
 
-* Compute PPRM ESOP for truth table
+* Compute PPRM ESOP for truth table: ``esop_from_pprm``
   `#38 <https://github.com/msoeken/kitty/pull/38>`_
+
+* Compute permutation masks and delta-swap operations: ``delta_swap_inplace``, ``delta_swap``, ``permute_with_masks_inplace``, ``permute_with_masks``, ``compute_permutation_masks``, 
+  `#40 <https://github.com/msoeken/kitty/pull/40>`_
 
 v0.2 (December 21, 2017)
 ------------------------
