@@ -25,7 +25,10 @@
 
 #include <gtest/gtest.h>
 
+#include <chrono>
 #include <iostream>
+#include <numeric>
+#include <random>
 
 #include <kitty/affine.hpp>
 #include <kitty/constructors.hpp>
@@ -45,16 +48,44 @@ TEST( PermutationTest, small_permutations_static )
 
   for ( auto i = 0u; i < 1000u; ++i )
   {
-    static_truth_table<3> f;
+    auto f = base.construct();
     create_random( f );
 
-    std::vector<uint64_t> _masks;
-    for ( const auto& mask : masks )
-    {
-      _masks.push_back( mask._bits );
-    }
+    const auto f_p = permute_with_masks( f, masks );
 
-    const auto f_p = permute_with_masks( f, &_masks[0] );
+    for ( auto i = 0u; i < perm.size(); ++i )
+    {
+      EXPECT_EQ( get_bit( f, perm[i] ), get_bit( f_p, i ) );
+    }
+  }
+}
+
+TEST( PermutationTest, random_permutation_masks )
+{
+  constexpr const auto n = 8u;
+
+  /* create random truth table by random swaps */
+  std::vector<uint32_t> perm( 1 << n );
+  std::iota( perm.begin(), perm.end(), 0u );
+
+  std::default_random_engine gen( std::chrono::system_clock::now().time_since_epoch().count() );
+  std::uniform_int_distribution<std::size_t> dist( 0u, perm.size() - 1 );
+
+  for ( auto i = 0; i < perm.size(); ++i )
+  {
+    std::swap( perm[dist( gen )], perm[dist( gen )] );
+  }
+
+  static_truth_table<n> base;
+  const auto masks = compute_permutation_masks( base, perm );
+  EXPECT_EQ( masks.size(), 2 * n - 1 );
+
+  for ( auto i = 0u; i < 10u; ++i )
+  {
+    auto f = base.construct();
+    create_random( f );
+
+    const auto f_p = permute_with_masks( f, masks );
 
     for ( auto i = 0u; i < perm.size(); ++i )
     {

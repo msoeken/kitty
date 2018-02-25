@@ -36,6 +36,7 @@
 #include <vector>
 
 #include "bit_operations.hpp"
+#include "operators.hpp"
 #include "print.hpp"
 
 namespace kitty
@@ -174,6 +175,83 @@ std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint
 }
 }
 
+/*! \brief Applies delta-swap operation
+
+  The delta-swap operation swaps all position pairs \f$(i, i+\delta)\f$, for
+  which \f$\omega\f$ is set 1 at position \f$i\f$.
+
+  See also Eq. 7.1.3-(69) in The Art of Computer Programming.
+
+  \param tt Truth table
+  \param delta Index distance delta
+  \param omega Enable mask
+*/
+template<typename TT>
+inline void delta_swap_inplace( TT& tt, uint64_t delta, const TT& omega )
+{
+  const auto y = ( tt ^ ( tt >> delta ) ) & omega;
+  tt = tt ^ y ^ ( y << delta );
+}
+
+/*! \brief Applies delta-swap operation
+
+  Out-of-place variant for `delta_swap_inplace`.
+*/
+template<typename TT>
+TT delta_swap( const TT& tt, uint64_t delta, const TT& omega )
+{
+  auto copy = tt;
+  delta_swap_inplace( copy, delta, omega );
+  return copy;
+}
+
+/*! \brief Permutes a truth table using a sequence of delta-swaps
+
+  Masks is an array containing the \f$\omega\f$ masks.  The \f$\delta\f$ values
+  are chosen as increasing and decreasing powers of 2, as described in Eq.
+  7.1.3-(71) of The Art of Computer Programming.
+
+  \param tt Truth table
+  \param masks Array of omega-masks
+*/
+template<typename TT>
+void permute_with_masks_inplace( TT& tt, const std::vector<TT>& masks )
+{
+  for ( auto k = 0; k < tt.num_vars(); ++k )
+  {
+    delta_swap_inplace( tt, uint64_t( 1 ) << k, masks[k] );
+  }
+
+  for ( int k = tt.num_vars() - 2, i = tt.num_vars(); k >= 0; --k, ++i )
+  {
+    delta_swap_inplace( tt, uint64_t( 1 ) << k, masks[i] );
+  }
+}
+
+/*! \brief Permutes a truth table using a sequence of delta-swaps
+
+  Out-of-place variant of `permute_with_masks_inplace`.
+*/
+template<typename TT>
+TT permute_with_masks( const TT& tt, const std::vector<TT>& masks )
+{
+  auto copy = tt;
+  permute_with_masks_inplace( copy, masks );
+  return copy;
+}
+
+/*! \brief Computes permutation bitmasks
+
+  These bitmasks can be used with the `permute_with_masks` algorithm.  The
+  algorithm to compute these masks is described in The Art of Computer
+  Programming, Section 7.1.3 'Bit permutation in general'.
+
+  The input truth table can be arbitrary but is used to determine the type and
+  size of of the returned permutation masks.
+
+  \param tt Base truth table to derive types and size
+  \param permutation Permutation
+*/
 template<typename TT>
 std::vector<TT> compute_permutation_masks( const TT& tt, const std::vector<uint32_t>& permutation )
 {
@@ -184,7 +262,7 @@ std::vector<TT> compute_permutation_masks( const TT& tt, const std::vector<uint3
 
   for ( auto i = 0u; i < tt.num_vars() - 1u; ++i )
   {
-    const auto pair = detaill::compute_permutation_masks_pair( tt, left, right, i );
+    const auto pair = detail::compute_permutation_masks_pair( tt, left, right, i );
 
     masks.insert( masks.begin() + i, pair.second );
     masks.insert( masks.begin() + i, pair.first );
