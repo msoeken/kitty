@@ -23,39 +23,42 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <iostream>
 
-#pragma once
+#include <kitty/affine.hpp>
+#include <kitty/constructors.hpp>
+#include <kitty/permutation.hpp>
+#include <kitty/print.hpp>
+#include <kitty/static_truth_table.hpp>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+using namespace kitty;
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+TEST( PermutationTest, small_permutations_static )
+{
+  static_truth_table<3> base;
+  std::vector<uint32_t> perm{0u, 2u, 3u, 5u, 7u, 1u, 4u, 6u};
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+  const auto masks = compute_permutation_masks( base, perm );
+  EXPECT_EQ( masks.size(), 5u );
+
+  for ( auto i = 0u; i < 1000u; ++i )
+  {
+    static_truth_table<3> f;
+    create_random( f );
+
+    std::vector<uint64_t> _masks;
+    for ( const auto& mask : masks )
+    {
+      _masks.push_back( mask._bits );
+    }
+
+    const auto f_p = permute_with_masks( f, &_masks[0] );
+
+    for ( auto i = 0u; i < perm.size(); ++i )
+    {
+      EXPECT_EQ( get_bit( f, perm[i] ), get_bit( f_p, i ) );
+    }
+  }
+}
