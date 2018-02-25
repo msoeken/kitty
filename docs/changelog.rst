@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.3 (not yet released)
------------------------
+v0.3 (February 25, 2018)
+------------------------
 
 * Constructors: ``create_from_chain``, ``create_symmetric``
   `#28 <https://github.com/msoeken/kitty/pull/28>`_
