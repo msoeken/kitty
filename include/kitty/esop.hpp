@@ -110,7 +110,7 @@ uint32_t find_pkrm_expansions( const TT& tt, expansion_cache<TT>& cache, uint8_t
   return cost;
 }
 
-inline void add_to_cubes( std::unordered_set<cube, hash<cube>>& pkrm, const cube& c )
+inline void add_to_cubes( std::unordered_set<cube, hash<cube>>& pkrm, const cube& c, bool distance_one_merging = true )
 {
   /* first check whether cube is already contained; if so, delete it */
   const auto it = pkrm.find( c );
@@ -121,14 +121,17 @@ inline void add_to_cubes( std::unordered_set<cube, hash<cube>>& pkrm, const cube
   }
 
   /* otherwise, check if there is a distance-1 cube; if so, merge it */
-  for ( auto it = pkrm.begin(); it != pkrm.end(); ++it )
+  if ( distance_one_merging )
   {
-    if ( c.distance( *it ) == 1 )
+    for ( auto it = pkrm.begin(); it != pkrm.end(); ++it )
     {
-      auto new_cube = c.merge( *it );
-      pkrm.erase( it );
-      add_to_cubes( pkrm, new_cube );
-      return;
+      if ( c.distance( *it ) == 1 )
+      {
+        auto new_cube = c.merge( *it );
+        pkrm.erase( it );
+        add_to_cubes( pkrm, new_cube );
+        return;
+      }
     }
   }
 
@@ -178,7 +181,29 @@ void optimum_pkrm_rec( std::unordered_set<cube, hash<cube>>& pkrm, const TT& tt,
     break;
   }
 }
+
+template<typename TT>
+void esop_from_pprm_rec( std::unordered_set<cube, hash<cube>>& cubes, const TT& tt, uint8_t var_index, const cube& c )
+{
+  /* terminal cases */
+  if ( is_const0( tt ) )
+  {
+    return;
+  }
+  if ( is_const0( ~tt ) )
+  {
+    /* add to cubes, but do not apply distance-1 merging */
+    add_to_cubes( cubes, c, false );
+    return;
+  }
+
+  const auto tt0 = cofactor0( tt, var_index );
+  const auto tt1 = cofactor1( tt, var_index );
+
+  esop_from_pprm_rec( cubes, tt0, var_index + 1, c );
+  esop_from_pprm_rec( cubes, tt0 ^ tt1, var_index + 1, with_literal( c, var_index, true ) );
 }
+} // namespace detail
 /*! \endcond */
 
 /*! \brief Computes ESOP representation using optimum PKRM
@@ -187,6 +212,8 @@ void optimum_pkrm_rec( std::unordered_set<cube, hash<cube>>& pkrm, const TT& tt,
   in [R. Drechsler, IEEE Trans. C 48(9), 1999, 987–990].
 
   The algorithm applies post-optimization to merge distance-1 cubes.
+
+  \param tt Truth table
 */
 template<typename TT>
 inline std::vector<cube> esop_from_optimum_pkrm( const TT& tt )
@@ -196,6 +223,22 @@ inline std::vector<cube> esop_from_optimum_pkrm( const TT& tt )
 
   detail::find_pkrm_expansions( tt, cache, 0 );
   detail::optimum_pkrm_rec( cubes, tt, cache, 0, cube() );
+
+  return std::vector<cube>( cubes.begin(), cubes.end() );
+}
+
+/*! \brief Computes PPRM representation for a function
+
+  This algorithm applies recursively the positive Davio decomposition which
+  eventually leads into the PPRM representation of a function.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline std::vector<cube> esop_from_pprm( const TT& tt )
+{
+  std::unordered_set<cube, hash<cube>> cubes;
+  detail::esop_from_pprm_rec( cubes, tt, 0, cube() );
 
   return std::vector<cube>( cubes.begin(), cubes.end() );
 }
