@@ -41,6 +41,8 @@
 namespace kitty
 {
 
+namespace detail
+{
 template<typename TT>
 std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint32_t>& left, std::vector<uint32_t>& right, unsigned step )
 {
@@ -170,23 +172,6 @@ std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint
 
   return std::make_pair( mask_left, mask_right );
 }
-
-namespace detail
-{
-  void print_permutations( const std::vector<uint32_t>& left, const std::vector<uint32_t>& right )
-  {
-    std::cout << "left (" << left.size() << ") =";
-    for ( auto i : left )
-    {
-      std::cout << " " << i;
-    }
-    std::cout << "\nright (" << right.size() << ") =";
-    for ( auto i : right )
-    {
-      std::cout << " " << i;
-    }
-    std::cout << "\n" << std::flush;
-  }
 }
 
 template<typename TT>
@@ -199,7 +184,7 @@ std::vector<TT> compute_permutation_masks( const TT& tt, const std::vector<uint3
 
   for ( auto i = 0u; i < tt.num_vars() - 1u; ++i )
   {
-    const auto pair = compute_permutation_masks_pair( tt, left, right, i );
+    const auto pair = detaill::compute_permutation_masks_pair( tt, left, right, i );
 
     masks.insert( masks.begin() + i, pair.second );
     masks.insert( masks.begin() + i, pair.first );
