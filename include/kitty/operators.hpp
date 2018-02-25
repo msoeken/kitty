@@ -195,4 +195,30 @@ inline void operator<<=( static_truth_table<NumVars>& tt, uint64_t shift )
   shift_left_inplace( tt, shift );
 }
 
+/*! \brief Operator for right_shift */
+inline dynamic_truth_table operator>>( const dynamic_truth_table& tt, uint64_t shift )
+{
+  return shift_right( tt, shift );
+}
+
+/*! \brief Operator for right_shift */
+template<int NumVars>
+inline static_truth_table<NumVars> operator>>( const static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  return shift_right( tt, shift );
+}
+
+/*! \brief Operator for right_shift_inplace */
+inline void operator>>=( dynamic_truth_table& tt, uint64_t shift )
+{
+  shift_right_inplace( tt, shift );
+}
+
+/*! \brief Operator for right_shift_inplace */
+template<int NumVars>
+inline void operator>>=( static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  shift_right_inplace( tt, shift );
+}
+
 } // namespace kitty
