@@ -63,3 +63,38 @@ TEST_F( EsopTest, random_esop )
     EXPECT_EQ( tt, tt_copy );
   }
 }
+
+TEST_F( EsopTest, random_pprm )
+{
+  static_truth_table<10> tt;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    const auto cubes = esop_from_pprm( tt );
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes, true );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}
+
+TEST_F( EsopTest, random_pprm_dynamic_and_check )
+{
+  dynamic_truth_table tt( 8u );
+
+  for ( auto i = 0; i < 50; ++i )
+  {
+    create_random( tt );
+    const auto cubes = esop_from_pprm( tt );
+
+    /* only positive literals */
+    for ( const auto& c : cubes )
+    {
+      EXPECT_EQ( c._bits, c._mask );
+    }
+
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes, true );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}

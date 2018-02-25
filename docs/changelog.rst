@@ -31,6 +31,9 @@ v0.3 (not yet released)
 * Linear and affine canonization: ``exact_linear_canonization``, ``exact_linear_output_canonization``, ``exact_affine_canonization``, ``exact_affine_output_canonization``
   `#36 <https://github.com/msoeken/kitty/pull/36>`_
 
+* Compute PPRM ESOP for truth table
+  `#38 <https://github.com/msoeken/kitty/pull/38>`_
+
 v0.2 (December 21, 2017)
 ------------------------
 
