@@ -16,3 +16,5 @@ The header ``<kitty/operators.hpp>`` implements operator shortcuts to operations
    operator<
    operator<<
    operator<<=
+   operator>>
+   operator>>=

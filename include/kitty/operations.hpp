@@ -793,4 +793,80 @@ inline TT shift_left( const TT& tt, uint64_t shift )
   return copy;
 }
 
+/*! \brief Right-shift truth table
+
+  Drops overflowing least-significant bits and fills up most-significant bits
+  with zeroes.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+void shift_right_inplace( TT& tt, uint64_t shift )
+{
+  /* small truth table */
+  if ( tt.num_vars() <= 6 )
+  {
+    tt._bits[0] >>= shift;
+    tt.mask_bits();
+    return;
+  }
+
+  /* large shift */
+  if ( shift >= tt.num_bits() )
+  {
+    clear( tt );
+    return;
+  }
+  
+  if ( shift > 0 )
+  {
+    const auto last = tt.num_blocks() - 1u;
+    const auto div = shift / 64u;
+    const auto rem = shift % 64u;
+
+    if ( rem != 0 )
+    {
+      const auto rshift = 64u - rem;
+      for ( auto i = div; i < last; ++i )
+      {
+        tt._bits[i - div] = ( tt._bits[i] >> rem ) | ( tt._bits[i + 1] << rshift );
+      }
+      tt._bits[last - div] = tt._bits[last] >> rem;
+    }
+    else
+    {
+      for ( auto i = div; i <= last; ++i )
+      {
+        tt._bits[i - div] = tt._bits[i];
+      }
+    }
+
+    std::fill_n( std::begin( tt._bits ) + ( tt.num_blocks() - div ), div, 0u );
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void shift_right_inplace( static_truth_table<NumVars, true>& tt, uint64_t shift )
+{
+  tt._bits >>= shift;
+}
+/*! \endcond */
+
+/*! \brief Right-shift truth table
+
+  Out-of-place variant of `shift_right`.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+inline TT shift_right( const TT& tt, uint64_t shift )
+{
+  auto copy = tt;
+  shift_right_inplace( copy, shift );
+  return copy;
+}
+
 } // namespace kitty

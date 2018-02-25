@@ -39,4 +39,6 @@ Combination and manipulation
    extend_to
    shift_left_inplace
    shift_left
+   shift_right_inplace
+   shift_right
 
