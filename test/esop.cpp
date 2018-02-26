@@ -92,6 +92,11 @@ TEST_F( EsopTest, esop_corner_cases )
   EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "fe") ) ), from_hex<3>( "fe" ) );
   EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "80") ) ), from_hex<3>( "80" ) );
   EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "ff") ) ), from_hex<3>( "ff" ) );
+
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "00") ) ), from_hex<3>( "00" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "fe") ) ), from_hex<3>( "fe" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "80") ) ), from_hex<3>( "80" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "ff") ) ), from_hex<3>( "ff" ) );
 }
 
 TEST_F( EsopTest, random_pprm_dynamic_and_check )
