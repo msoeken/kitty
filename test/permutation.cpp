@@ -71,7 +71,7 @@ TEST( PermutationTest, random_permutation_masks )
   std::default_random_engine gen( std::chrono::system_clock::now().time_since_epoch().count() );
   std::uniform_int_distribution<std::size_t> dist( 0u, perm.size() - 1 );
 
-  for ( auto i = 0; i < perm.size(); ++i )
+  for ( auto i = 0u; i < perm.size(); ++i )
   {
     std::swap( perm[dist( gen )], perm[dist( gen )] );
   }
