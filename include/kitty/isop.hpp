@@ -40,6 +40,8 @@ namespace kitty
 {
 
 /*! \cond PRIVATE */
+namespace detail
+{
 template<typename TT>
 TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& cubes )
 {
@@ -99,6 +101,7 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& c
 
   return res2;
 }
+}
 /* \endcond */
 
 /*! \brief Computes ISOP representation
@@ -113,7 +116,7 @@ template<typename TT>
 inline std::vector<cube> isop( const TT& tt )
 {
   std::vector<cube> cubes;
-  isop_rec( tt, tt, tt.num_vars(), cubes );
+  detail::isop_rec( tt, tt, tt.num_vars(), cubes );
   return cubes;
 }
 

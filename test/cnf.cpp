@@ -23,40 +23,53 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/constructors.hpp>
+#include <kitty/cnf.hpp>
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/static_truth_table.hpp>
 
-#pragma once
+#include "utility.hpp"
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+using namespace kitty;
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+class CNFTest : public kitty::testing::Test
+{
+};
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+TEST_F( CNFTest, small_cnf_dynamic )
+{
+  auto f = from_hex( 3, "c2" );
+  const auto cubes = cnf_characteristic( f );
+
+  dynamic_truth_table char1( f.num_vars() + 1 ), char2( f.num_vars() + 1 );
+  create_from_clauses( char1, cubes );
+  create_characteristic( char2, f );
+  EXPECT_EQ( char1, char2 );
+}
+
+TEST_F( CNFTest, random_cnf_dynamic )
+{
+  dynamic_truth_table f( 10u ), f_c1( 11u ), f_c2( 11u );
+  for ( auto i = 0; i < 50; ++i )
+  {
+    create_random( f );
+    create_from_clauses( f_c1, cnf_characteristic( f ) );
+    create_characteristic( f_c2, f );
+    EXPECT_EQ( f_c1, f_c2 );
+  }
+}
+
+TEST_F( CNFTest, random_cnf_static )
+{
+  static_truth_table<10> f;
+  static_truth_table<11> f_c1, f_c2;
+  for ( auto i = 0; i < 50; ++i )
+  {
+    create_random( f );
+    create_from_clauses( f_c1, cnf_characteristic( f ) );
+    create_characteristic( f_c2, f );
+    EXPECT_EQ( f_c1, f_c2 );
+  }
+}
