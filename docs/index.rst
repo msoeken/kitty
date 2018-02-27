@@ -32,6 +32,7 @@ Welcome to kitty's documentation!
    permutation
    esop
    isop
+   cnf
    reference
 
 Indices and tables

@@ -11,10 +11,12 @@ The header ``<kitty/constructors.hpp>`` implements operations to construct truth
    create_random
    create_from_words
    create_from_cubes
+   create_from_clauses
    create_majority
    create_threshold
    create_equals
    create_symmetric
    create_from_chain
+   create_characteristic
 
 

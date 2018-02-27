@@ -294,6 +294,59 @@ void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = fals
   }
 }
 
+/*! \brief Creates truth table from clause representation
+
+  A product-of-sum is represented as a vector of sums (called clauses).
+
+  An empty truth table is given as first argument to determine type
+  and number of variables.  Literals in sums that do not fit the
+  number of variables of the truth table are ignored.
+
+  The clause representation only allows truth table sizes up to 32
+  variables.
+
+  \param tt Truth table
+  \param clauses Vector of clauses
+  \param esop Use product of exclusive sums instead of POS
+*/
+template<typename TT>
+void create_from_clauses( TT& tt, const std::vector<cube>& clauses, bool esop = false )
+{
+  /* we collect product terms for an (E)SOP, start with const0 */
+  clear( tt );
+  tt = ~tt;
+
+  for ( auto clause : clauses )
+  {
+    auto sum = tt.construct(); /* const1 of same size */
+
+    auto bits = clause._bits;
+    auto mask = clause._mask;
+
+    for ( auto i = 0; i < tt.num_vars(); ++i )
+    {
+      if ( mask & 1 )
+      {
+        auto var = tt.construct();
+        create_nth_var( var, i, !( bits & 1 ) );
+
+        if ( esop )
+        {
+          sum ^= var;
+        }
+        else
+        {
+          sum |= var;
+        }
+      }
+      bits >>= 1;
+      mask >>= 1;
+    }
+
+    tt &= sum;
+  }
+}
+
 /*! \brief Constructs majority-n function
 
   The number of variables is determined from the truth table.
@@ -660,4 +713,28 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
     return true;
   }
 }
+
+/*! \brief Creates characteristic function
+
+  Creates the truth table of the characteristic function, which contains one
+  additional variable.  The new output variable will be the most-significant
+  variable of the new function.
+
+  \param tt Truth table for characteristic function
+  \param from Input truth table
+*/
+template<typename TT, typename TTFrom>
+inline void create_characteristic( TT& tt, const TTFrom& from )
+{
+  assert( tt.num_vars() == from.num_vars() + 1 );
+
+  auto var = tt.construct();
+  create_nth_var( var, from.num_vars() );
+
+  auto ext = tt.construct();
+  extend_to( ext, from );
+
+  tt = ~var ^ ext;
+}
+
 } // namespace kitty

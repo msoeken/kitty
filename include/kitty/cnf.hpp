@@ -24,39 +24,55 @@
  */
 
 /*!
-  \file kitty.hpp
-  \brief Main header for kitty
+  \file cnf.hpp
+  \brief Implements methods to compute conjunctive normal forms (CNF)
 
   \author Mathias Soeken
 */
 
 #pragma once
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+#include <vector>
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
 #include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
 #include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
 #include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
+namespace kitty
+{
+
+/*! \brief Create CNF of the characteristic function
+
+  Creates a CNF representation for the characteritic function of the input
+  function, also known as Tseytin transformation.  To obtain small CNF,
+  an ISOP is computed.
+
+  \param tt Truth table
 */
+template<typename TT>
+std::vector<cube> cnf_characteristic( const TT& tt )
+{
+  std::vector<cube> cubes;
+  detail::isop_rec( tt, tt, tt.num_vars(), cubes );
+
+  for ( auto& cube : cubes )
+  {
+    cube._bits = ~cube._bits & cube._mask;
+    cube.add_literal( tt.num_vars(), true );
+  }
+
+  const auto end = cubes.size();
+
+  detail::isop_rec( ~tt, ~tt, tt.num_vars(), cubes );
+
+  for ( auto i = end; i < cubes.size(); ++i )
+  {
+    auto& cube = cubes[i];
+    cube._bits = ~cube._bits & cube._mask;
+    cube.add_literal( tt.num_vars(), false );
+  }
+
+  return cubes;
+}
+
+} // namespace kitty
