@@ -494,6 +494,21 @@ TEST_F( OperationsTest, extend_to_same )
   EXPECT_EQ( tt1, tt2 );
 }
 
+TEST_F( OperationsTest, shrink_to )
+{
+  EXPECT_EQ( shrink_to<2>( from_hex<3>( "aa" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex<3>( "1a" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex<2>( "8" ) ), from_hex<2>( "8" ) );
+
+  EXPECT_EQ( shrink_to<5>( from_hex<7>( "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+
+  EXPECT_EQ( shrink_to<2>( from_hex( 3, "aa" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex( 3, "1a" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex( 2, "8" ) ), from_hex<2>( "8" ) );
+
+  EXPECT_EQ( shrink_to<5>( from_hex( 7, "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+}
+
 TEST_F( OperationsTest, shift_left )
 {
   EXPECT_EQ( shift_left( from_hex<3>( "e8"), 1 ), from_hex<3>( "d0" ) );

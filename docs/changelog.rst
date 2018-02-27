@@ -7,6 +7,9 @@ v0.4 (not yet released)
 * Constructors: ``create_from_clauses``, ``create_characteristic``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_
 
+* Operations: ``shrink_to``
+  `#42 <https://github.com/msoeken/kitty/pull/42>`_
+
 * CNF generation: ``cnf_characteristic``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_
 

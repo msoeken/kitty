@@ -60,6 +60,7 @@ inline TT unary_not_if( const TT& tt, bool cond )
 
 /*! \brief Bitwise AND of two truth tables */
 template<typename TT>
+
 inline TT binary_and( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_and<>() );
@@ -700,7 +701,7 @@ void extend_to( TT& tt, const TTFrom& from )
 
 /*! \brief Extends smaller truth table to larger static one
 
-  This is a special version of extend_to that has the truth table as a return
+  This is a special version of `extend_to` that has the truth table as a return
   value.  It only works for creating static truth tables.  The template
   parameter `NumVars` must be equal or larger to the number of variables in
   `from`.
@@ -712,6 +713,45 @@ inline static_truth_table<NumVars> extend_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
   extend_to( tt, from );
+  return tt;
+}
+
+/*! \brief Shrinks larger truth table to smaller one
+
+  The function expects that the most significant bits, which are cut off, are
+  not in the functional support of the original function.  Only then it is 
+  ensured that the resulting function is equivalent. 
+
+  \param tt Smaller truth table to create
+  \param from Larger truth table to copy from
+*/
+template<typename TT, typename TTFrom>
+void shrink_to( TT& tt, const TTFrom& from )
+{
+  assert( tt.num_vars() <= from.num_vars() );
+
+  std::copy( from.begin(), from.begin() + tt.num_blocks(), tt.begin() );
+  
+  if ( tt.num_vars() < 6 )
+  {
+    tt.mask_bits();
+  }
+}
+
+/*! \brief Shrinks larger truth table to smaller static one
+
+  This is a special version of `shrink_to` that has the truth table as a return
+  value.  It only works for creating static truth tables.  The template
+  parameter `NumVars` must be equal or smaller to the number of variables in
+  `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<int NumVars, typename TTFrom>
+inline static_truth_table<NumVars> shrink_to( const TTFrom& from )
+{
+  static_truth_table<NumVars> tt;
+  shrink_to( tt, from );
   return tt;
 }
 
