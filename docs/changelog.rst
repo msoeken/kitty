@@ -14,6 +14,9 @@ v0.4 (not yet released)
 * CNF generation: ``cnf_characteristic``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_
 
+* Print all cubes: ``print_cubes``
+  `#44 <https://github.com/msoeken/kitty/pull/44>`_
+
 v0.3 (February 25, 2018)
 ------------------------
 

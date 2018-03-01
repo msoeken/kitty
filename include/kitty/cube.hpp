@@ -231,6 +231,23 @@ public:
   };
 };
 
+/*! \brief Prints all cubes in a vector
+
+  \param cubes Vector of cubes
+  \param length Number of variables in each cube
+  \param os Output stream
+*/
+void print_cubes( const std::vector<cube>& cubes, unsigned length = 32u, std::ostream& os = std::cout )
+{
+  for ( const auto& cube : cubes )
+  {
+    cube.print( length, os );
+    std::cout << '\n';
+  }
+
+  std::cout << std::flush;
+}
+
 template<>
 struct hash<cube>
 {
