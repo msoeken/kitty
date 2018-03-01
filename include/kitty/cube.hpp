@@ -237,7 +237,7 @@ public:
   \param length Number of variables in each cube
   \param os Output stream
 */
-void print_cubes( const std::vector<cube>& cubes, unsigned length = 32u, std::ostream& os = std::cout )
+inline void print_cubes( const std::vector<cube>& cubes, unsigned length = 32u, std::ostream& os = std::cout )
 {
   for ( const auto& cube : cubes )
   {
