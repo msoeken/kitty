@@ -671,6 +671,36 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
   }
 }
 
+/*! \brief Constructs truth tables from Boolean chain
+
+  Like ``create_from_chain``, but also returns all internally computed steps.
+
+  \param tt Truth table
+  \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
+  \param steps Vector of steps
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
+{
+  tts.clear();
+  auto it = steps.begin();
+  if ( !create_from_chain( tt, [&it, &steps]() {
+         return ( it != steps.end() ) ? *it++ : std::string();
+       },
+                           tts, error ) )
+  {
+    return false;
+  }
+  else
+  {
+    tt = tts.back();
+    return true;
+  }
+}
+
 /*! \brief Constructs truth table from Boolean chain
 
   Like the other ``create_from_chain`` function, but reads chain from an input
@@ -710,6 +740,48 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
   else
   {
     tt = vec_steps.back();
+    return true;
+  }
+}
+
+/*! \brief Constructs truth tables from Boolean chain
+
+  Like ``create_from_chain``, but also returns all internally computed steps.
+
+  \param tt Truth table
+  \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
+  \param in Input stream to read chain
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
+{
+  tts.clear();
+  if ( !create_from_chain( tt, [&in]() {
+    std::string line;
+    while ( true )
+    {
+      if ( std::getline( in, line ) )
+      {
+        detail::trim( line );
+        if ( !line.empty() )
+        {
+          return line;
+        }
+      }
+      else
+      {
+        return std::string();
+      }
+    } }, tts, error ) )
+  {
+    return false;
+  }
+  else
+  {
+    tt = tts.back();
     return true;
   }
 }
