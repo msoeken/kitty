@@ -55,6 +55,9 @@ member functions.
 | ``clear_mask(index)``                | Clears mask at index                                                    |
 +--------------------------------------+-------------------------------------------------------------------------+
 
+.. doc_brief_table::
+   print_cubes
+
 You can use ``kitty::hash<cube>`` to hash cubes, e.g., in a hash map or set.
 
 .. doxygenclass:: kitty::cube
