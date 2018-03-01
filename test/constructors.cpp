@@ -298,3 +298,28 @@ TEST( ConstructorsTest, create_from_chain_fail )
   check_for( "x4 = x1 & x4", "error in \"x4\": invalid operand index" );
   check_for( "x4 = x1 @ x2", "error in \"@\": invalid operator" );
 }
+
+TEST( ConstructorsTst, create_multiple_from_chain )
+{
+  std::vector<std::string> steps{
+    "x5 = x1 | x3",
+    "x6 = x1 < x4",
+    "x7 = x2 > x4",
+    "x8 = x2 < x4",
+    "x9 = x5 | x7",
+    "x10 = x3 & x8",
+    "x11 = x9 ^ x10",
+    "x12 = x6 ^ x9"
+  };
+
+  static_truth_table<4> f, f1, f2;
+  std::vector<static_truth_table<4>> fs;
+
+  create_multiple_from_chain( f, fs, steps );
+
+  create_from_hex_string( f1, "cafe" );
+  create_from_hex_string( f2, "affe" );
+
+  EXPECT_EQ( fs[10], f1 );
+  EXPECT_EQ( fs[11], f2 );
+}

@@ -17,6 +17,7 @@ The header ``<kitty/constructors.hpp>`` implements operations to construct truth
    create_equals
    create_symmetric
    create_from_chain
+   create_multiple_from_chain
    create_characteristic
 
 

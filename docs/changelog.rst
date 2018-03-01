@@ -4,8 +4,9 @@ Change Log
 v0.4 (not yet released)
 -----------------------
 
-* Constructors: ``create_from_clauses``, ``create_characteristic``
+* Constructors: ``create_from_clauses``, ``create_characteristic``, ``create_multiple_from_chain``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_
+  `#43 <https://github.com/msoeken/kitty/pull/43>`_
 
 * Operations: ``shrink_to``
   `#42 <https://github.com/msoeken/kitty/pull/42>`_
