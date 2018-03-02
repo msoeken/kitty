@@ -24,10 +24,10 @@ if(KITTY_EXAMPLES)
 endif()
 
 if(KITTY_BENCH)
-  add_subdirectory(bench)
+  add_subdirectory(bench EXCLUDE_FROM_ALL)
 endif()
 
 if(KITTY_TEST)
-  add_subdirectory(test)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
 endif()
 
