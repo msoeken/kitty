@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 option(KITTY_EXAMPLES "Build examples" ON)
 option(KITTY_BENCH "Build benchmarks" OFF)
 option(KITTY_TEST "Build tests" OFF)
+option(KITTY_TIDY "Check code with clang-tidy" OFF)
 
 # some specific compiler definitions
 include(CheckCXXCompilerFlag)
@@ -29,5 +30,9 @@ endif()
 
 if(KITTY_TEST)
   add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()
+
+if(KITTY_TIDY)
+  add_subdirectory(tidy EXCLUDE_FROM_ALL)
 endif()
 
