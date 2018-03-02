@@ -696,7 +696,7 @@ void extend_to( TT& tt, const TTFrom& from )
     {
       it = std::copy( from.cbegin(), from.cend(), it );
     }
-  } 
+  }
 }
 
 /*! \brief Extends smaller truth table to larger static one
@@ -731,7 +731,7 @@ void shrink_to( TT& tt, const TTFrom& from )
   assert( tt.num_vars() <= from.num_vars() );
 
   std::copy( from.begin(), from.begin() + tt.num_blocks(), tt.begin() );
-  
+
   if ( tt.num_vars() < 6 )
   {
     tt.mask_bits();
@@ -780,7 +780,7 @@ void shift_left_inplace( TT& tt, uint64_t shift )
     clear( tt );
     return;
   }
-  
+
   if ( shift > 0 )
   {
     const auto last = tt.num_blocks() - 1u;
@@ -858,7 +858,7 @@ void shift_right_inplace( TT& tt, uint64_t shift )
     clear( tt );
     return;
   }
-  
+
   if ( shift > 0 )
   {
     const auto last = tt.num_blocks() - 1u;
