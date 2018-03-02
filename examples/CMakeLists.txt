@@ -6,6 +6,7 @@ function(add_example name)
   target_link_libraries(${name} kitty)
 endfunction()
 
+add_example(gf16_inverse gf16_inverse.cpp)
 add_example(isop isop.cpp)
 add_example(npn_enumeration npn_enumeration.cpp)
 add_example(npn_enumeration_map npn_enumeration_map.cpp)
