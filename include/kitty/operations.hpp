@@ -461,7 +461,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
     const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
     std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
-                    [var_index1, var_index2, shift, &pmask]( uint64_t word ) {
+                    [shift, &pmask]( uint64_t word ) {
                       return ( word & pmask[0] ) | ( ( word & pmask[1] ) << shift ) | ( ( word & pmask[2] ) >> shift );
                     } );
   }
