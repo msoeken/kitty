@@ -166,21 +166,19 @@ bool has_var( const TT& tt, uint8_t var_index )
                         [var_index]( uint64_t word ) { return ( ( word >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
                                                               ( word & detail::projections_neg[var_index] ); } );
   }
-  else
+
+  const auto step = 1 << ( var_index - 6 );
+  for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
   {
-    const auto step = 1 << ( var_index - 6 );
-    for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
+    for ( auto j = 0; j < step; ++j )
     {
-      for ( auto j = 0; j < step; ++j )
+      if ( tt._bits[i + j] != tt._bits[i + j + step] )
       {
-        if ( tt._bits[i + j] != tt._bits[i + j + step] )
-        {
-          return true;
-        }
+        return true;
       }
     }
-    return false;
   }
+  return false;
 }
 
 /*! \cond PRIVATE */
@@ -216,7 +214,9 @@ void next_inplace( TT& tt )
     {
       /* If incrementing the word does not lead to an overflow, we're done*/
       if ( ++tt._bits[i] != 0 )
+      {
         break;
+      }
     }
   }
 }

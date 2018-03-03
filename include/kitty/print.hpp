@@ -142,4 +142,4 @@ inline std::string to_hex( const TT& tt )
   return st.str();
 }
 
-}
+} /* namespace kitty */

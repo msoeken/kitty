@@ -60,12 +60,12 @@ struct spectral_operation
     disjoint_translation
   };
 
-  spectral_operation() : _kind( kind::none ), _var1( 0 ), _var2( 0 ) {}
-  spectral_operation( kind _kind, uint16_t _var1 = 0, uint16_t _var2 = 0 ) : _kind( _kind ), _var1( _var1 ), _var2( _var2 ) {}
+  spectral_operation() = default;
+  explicit spectral_operation( kind _kind, uint16_t _var1 = 0, uint16_t _var2 = 0 ) : _kind( _kind ), _var1( _var1 ), _var2( _var2 ) {}
 
-  kind _kind;
-  uint16_t _var1;
-  uint16_t _var2;
+  kind _kind{kind::none};
+  uint16_t _var1{0};
+  uint16_t _var2{0};
 };
 
 inline void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
@@ -99,8 +99,10 @@ class spectrum
 {
 public:
   spectrum() = delete;
+  ~spectrum() = default;
 
   spectrum( const spectrum& other ) : _s( std::begin( other._s ), std::end( other._s ) ) {}
+  spectrum( spectrum&& other ) noexcept : _s( std::move( other._s ) ) {}
 
   spectrum& operator=( const spectrum& other )
   {
@@ -111,8 +113,14 @@ public:
     return *this;
   }
 
+  spectrum& operator=( spectrum&& other ) noexcept
+  {
+    _s = std::move( other._s );
+    return *this;
+  }
+
 private:
-  explicit spectrum( const std::vector<int32_t>& _s ) : _s( _s ) {}
+  explicit spectrum( std::vector<int32_t> _s ) : _s( std::move( _s ) ) {}
 
 public:
   template<typename TT>
@@ -171,9 +179,9 @@ public:
 
   auto output_negation()
   {
-    for ( auto k = 0u; k < _s.size(); ++k )
+    for ( auto& coeff : _s )
     {
-      _s[k] = -_s[k];
+      coeff = -coeff;
     }
     return spectral_operation( spectral_operation::kind::output_negation );
   }
@@ -302,8 +310,7 @@ public:
         num_vars_exp( 1 << num_vars ),
         spec( spectrum::from_truth_table( func ) ),
         best_spec( spec ),
-        transforms( 100u ),
-        transform_index( 0u )
+        transforms( 100u )
   {
   }
 
@@ -337,7 +344,9 @@ private:
     {
       const auto j = order[i];
       if ( lspec[j] == best_spec[j] )
+      {
         continue;
+      }
       if ( abs( lspec[j] ) > abs( best_spec[j] ) ||
            ( abs( lspec[j] ) == abs( best_spec[j] ) && lspec[j] > best_spec[j] ) )
       {
@@ -401,14 +410,18 @@ private:
       {
         auto j = order[i];
         if ( abs( lspec[j] ) != max )
+        {
           continue;
+        }
 
         /* k = first one bit in j starting from pos v */
         auto k = j & ~( v - 1 ); /* remove 1 bits until v */
         if ( k == 0 )
+        {
           continue; /* are there bit left? */
+        }
         k = k - ( k & ( k - 1 ) ); /* extract lowest bit */
-        j ^= k; /* remove bit k from j */
+        j ^= k;                    /* remove bit k from j */
 
         auto& spec2 = specs.at( v << 1 );
         spec2 = lspec;
@@ -431,7 +444,9 @@ private:
         normalize_rec( spec2, v << 1 );
 
         if ( v == 1 && min == max )
+        {
           return;
+        }
         transform_index = save;
       }
     }
@@ -446,12 +461,12 @@ private:
     if ( j )
     {
       auto k = j - ( j & ( j - 1 ) ); /* LSB of j */
-      j ^= k; /* delete bit in j */
+      j ^= k;                         /* delete bit in j */
 
       while ( j )
       {
         auto p = j - ( j & ( j - 1 ) ); /* next LSB of j */
-        j ^= p; /* delete bit in j */
+        j ^= p;                         /* delete bit in j */
         insert( spec.spectral_translation( k, p ) );
       }
       insert( spec.disjoint_translation( k ) );
@@ -512,13 +527,14 @@ private:
   std::vector<uint32_t> order;
   std::vector<spectral_operation> transforms;
   std::vector<spectral_operation> best_transforms;
-  unsigned transform_index = 0u;
+  unsigned transform_index{0u};
 };
 
-inline void exact_spectral_canonization_null_callback( const std::vector<spectral_operation>& )
+inline void exact_spectral_canonization_null_callback( const std::vector<spectral_operation>& operations )
 {
+  (void)operations;
 }
-} // namespace detail
+} /* namespace detail */
 
 /*! \brief Exact spectral canonization
 
@@ -548,4 +564,4 @@ inline void print_spectrum( const TT& tt, std::ostream& os = std::cout )
   spectrum.print( os, detail::get_rw_coeffecient_order( tt.num_vars() ) );
 }
 
-} // namespace kitty
+} /* namespace kitty */

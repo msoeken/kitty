@@ -56,7 +56,7 @@ std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint
   struct node_t
   {
     std::vector<uint32_t>::iterator a, b; /* numbers in left or right */
-    unsigned lf, rf;                     /* left field right field */
+    unsigned lf{}, rf{};                  /* left field right field */
     bool visited = false;
   };
 
@@ -136,7 +136,9 @@ std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint
     }
 
     if ( idx == offset )
+    {
       break;
+    }
 
     auto left_side = true;
     auto nr = *nodes[idx].a;
@@ -173,7 +175,7 @@ std::pair<TT, TT> compute_permutation_masks_pair( const TT& tt, std::vector<uint
 
   return std::make_pair( mask_left, mask_right );
 }
-}
+} /* namespace detail */
 
 /*! \brief Applies delta-swap operation
 
@@ -281,4 +283,4 @@ std::vector<TT> compute_permutation_masks( const TT& tt, const std::vector<uint3
   return masks;
 }
 
-} // namespace kitty
+} /* namespace kitty */

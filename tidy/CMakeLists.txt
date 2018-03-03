@@ -4,7 +4,7 @@ if(${CMAKE_VERSION} VERSION_GREATER "3.6")
     message(STATUS "clang-tidy not found.")
   else()
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
-    set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*" "-header-filter=kitty/.*")
+    set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-cppcoreguidelines-*,-llvm-header-guard,-cert-err58-cpp,-google-runtime-references,-llvm-include-order" "-header-filter=kitty/.*")
   endif()
 
   add_executable(kitty_tidy tidy.cpp)

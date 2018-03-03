@@ -169,13 +169,21 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   {
     const auto i = detail::hex_to_int[c];
     if ( i & 8 )
+    {
       set_bit( tt, j );
+    }
     if ( i & 4 )
+    {
       set_bit( tt, j - 1 );
+    }
     if ( i & 2 )
+    {
       set_bit( tt, j - 2 );
+    }
     if ( i & 1 )
+    {
       set_bit( tt, j - 3 );
+    }
     j -= 4;
   }
 }
@@ -664,11 +672,9 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
   {
     return false;
   }
-  else
-  {
-    tt = vec_steps.back();
-    return true;
-  }
+
+  tt = vec_steps.back();
+  return true;
 }
 
 /*! \brief Constructs truth tables from Boolean chain
@@ -694,11 +700,9 @@ bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, const std::vector
   {
     return false;
   }
-  else
-  {
-    tt = tts.back();
-    return true;
-  }
+
+  tt = tts.back();
+  return true;
 }
 
 /*! \brief Constructs truth table from Boolean chain
@@ -737,11 +741,9 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
   {
     return false;
   }
-  else
-  {
-    tt = vec_steps.back();
-    return true;
-  }
+
+  tt = vec_steps.back();
+  return true;
 }
 
 /*! \brief Constructs truth tables from Boolean chain
@@ -779,11 +781,9 @@ bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, std::istream& in,
   {
     return false;
   }
-  else
-  {
-    tt = tts.back();
-    return true;
-  }
+
+  tt = tts.back();
+  return true;
 }
 
 /*! \brief Creates characteristic function

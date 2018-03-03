@@ -100,7 +100,7 @@ inline void for_each_permutation_mask( unsigned num_vars, Fn&& fn )
     fn( &detail::linear_masks[i] );
   }
 }
-}
+} /* namespace detail */
 /*! \endcond */
 
 /*! \brief Applies exact linear classification
@@ -183,4 +183,4 @@ TT exact_affine_output_canonization( const TT& tt )
   return std::min( exact_affine_canonization( tt ), exact_affine_canonization( ~tt ) );
 }
 
-}
+} /* namespace kitty */
