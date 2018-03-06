@@ -29,8 +29,10 @@ Welcome to kitty's documentation!
    hash
    canonization
    cube
+   permutation
    esop
    isop
+   cnf
    reference
 
 Indices and tables

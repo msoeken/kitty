@@ -60,6 +60,7 @@ inline TT unary_not_if( const TT& tt, bool cond )
 
 /*! \brief Bitwise AND of two truth tables */
 template<typename TT>
+
 inline TT binary_and( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_and<>() );
@@ -165,21 +166,19 @@ bool has_var( const TT& tt, uint8_t var_index )
                         [var_index]( uint64_t word ) { return ( ( word >> ( 1 << var_index ) ) & detail::projections_neg[var_index] ) !=
                                                               ( word & detail::projections_neg[var_index] ); } );
   }
-  else
+
+  const auto step = 1 << ( var_index - 6 );
+  for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
   {
-    const auto step = 1 << ( var_index - 6 );
-    for ( auto i = 0u; i < tt.num_blocks(); i += 2 * step )
+    for ( auto j = 0; j < step; ++j )
     {
-      for ( auto j = 0; j < step; ++j )
+      if ( tt._bits[i + j] != tt._bits[i + j + step] )
       {
-        if ( tt._bits[i + j] != tt._bits[i + j + step] )
-        {
-          return true;
-        }
+        return true;
       }
     }
-    return false;
   }
+  return false;
 }
 
 /*! \cond PRIVATE */
@@ -215,7 +214,9 @@ void next_inplace( TT& tt )
     {
       /* If incrementing the word does not lead to an overflow, we're done*/
       if ( ++tt._bits[i] != 0 )
+      {
         break;
+      }
     }
   }
 }
@@ -460,7 +461,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
     const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
     std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
-                    [var_index1, var_index2, shift, &pmask]( uint64_t word ) {
+                    [shift, &pmask]( uint64_t word ) {
                       return ( word & pmask[0] ) | ( ( word & pmask[1] ) << shift ) | ( ( word & pmask[2] ) >> shift );
                     } );
   }
@@ -695,12 +696,12 @@ void extend_to( TT& tt, const TTFrom& from )
     {
       it = std::copy( from.cbegin(), from.cend(), it );
     }
-  } 
+  }
 }
 
 /*! \brief Extends smaller truth table to larger static one
 
-  This is a special version of extend_to that has the truth table as a return
+  This is a special version of `extend_to` that has the truth table as a return
   value.  It only works for creating static truth tables.  The template
   parameter `NumVars` must be equal or larger to the number of variables in
   `from`.
@@ -713,6 +714,199 @@ inline static_truth_table<NumVars> extend_to( const TTFrom& from )
   static_truth_table<NumVars> tt;
   extend_to( tt, from );
   return tt;
+}
+
+/*! \brief Shrinks larger truth table to smaller one
+
+  The function expects that the most significant bits, which are cut off, are
+  not in the functional support of the original function.  Only then it is 
+  ensured that the resulting function is equivalent. 
+
+  \param tt Smaller truth table to create
+  \param from Larger truth table to copy from
+*/
+template<typename TT, typename TTFrom>
+void shrink_to( TT& tt, const TTFrom& from )
+{
+  assert( tt.num_vars() <= from.num_vars() );
+
+  std::copy( from.begin(), from.begin() + tt.num_blocks(), tt.begin() );
+
+  if ( tt.num_vars() < 6 )
+  {
+    tt.mask_bits();
+  }
+}
+
+/*! \brief Shrinks larger truth table to smaller static one
+
+  This is a special version of `shrink_to` that has the truth table as a return
+  value.  It only works for creating static truth tables.  The template
+  parameter `NumVars` must be equal or smaller to the number of variables in
+  `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<int NumVars, typename TTFrom>
+inline static_truth_table<NumVars> shrink_to( const TTFrom& from )
+{
+  static_truth_table<NumVars> tt;
+  shrink_to( tt, from );
+  return tt;
+}
+
+/*! \brief Left-shift truth table
+
+  Drops overflowing most-significant bits and fills up least-significant bits
+  with zeroes.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+void shift_left_inplace( TT& tt, uint64_t shift )
+{
+  /* small truth table */
+  if ( tt.num_vars() <= 6 )
+  {
+    tt._bits[0] <<= shift;
+    tt.mask_bits();
+    return;
+  }
+
+  /* large shift */
+  if ( shift >= tt.num_bits() )
+  {
+    clear( tt );
+    return;
+  }
+
+  if ( shift > 0 )
+  {
+    const auto last = tt.num_blocks() - 1u;
+    const auto div = shift / 64u;
+    const auto rem = shift % 64u;
+
+    if ( rem != 0 )
+    {
+      const auto rshift = 64u - rem;
+      for ( auto i = last - div; i > 0; --i )
+      {
+        tt._bits[i + div] = ( tt._bits[i] << rem ) | ( tt._bits[i - 1] >> rshift );
+      }
+      tt._bits[div] = tt._bits[0] << rem;
+    }
+    else
+    {
+      for ( auto i = last - div; i > 0; --i )
+      {
+        tt._bits[i + div] = tt._bits[i];
+      }
+      tt._bits[div] = tt._bits[0];
+    }
+
+    std::fill_n( std::begin( tt._bits ), div, 0u );
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void shift_left_inplace( static_truth_table<NumVars, true>& tt, uint64_t shift )
+{
+  tt._bits <<= shift;
+  tt.mask_bits();
+}
+/*! \endcond */
+
+/*! \brief Left-shift truth table
+
+  Out-of-place variant of `shift_left`.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+inline TT shift_left( const TT& tt, uint64_t shift )
+{
+  auto copy = tt;
+  shift_left_inplace( copy, shift );
+  return copy;
+}
+
+/*! \brief Right-shift truth table
+
+  Drops overflowing least-significant bits and fills up most-significant bits
+  with zeroes.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+void shift_right_inplace( TT& tt, uint64_t shift )
+{
+  /* small truth table */
+  if ( tt.num_vars() <= 6 )
+  {
+    tt._bits[0] >>= shift;
+    tt.mask_bits();
+    return;
+  }
+
+  /* large shift */
+  if ( shift >= tt.num_bits() )
+  {
+    clear( tt );
+    return;
+  }
+
+  if ( shift > 0 )
+  {
+    const auto last = tt.num_blocks() - 1u;
+    const auto div = shift / 64u;
+    const auto rem = shift % 64u;
+
+    if ( rem != 0 )
+    {
+      const auto rshift = 64u - rem;
+      for ( auto i = div; i < last; ++i )
+      {
+        tt._bits[i - div] = ( tt._bits[i] >> rem ) | ( tt._bits[i + 1] << rshift );
+      }
+      tt._bits[last - div] = tt._bits[last] >> rem;
+    }
+    else
+    {
+      for ( auto i = div; i <= last; ++i )
+      {
+        tt._bits[i - div] = tt._bits[i];
+      }
+    }
+
+    std::fill_n( std::begin( tt._bits ) + ( tt.num_blocks() - div ), div, 0u );
+  }
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void shift_right_inplace( static_truth_table<NumVars, true>& tt, uint64_t shift )
+{
+  tt._bits >>= shift;
+}
+/*! \endcond */
+
+/*! \brief Right-shift truth table
+
+  Out-of-place variant of `shift_right`.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+inline TT shift_right( const TT& tt, uint64_t shift )
+{
+  auto copy = tt;
+  shift_right_inplace( copy, shift );
+  return copy;
 }
 
 } // namespace kitty

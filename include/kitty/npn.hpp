@@ -45,10 +45,11 @@ namespace kitty
 namespace detail
 {
 template<typename TT>
-void exact_npn_canonization_null_callback( const TT& )
+void exact_npn_canonization_null_callback( const TT& tt )
 {
+  (void)tt;
 }
-}
+} /* namespace detail */
 /*! \endcond */
 
 /*! \brief Exact NPN canonization
@@ -323,7 +324,7 @@ void sifting_npn_canonization_loop( TT& npn, uint32_t& phase, std::vector<uint8_
     forward = !forward;
   }
 }
-}
+} /* namespace detail */
 /*! \endcond */
 
 /*! \brief Sifting NPN heuristic
@@ -406,7 +407,9 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   for ( auto i = 0; i < num_vars; ++i )
   {
     if ( perm[i] == i )
+    {
       continue;
+    }
 
     int k = i;
     while ( perm[k] != i )
@@ -430,4 +433,4 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   return res;
 }
 
-} // namespace kitty
+} /* namespace kitty */

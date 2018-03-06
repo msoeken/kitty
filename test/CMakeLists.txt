@@ -8,3 +8,11 @@ file(GLOB FILENAMES *.cpp)
 
 add_executable(run_tests ${FILENAMES})
 target_link_libraries(run_tests gtest kitty)
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-ftime-report" HAS_FTIME_REPORT)
+if(HAS_FTIME_REPORT)
+  add_executable(run_tests_report ${FILENAMES})
+  target_link_libraries(run_tests_report gtest kitty)
+  target_compile_options(run_tests_report PUBLIC -ftime-report)
+endif()

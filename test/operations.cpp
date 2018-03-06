@@ -494,6 +494,43 @@ TEST_F( OperationsTest, extend_to_same )
   EXPECT_EQ( tt1, tt2 );
 }
 
+TEST_F( OperationsTest, shrink_to )
+{
+  EXPECT_EQ( shrink_to<2>( from_hex<3>( "aa" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex<3>( "1a" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex<2>( "8" ) ), from_hex<2>( "8" ) );
+
+  EXPECT_EQ( shrink_to<5>( from_hex<7>( "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+
+  EXPECT_EQ( shrink_to<2>( from_hex( 3, "aa" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex( 3, "1a" ) ), from_hex<2>( "a" ) );
+  EXPECT_EQ( shrink_to<2>( from_hex( 2, "8" ) ), from_hex<2>( "8" ) );
+
+  EXPECT_EQ( shrink_to<5>( from_hex( 7, "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+}
+
+TEST_F( OperationsTest, shift_left )
+{
+  EXPECT_EQ( shift_left( from_hex<3>( "e8"), 1 ), from_hex<3>( "d0" ) );
+  EXPECT_EQ( shift_left( from_hex<4>( "cafe"), 4 ), from_hex<4>( "afe0" ) );
+  EXPECT_EQ( shift_left( from_hex<7>( "cafeaffe12345678acabacab91837465" ), 4 ), from_hex<7>( "afeaffe12345678acabacab918374650" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 8 ), from_hex( 7, "feaffe12345678acabacab9183746500" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 64 ), from_hex( 7, "acabacab918374650000000000000000" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 0 ), from_hex( 7, "cafeaffe12345678acabacab91837465" ) );
+  EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 128 ), from_hex( 7, "00000000000000000000000000000000" ) );
+}
+
+TEST_F( OperationsTest, shift_right )
+{
+  EXPECT_EQ( shift_right( from_hex<3>( "e8"), 1 ), from_hex<3>( "74" ) );
+  EXPECT_EQ( shift_right( from_hex<4>( "cafe"), 4 ), from_hex<4>( "0caf" ) );
+  EXPECT_EQ( shift_right( from_hex<7>( "cafeaffe12345678acabacab91837465" ), 4 ), from_hex<7>( "0cafeaffe12345678acabacab9183746" ) );
+  EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 8 ), from_hex( 7, "00cafeaffe12345678acabacab918374" ) );
+  EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 64 ), from_hex( 7, "0000000000000000cafeaffe12345678" ) );
+  EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 0 ), from_hex( 7, "cafeaffe12345678acabacab91837465" ) );
+  EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 128 ), from_hex( 7, "00000000000000000000000000000000" ) );
+}
+
 TEST_F( OperationsTest, majority7 )
 {
   const auto a = nth<7>( 0 );

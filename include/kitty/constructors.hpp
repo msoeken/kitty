@@ -169,13 +169,21 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   {
     const auto i = detail::hex_to_int[c];
     if ( i & 8 )
+    {
       set_bit( tt, j );
+    }
     if ( i & 4 )
+    {
       set_bit( tt, j - 1 );
+    }
     if ( i & 2 )
+    {
       set_bit( tt, j - 2 );
+    }
     if ( i & 1 )
+    {
       set_bit( tt, j - 3 );
+    }
     j -= 4;
   }
 }
@@ -294,6 +302,59 @@ void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = fals
   }
 }
 
+/*! \brief Creates truth table from clause representation
+
+  A product-of-sum is represented as a vector of sums (called clauses).
+
+  An empty truth table is given as first argument to determine type
+  and number of variables.  Literals in sums that do not fit the
+  number of variables of the truth table are ignored.
+
+  The clause representation only allows truth table sizes up to 32
+  variables.
+
+  \param tt Truth table
+  \param clauses Vector of clauses
+  \param esop Use product of exclusive sums instead of POS
+*/
+template<typename TT>
+void create_from_clauses( TT& tt, const std::vector<cube>& clauses, bool esop = false )
+{
+  /* we collect product terms for an (E)SOP, start with const0 */
+  clear( tt );
+  tt = ~tt;
+
+  for ( auto clause : clauses )
+  {
+    auto sum = tt.construct(); /* const1 of same size */
+
+    auto bits = clause._bits;
+    auto mask = clause._mask;
+
+    for ( auto i = 0; i < tt.num_vars(); ++i )
+    {
+      if ( mask & 1 )
+      {
+        auto var = tt.construct();
+        create_nth_var( var, i, !( bits & 1 ) );
+
+        if ( esop )
+        {
+          sum ^= var;
+        }
+        else
+        {
+          sum |= var;
+        }
+      }
+      bits >>= 1;
+      mask >>= 1;
+    }
+
+    tt &= sum;
+  }
+}
+
 /*! \brief Constructs majority-n function
 
   The number of variables is determined from the truth table.
@@ -317,6 +378,8 @@ inline void create_majority( TT& tt )
 template<typename TT>
 void create_threshold( TT& tt, uint8_t threshold )
 {
+  clear( tt );
+
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
     if ( __builtin_popcount( x ) > threshold )
@@ -337,9 +400,34 @@ void create_threshold( TT& tt, uint8_t threshold )
 template<typename TT>
 void create_equals( TT& tt, uint8_t bitcount )
 {
+  clear( tt );
+
   for ( uint64_t x = 0; x < tt.num_bits(); ++x )
   {
     if ( __builtin_popcount( x ) == bitcount )
+    {
+      set_bit( tt, x );
+    }
+  }
+}
+
+/*! \brief Constructs symmetric function
+
+  Bits in `counts` are numbered from 0 to 63.  If bit `i` is set in `counts`,
+  the created truth table will evaluate to true, if `i` bits are set in the
+  input assignment.
+
+  \param tt Truth table
+  \param counts Bitcount mask
+*/
+template<typename TT>
+void create_symmetric( TT& tt, uint64_t counts )
+{
+  clear( tt );
+
+  for ( uint64_t x = 0; x < tt.num_bits(); ++x )
+  {
+    if ( ( counts >> __builtin_popcount( x ) ) & 1 )
     {
       set_bit( tt, x );
     }
@@ -584,11 +672,37 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
   {
     return false;
   }
-  else
+
+  tt = vec_steps.back();
+  return true;
+}
+
+/*! \brief Constructs truth tables from Boolean chain
+
+  Like ``create_from_chain``, but also returns all internally computed steps.
+
+  \param tt Truth table
+  \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
+  \param steps Vector of steps
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
+{
+  tts.clear();
+  auto it = steps.begin();
+  if ( !create_from_chain( tt, [&it, &steps]() {
+         return ( it != steps.end() ) ? *it++ : std::string();
+       },
+                           tts, error ) )
   {
-    tt = vec_steps.back();
-    return true;
+    return false;
   }
+
+  tt = tts.back();
+  return true;
 }
 
 /*! \brief Constructs truth table from Boolean chain
@@ -627,10 +741,72 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
   {
     return false;
   }
-  else
-  {
-    tt = vec_steps.back();
-    return true;
-  }
+
+  tt = vec_steps.back();
+  return true;
 }
+
+/*! \brief Constructs truth tables from Boolean chain
+
+  Like ``create_from_chain``, but also returns all internally computed steps.
+
+  \param tt Truth table
+  \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
+  \param in Input stream to read chain
+  \param error If not null, a pointer to store the error message
+
+  \return True on success
+*/
+template<typename TT>
+bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
+{
+  tts.clear();
+  if ( !create_from_chain( tt, [&in]() {
+    std::string line;
+    while ( true )
+    {
+      if ( std::getline( in, line ) )
+      {
+        detail::trim( line );
+        if ( !line.empty() )
+        {
+          return line;
+        }
+      }
+      else
+      {
+        return std::string();
+      }
+    } }, tts, error ) )
+  {
+    return false;
+  }
+
+  tt = tts.back();
+  return true;
+}
+
+/*! \brief Creates characteristic function
+
+  Creates the truth table of the characteristic function, which contains one
+  additional variable.  The new output variable will be the most-significant
+  variable of the new function.
+
+  \param tt Truth table for characteristic function
+  \param from Input truth table
+*/
+template<typename TT, typename TTFrom>
+inline void create_characteristic( TT& tt, const TTFrom& from )
+{
+  assert( tt.num_vars() == from.num_vars() + 1 );
+
+  auto var = tt.construct();
+  create_nth_var( var, from.num_vars() );
+
+  auto ext = tt.construct();
+  extend_to( ext, from );
+
+  tt = ~var ^ ext;
+}
+
 } // namespace kitty

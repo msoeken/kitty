@@ -240,10 +240,8 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
   {
     return -1;
   }
-  else
-  {
-    return 64 * std::distance( tt.cbegin(), it ) + find_first_bit_in_word( *it );
-  }
+  
+  return 64 * std::distance( tt.cbegin(), it ) + find_first_bit_in_word( *it );
 }
 
 /*! \brief Finds most-significant one-bit
@@ -261,10 +259,8 @@ int64_t find_last_one_bit( const TT& tt )
   {
     return -1;
   }
-  else
-  {
-    return 64 * ( std::distance( it, tt.crend() ) - 1 ) + find_last_bit_in_word( *it );
-  }
+
+  return 64 * ( std::distance( it, tt.crend() ) - 1 ) + find_last_bit_in_word( *it );
 }
 
 /*! \brief Finds least-significant bit difference

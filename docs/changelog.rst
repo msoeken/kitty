@@ -1,11 +1,28 @@
 Change Log
 ==========
 
-v0.3 (not yet released)
+v0.4 (not yet released)
 -----------------------
 
-* Constructors: ``create_from_chain``
+* Constructors: ``create_from_clauses``, ``create_characteristic``, ``create_multiple_from_chain``
+  `#41 <https://github.com/msoeken/kitty/pull/41>`_
+  `#43 <https://github.com/msoeken/kitty/pull/43>`_
+
+* Operations: ``shrink_to``
+  `#42 <https://github.com/msoeken/kitty/pull/42>`_
+
+* CNF generation: ``cnf_characteristic``
+  `#41 <https://github.com/msoeken/kitty/pull/41>`_
+
+* Print all cubes: ``print_cubes``
+  `#44 <https://github.com/msoeken/kitty/pull/44>`_
+
+v0.3 (February 25, 2018)
+------------------------
+
+* Constructors: ``create_from_chain``, ``create_symmetric``
   `#28 <https://github.com/msoeken/kitty/pull/28>`_
+  `#35 <https://github.com/msoeken/kitty/pull/35>`_
 
 * Cube constructors: ``pos_cube``, ``neg_cube``, constructor to create cube from string
   `#29 <https://github.com/msoeken/kitty/pull/29>`_
@@ -14,14 +31,29 @@ v0.3 (not yet released)
 * Cube methods: ``get_bit``, ``get_mask``, ``set_bit``, ``set_mask``, ``clear_bit``, ``clear_mask`` (contributed by Heinz Riener)
   `#30 <https://github.com/msoeken/kitty/pull/30>`_
 
-* Operators: ``!=``
+* Operations: ``shift_left``, ``shift_left_inplace``, ``shift_right``, ``shift_right_inplace``
+  `#37 <https://github.com/msoeken/kitty/pull/37>`_
+  `#39 <https://github.com/msoeken/kitty/pull/39>`_
+
+* Operators: ``!=``, ``<<``, ``<<=``, ``>>``, ``>>=``
   `#32 <https://github.com/msoeken/kitty/pull/32>`_
+  `#37 <https://github.com/msoeken/kitty/pull/37>`_
+  `#39 <https://github.com/msoeken/kitty/pull/39>`_
 
 * Return truth table as string: ``to_binary``, ``to_hex``
   `#33 <https://github.com/msoeken/kitty/pull/33>`_
 
 * Default comparison for cubes (contributed by Heinz Riener)
   `#34 <https://github.com/msoeken/kitty/pull/34>`_
+
+* Linear and affine canonization: ``exact_linear_canonization``, ``exact_linear_output_canonization``, ``exact_affine_canonization``, ``exact_affine_output_canonization``
+  `#36 <https://github.com/msoeken/kitty/pull/36>`_
+
+* Compute PPRM ESOP for truth table: ``esop_from_pprm``
+  `#38 <https://github.com/msoeken/kitty/pull/38>`_
+
+* Compute permutation masks and delta-swap operations: ``delta_swap_inplace``, ``delta_swap``, ``permute_with_masks_inplace``, ``permute_with_masks``, ``compute_permutation_masks``, 
+  `#40 <https://github.com/msoeken/kitty/pull/40>`_
 
 v0.2 (December 21, 2017)
 ------------------------

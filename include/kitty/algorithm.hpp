@@ -260,7 +260,7 @@ void for_each_one_bit_jump( const TT& tt, Fn&& op )
       value |= value >> 8;
       value |= value >> 16;
       value |= value >> 32;
-      op( offset + detail::de_bruijn64[( ( uint64_t )( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
+      op( offset + detail::de_bruijn64[( static_cast<uint64_t>( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
 
       block ^= low_bit;
     }
@@ -284,7 +284,7 @@ void for_each_one_bit_jump( const static_truth_table<NumVars, true>& tt, Fn&& op
     value |= value >> 8;
     value |= value >> 16;
     value |= value >> 32;
-    op( detail::de_bruijn64[( ( uint64_t )( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
+    op( detail::de_bruijn64[( static_cast<uint64_t>( ( value - ( value >> 1 ) ) * UINT64_C( 0x07EDD5E59A4E28C2 ) ) ) >> 58] );
 
     block ^= low_bit;
   }
@@ -304,4 +304,4 @@ inline void for_each_one_bit( const TT& tt, Fn&& op )
 {
   for_each_one_bit_naive( tt, op );
 }
-}
+} /* namespace kitty */

@@ -6,8 +6,9 @@ script:
   - mkdir build
   - cd build
   - cmake -DKITTY_BENCH=ON -DKITTY_TEST=ON ..
-  - make
+  - make run_tests
   - ./test/run_tests
+  - make
 
 matrix:
   include:

@@ -40,6 +40,8 @@ namespace kitty
 {
 
 /*! \cond PRIVATE */
+namespace detail
+{
 template<typename TT>
 TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& cubes )
 {
@@ -47,11 +49,13 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& c
   assert( is_const0( tt & ~dc ) );
 
   if ( is_const0( tt ) )
+  {
     return tt;
+  }
 
   if ( is_const0( ~dc ) )
   {
-    cubes.push_back( cube() );
+    cubes.emplace_back(); /* add empty cube */
     return dc;
   }
 
@@ -61,7 +65,9 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& c
   for ( ; var >= 0; --var )
   {
     if ( has_var( tt, var ) || has_var( dc, var ) )
+    {
       break;
+    }
   }
 
   assert( var >= 0 );
@@ -99,6 +105,7 @@ TT isop_rec( const TT& tt, const TT& dc, uint8_t var_index, std::vector<cube>& c
 
   return res2;
 }
+} /* namespace detail */
 /* \endcond */
 
 /*! \brief Computes ISOP representation
@@ -113,9 +120,8 @@ template<typename TT>
 inline std::vector<cube> isop( const TT& tt )
 {
   std::vector<cube> cubes;
-  isop_rec( tt, tt, tt.num_vars(), cubes );
+  detail::isop_rec( tt, tt, tt.num_vars(), cubes );
   return cubes;
 }
 
-} // namespace kitty
-
+} /* namespace kitty */

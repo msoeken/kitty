@@ -16,3 +16,11 @@ based on spectral transformations.
    exact_spectral_canonization
    print_spectrum
 
+The header ``<kitty/affine.hpp>`` implements canonization algorithms based on
+linear and affine transformations.
+
+.. doc_brief_table::
+   exact_linear_canonization
+   exact_linear_output_canonization
+   exact_affine_canonization
+   exact_affine_output_canonization

@@ -37,6 +37,14 @@ using namespace kitty;
 
 class EsopTest : public kitty::testing::Test
 {
+protected:
+  template<int NumVars>
+  static_truth_table<NumVars> from_cubes( const std::vector<cube>& cubes )
+  {
+    static_truth_table<NumVars> tt;
+    create_from_cubes( tt, cubes );
+    return tt;
+  }
 };
 
 TEST_F( EsopTest, esop_for_small )
@@ -58,6 +66,54 @@ TEST_F( EsopTest, random_esop )
   {
     create_random( tt );
     const auto cubes = esop_from_optimum_pkrm( tt );
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes, true );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}
+
+TEST_F( EsopTest, random_pprm )
+{
+  static_truth_table<10> tt;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    const auto cubes = esop_from_pprm( tt );
+    auto tt_copy = tt.construct();
+    create_from_cubes( tt_copy, cubes, true );
+    EXPECT_EQ( tt, tt_copy );
+  }
+}
+
+TEST_F( EsopTest, esop_corner_cases )
+{
+  EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "00") ) ), from_hex<3>( "00" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "fe") ) ), from_hex<3>( "fe" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "80") ) ), from_hex<3>( "80" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_pprm( from_hex<3>( "ff") ) ), from_hex<3>( "ff" ) );
+
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "00") ) ), from_hex<3>( "00" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "fe") ) ), from_hex<3>( "fe" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "80") ) ), from_hex<3>( "80" ) );
+  EXPECT_EQ( from_cubes<3>( esop_from_optimum_pkrm( from_hex<3>( "ff") ) ), from_hex<3>( "ff" ) );
+}
+
+TEST_F( EsopTest, random_pprm_dynamic_and_check )
+{
+  dynamic_truth_table tt( 8u );
+
+  for ( auto i = 0; i < 50; ++i )
+  {
+    create_random( tt );
+    const auto cubes = esop_from_pprm( tt );
+
+    /* only positive literals */
+    for ( const auto& c : cubes )
+    {
+      EXPECT_EQ( c._bits, c._mask );
+    }
+
     auto tt_copy = tt.construct();
     create_from_cubes( tt_copy, cubes, true );
     EXPECT_EQ( tt, tt_copy );
