@@ -321,10 +321,10 @@ TEST( ConstructorsTst, create_multiple_from_chain )
     "x12 = x6 ^ x9"
   };
 
-  static_truth_table<4> f, f1, f2;
+  static_truth_table<4> f1, f2;
   std::vector<static_truth_table<4>> fs;
 
-  create_multiple_from_chain( f, fs, steps );
+  create_multiple_from_chain( 4, fs, steps );
 
   create_from_hex_string( f1, "cafe" );
   create_from_hex_string( f2, "affe" );

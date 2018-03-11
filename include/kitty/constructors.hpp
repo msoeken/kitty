@@ -709,7 +709,7 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
 
   Like ``create_from_chain``, but also returns all internally computed steps.
 
-  \param tt Truth table
+  \param num_vars Number of input variables
   \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
   \param steps Vector of steps
   \param error If not null, a pointer to store the error message
@@ -717,8 +717,9 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
   \return True on success
 */
 template<typename TT>
-bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
+bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
 {
+  auto tt = create<TT>( num_vars );
   tts.clear();
   auto it = steps.begin();
   if ( !create_from_chain( tt, [&it, &steps]() {
@@ -778,7 +779,7 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
 
   Like ``create_from_chain``, but also returns all internally computed steps.
 
-  \param tt Truth table
+  \param num_vars Number of input variables
   \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
   \param in Input stream to read chain
   \param error If not null, a pointer to store the error message
@@ -786,8 +787,9 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
   \return True on success
 */
 template<typename TT>
-bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
+bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
 {
+  auto tt = create<TT>( num_vars );
   tts.clear();
   if ( !create_from_chain( tt, [&in]() {
     std::string line;
