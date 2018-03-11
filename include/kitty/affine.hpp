@@ -50,7 +50,7 @@ namespace detail
 template<typename TT>
 inline void delta_swap_inplace_opt( TT& tt, uint64_t delta, uint64_t omega )
 {
-  assert( tt.num_vars() <= 6u );
+  assert( tt.num_vars() <= 6 );
   const uint64_t y = ( tt._bits[0] ^ ( tt._bits[0] >> delta ) ) & omega;
   tt._bits[0] = tt._bits[0] ^ y ^ ( y << delta );
 }

@@ -40,12 +40,40 @@
 #include "cube.hpp"
 #include "detail/constants.hpp"
 #include "detail/utils.hpp"
+#include "dynamic_truth_table.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "static_truth_table.hpp"
 
 namespace kitty
 {
+
+/*! \brief Creates truth table with number of variables
+
+  If some truth table instance is given, one can create a truth table with the
+  same type by calling the `construct()` method on it.  This function helps if
+  only the number of variables is known and the base type and uniforms the
+  creation of static and dynamic truth tables.  Note, however, that for static
+  truth tables `num_vars` must be consistent to the number of variables in the
+  truth table type.
+
+  \param num_vars Number of variables
+*/
+template<typename TT>
+inline TT create( unsigned num_vars )
+{
+  TT tt;
+  assert( tt.num_vars() == static_cast<int>( num_vars ) );
+  return tt;
+}
+
+/*! \cond PRIVATE */
+template<>
+inline dynamic_truth_table create<dynamic_truth_table>( unsigned num_vars )
+{
+  return dynamic_truth_table( num_vars );
+}
+/*! \endcond */
 
 /*! \brief Constructs projections (single-variable functions)
 
@@ -246,7 +274,7 @@ void create_random( TT& tt )
 template<typename TT, typename InputIt>
 void create_from_words( TT& tt, InputIt begin, InputIt end )
 {
-  assert( std::distance( begin, end ) == tt.num_blocks() );
+  assert( std::distance( begin, end ) == static_cast<unsigned>( tt.num_blocks() ) );
   std::copy( begin, end, tt.begin() );
 }
 
