@@ -51,18 +51,19 @@ std::vector<uint32_t> get_minterms( const TT& tt )
   return m;
 }
 
-inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vector<uint32_t>& minterms, uint8_t j )
+inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vector<uint32_t>& minterms, uint32_t j )
 {
   std::vector<std::pair<uint32_t, uint32_t>> buddies;
 
   auto mask = uint32_t( 1 ) << j;
   auto k = minterms.cbegin();
   auto kk = minterms.cbegin();
-  
+
   while ( true )
   {
     k = std::find_if( k, minterms.end(), [mask]( auto m ) { return ( m & mask ) == 0; } );
-    if ( k == minterms.end() ) break;
+    if ( k == minterms.end() )
+      break;
 
     if ( kk <= k )
     {
@@ -70,7 +71,8 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vecto
     }
 
     kk = std::find_if( kk, minterms.end(), [mask, &k]( auto m ) { return m >= ( *k | mask ); } );
-    if ( kk == minterms.end() ) break;
+    if ( kk == minterms.end() )
+      break;
 
     if ( ( *k ^ *kk ) >= ( mask << 1 ) )
     {
@@ -94,35 +96,151 @@ template<typename TT>
 void quine_mccluskey( const TT& tt )
 {
   const auto minterms = get_minterms( tt );
+  const auto n = tt.num_vars();
   const auto m = minterms.size();
 
   std::vector<uint32_t> tags( m, 0 );
-  std::vector<uint32_t> stack;
+  std::vector<uint32_t> stack( 2 * m + n , 0 );
 
-  for ( auto j = 0; j < m; ++j )
+  uint64_t a{};
+
+  /* Update tags using j-buddy algorithm */
+  for ( auto j = 0; j < n; ++j )
   {
     for ( const auto& p : get_jbuddies( minterms, j ) )
     {
+      assert( p.first < m );
+      assert( p.second < m );
+      assert( j <= n );
+
+      assert( !( ( tags[p.first] >> j ) & 1 ) );
       tags[p.first] |= ( 1 << j );
+      assert( !( ( tags[p.second] >> j ) & 1 ) );
       tags[p.second] |= ( 1 << j );
     }
+  }
 
-    auto t = 0;
-    for ( auto s = 0; s < m; ++s )
+  //std::cout << "Minterms:\n";
+  //for ( auto i = 0; i < m; ++i )
+  //{
+  //  std::cout << std::setw( 3 ) << minterms[i] << ": " << std::setw( 8 ) << std::hex << tags[i] << "\n";
+  //}
+
+  auto t = 0;
+  for ( auto s = 0; s < m; ++s )
+  {
+    if ( tags[s] == 0 )
     {
-      if ( t[s] == 0 )
+      // TODO output cube
+    }
+    else
+    {
+      stack[t] = minterms[s];
+      tags[t] = tags[s];
+      t++;
+    }
+  }
+
+  std::cout << "After step P1\n";
+  std::cout << "T =";
+  for ( auto j = 0; j < t; ++j )
+  {
+    std::cout << " " << tags[j];
+  }
+
+  std::cout << "\nS =";
+  for ( auto j = 0; j < t; ++j )
+  {
+    std::cout << " " << stack[j];
+  }
+
+  std::cout << "\nt = " << t << "\n";
+
+  stack.push_back( 0 );
+  auto A = 0;
+
+  while ( true )
+  {
+    /* P2 */
+    auto j = 0;
+    if ( stack[t] == t )
+    {
+      while ( j < n && ( ( A >> j ) & 1 ) == 0 )
       {
-        // TODO output cube
-      }
-      else
-      {
-        stack.push_back( minterms[s] );
-        tags[t++] = tags[s];
+        ++j;
       }
     }
 
-    // TODO A = 0;
-    stack.push_back( 0 );
+    while ( j < n && ( ( A >> j ) & 1 ) != 0 )
+    {
+      t = stack[t] - 1;
+
+      assert( ( A >> j ) & 1 );
+      A &= ~( 1 << j );
+      ++j;
+    }
+
+    if ( j >= n )
+    {
+      break;
+    }
+
+    assert( !( ( A >> j ) & 1 ) );
+    A |= ( 1 << j );
+
+    std::cout << "After step P2\n";
+    std::cout << "j = " << j << " t = " << t << " A = " << A << "\n";
+
+    // P3
+    auto r = t;
+    auto s = stack[t];
+
+    std::vector<uint32_t> subterms( r - s );
+    for ( auto i = 0; i < r - s; ++i )
+    {
+      subterms[i] = stack[s + i];
+    }
+
+    assert( !subterms.empty() );
+    assert( j < n );
+
+    if ( subterms.size() > 1 )
+    {
+      assert( subterms.size() > 1 );
+      for ( const auto& p : get_jbuddies( subterms, j ) )
+      {
+        std::cout << "loop\n";
+        auto x = tags[p.first] & tags[p.second];
+        //assert( ( x >> j ) & 1 );
+        x -= 1 << j;
+
+        if ( x == 0 )
+        {
+          std::cout << "CUBE(" << A << ", " << stack[p.first] << ")\n";
+          // TODO output cube
+        }
+        else
+        {
+          ++t;
+          stack[t] = stack[p.first];
+          tags[t] = x;
+        }
+      }
+    }
+
+    ++t;
+    stack[t] = r + 1;
+
+    std::cout << "After step P3\n";
+    std::cout << "\nS =";
+    for ( auto j = 0; j <= t; ++j )
+    {
+      std::cout << " " << stack[j];
+    }
+    std::cout << "\nt = " << t << "\n";
+
+    //return;
+    //break;
   }
 }
 } // namespace kitty

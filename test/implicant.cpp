@@ -27,6 +27,7 @@
 
 #include <kitty/static_truth_table.hpp>
 #include <kitty/implicant.hpp>
+#include <kitty/print.hpp>
 
 #include "utility.hpp"
 
@@ -57,4 +58,20 @@ TEST_F( ImplicantTest, get_jbuddies )
   buddies = get_jbuddies( minterms, 2 );
   EXPECT_EQ( buddies.size(), 1u );
   EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 0, 3 ) ) );
+
+  {
+    auto minterms = get_minterms( from_hex<4>( "cafe" ) );
+
+    for ( auto j = 0; j < 4; ++j )
+    {
+      get_jbuddies( minterms, j );
+    }
+  }
+}
+
+TEST_F( ImplicantTest, quine_mccluskey )
+{
+  //std::cout << to_binary( from_hex<4>( "cafe" ) ) << std::endl;
+
+  quine_mccluskey( from_hex<3>( "e8" ) );
 }

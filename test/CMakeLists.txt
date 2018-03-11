@@ -2,12 +2,11 @@ add_subdirectory(googletest/googletest)
 
 include_directories(googletest/googletest/include)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -Wall -Wextra")
-
 file(GLOB FILENAMES *.cpp)
 
 add_executable(run_tests ${FILENAMES})
 target_link_libraries(run_tests gtest kitty)
+target_compile_options(run_tests PUBLIC -Wall -Wextra -g)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-ftime-report" HAS_FTIME_REPORT)
