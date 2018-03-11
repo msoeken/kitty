@@ -34,6 +34,15 @@
 
 using namespace kitty;
 
+TEST( ConstructorsTest, create )
+{
+  dynamic_truth_table tt_d( 5 );
+  EXPECT_EQ( tt_d, create<dynamic_truth_table>( 5 ) );
+
+  static_truth_table<5> tt_s;
+  EXPECT_EQ( tt_s, create<static_truth_table<5>>( 5 ) );
+}
+
 TEST( ConstructorsTest, create_nth_var5 )
 {
   static_truth_table<5> tt_s;
