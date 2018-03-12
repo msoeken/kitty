@@ -41,10 +41,8 @@ int main( int argc, char** argv )
       "x20 = x6 ^ x14", "x21 = x2 ^ x10"};
 
   /* create truth tables */
-  /* f will be assigned the function computed by the last step */
-  kitty::static_truth_table<4> f;
   std::vector<kitty::static_truth_table<4>> steps;
-  kitty::create_multiple_from_chain( f, steps, chain );
+  kitty::create_multiple_from_chain( 4, steps, chain );
 
   /* output functions are in the last four steps */
   std::vector<kitty::static_truth_table<4>> y{steps[17], steps[18], steps[19], steps[20]};

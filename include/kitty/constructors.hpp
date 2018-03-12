@@ -40,12 +40,40 @@
 #include "cube.hpp"
 #include "detail/constants.hpp"
 #include "detail/utils.hpp"
+#include "dynamic_truth_table.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "static_truth_table.hpp"
 
 namespace kitty
 {
+
+/*! \brief Creates truth table with number of variables
+
+  If some truth table instance is given, one can create a truth table with the
+  same type by calling the `construct()` method on it.  This function helps if
+  only the number of variables is known and the base type and uniforms the
+  creation of static and dynamic truth tables.  Note, however, that for static
+  truth tables `num_vars` must be consistent to the number of variables in the
+  truth table type.
+
+  \param num_vars Number of variables
+*/
+template<typename TT>
+inline TT create( unsigned num_vars )
+{
+  TT tt;
+  assert( tt.num_vars() == static_cast<int>( num_vars ) );
+  return tt;
+}
+
+/*! \cond PRIVATE */
+template<>
+inline dynamic_truth_table create<dynamic_truth_table>( unsigned num_vars )
+{
+  return dynamic_truth_table( num_vars );
+}
+/*! \endcond */
 
 /*! \brief Constructs projections (single-variable functions)
 
@@ -246,7 +274,7 @@ void create_random( TT& tt )
 template<typename TT, typename InputIt>
 void create_from_words( TT& tt, InputIt begin, InputIt end )
 {
-  assert( std::distance( begin, end ) == tt.num_blocks() );
+  assert( std::distance( begin, end ) == static_cast<unsigned>( tt.num_blocks() ) );
   std::copy( begin, end, tt.begin() );
 }
 
@@ -681,7 +709,7 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
 
   Like ``create_from_chain``, but also returns all internally computed steps.
 
-  \param tt Truth table
+  \param num_vars Number of input variables
   \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
   \param steps Vector of steps
   \param error If not null, a pointer to store the error message
@@ -689,8 +717,9 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
   \return True on success
 */
 template<typename TT>
-bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
+bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
 {
+  auto tt = create<TT>( num_vars );
   tts.clear();
   auto it = steps.begin();
   if ( !create_from_chain( tt, [&it, &steps]() {
@@ -750,7 +779,7 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
 
   Like ``create_from_chain``, but also returns all internally computed steps.
 
-  \param tt Truth table
+  \param num_vars Number of input variables
   \param tts Truth table for all steps, tt[i] corresponds to step x\f$(i + 1)\f$
   \param in Input stream to read chain
   \param error If not null, a pointer to store the error message
@@ -758,8 +787,9 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
   \return True on success
 */
 template<typename TT>
-bool create_multiple_from_chain( TT& tt, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
+bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
 {
+  auto tt = create<TT>( num_vars );
   tts.clear();
   if ( !create_from_chain( tt, [&in]() {
     std::string line;

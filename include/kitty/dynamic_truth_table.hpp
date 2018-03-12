@@ -61,6 +61,15 @@ struct dynamic_truth_table
   {
   }
 
+  /*! Empty constructor.
+
+    Creates an empty truth table. It has 0 variables, but no bits, i.e., it is
+    different from a truth table for the constant function.  This constructor is
+    only used for convenience, if algorithms require the existence of default
+    constructable classes.
+   */
+  dynamic_truth_table() : _num_vars( 0 ) {}
+
   /*! Constructs a new dynamic truth table instance with the same number of variables. */
   inline dynamic_truth_table construct() const
   {

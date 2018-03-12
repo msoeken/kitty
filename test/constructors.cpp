@@ -34,6 +34,15 @@
 
 using namespace kitty;
 
+TEST( ConstructorsTest, create )
+{
+  dynamic_truth_table tt_d( 5 );
+  EXPECT_EQ( tt_d, create<dynamic_truth_table>( 5 ) );
+
+  static_truth_table<5> tt_s;
+  EXPECT_EQ( tt_s, create<static_truth_table<5>>( 5 ) );
+}
+
 TEST( ConstructorsTest, create_nth_var5 )
 {
   static_truth_table<5> tt_s;
@@ -312,10 +321,10 @@ TEST( ConstructorsTst, create_multiple_from_chain )
     "x12 = x6 ^ x9"
   };
 
-  static_truth_table<4> f, f1, f2;
+  static_truth_table<4> f1, f2;
   std::vector<static_truth_table<4>> fs;
 
-  create_multiple_from_chain( f, fs, steps );
+  create_multiple_from_chain( 4, fs, steps );
 
   create_from_hex_string( f1, "cafe" );
   create_from_hex_string( f2, "affe" );
