@@ -36,10 +36,15 @@
 #include <vector>
 
 #include "algorithm.hpp"
+#include "cube.hpp"
 
 namespace kitty
 {
 
+/*! \brief Computes all minterms 
+
+  \param tt Truth table
+*/
 template<typename TT>
 std::vector<uint32_t> get_minterms( const TT& tt )
 {
@@ -51,18 +56,20 @@ std::vector<uint32_t> get_minterms( const TT& tt )
   return m;
 }
 
-inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vector<uint32_t>& minterms, uint32_t j )
+/*! \cond PRIVATE */
+template<typename Iterator>
+inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( Iterator begin, Iterator end, uint32_t j )
 {
   std::vector<std::pair<uint32_t, uint32_t>> buddies;
 
   auto mask = uint32_t( 1 ) << j;
-  auto k = minterms.cbegin();
-  auto kk = minterms.cbegin();
+  auto k = begin;
+  auto kk = begin;
 
   while ( true )
   {
-    k = std::find_if( k, minterms.end(), [mask]( auto m ) { return ( m & mask ) == 0; } );
-    if ( k == minterms.end() )
+    k = std::find_if( k, end, [mask]( auto m ) { return ( m & mask ) == 0; } );
+    if ( k == end )
       break;
 
     if ( kk <= k )
@@ -70,8 +77,8 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vecto
       kk = k + 1;
     }
 
-    kk = std::find_if( kk, minterms.end(), [mask, &k]( auto m ) { return m >= ( *k | mask ); } );
-    if ( kk == minterms.end() )
+    kk = std::find_if( kk, end, [mask, &k]( auto m ) { return m >= ( *k | mask ); } );
+    if ( kk == end )
       break;
 
     if ( ( *k ^ *kk ) >= ( mask << 1 ) )
@@ -82,8 +89,7 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vecto
 
     if ( *kk == ( *k | mask ) )
     {
-      buddies.emplace_back( std::distance( minterms.begin(), k ),
-                            std::distance( minterms.begin(), kk ) );
+      buddies.emplace_back( std::distance( begin, k ), std::distance( begin, kk ) );
     }
 
     ++k;
@@ -91,21 +97,53 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vecto
 
   return buddies;
 }
+/*! \endcond */
 
-template<typename TT>
-void quine_mccluskey( const TT& tt )
+/*! \brief Computes all j-buddies in a list of minterms
+
+  Computes all pairs \f$(k, k')\f$ such that \f$k < k'\f$ and the two minterms
+  at indexes \f$k\f$ and \f$k'\f$ only differ in bit \f$j\f$.
+
+  This algorithm is described by Knuth in Exercise TAOCP 7.1.1-29.
+
+  \param minterms Vector of minterms
+  \param j Bit position
+*/
+inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vector<uint32_t>& minterms, uint32_t j )
 {
-  const auto minterms = get_minterms( tt );
-  const auto n = tt.num_vars();
+  return get_jbuddies( minterms.begin(), minterms.end(), j );
+}
+
+/*! \brief Computes all prime implicants (from minterms)
+
+  This algorithm computes all prime implicants for a list of minterms.  The
+  running time is at most proportional to \f$mn\f$, where \f$m\f$ is the number
+  of minterms and \f$n\f$ is the number of variables.
+
+  The algorithm is described in Exercise TAOCP 7.1.1-30 by Knuth and is inspired
+  by the algorithm described in [E. Morreale, IEEE Trans. EC 16(5), 1967,
+  611–620].
+
+  \param minterms Vector of minterms (as integer values)
+  \param num_vars Number of variables
+*/
+inline std::vector<cube> get_prime_implicants_morreale( const std::vector<uint32_t>& minterms, unsigned num_vars )
+{
+  std::vector<cube> cubes;
+
+  const auto n = num_vars;
   const auto m = minterms.size();
 
-  std::vector<uint32_t> tags( m, 0 );
+  std::vector<uint32_t> tags( 2 * m + n, 0 );
   std::vector<uint32_t> stack( 2 * m + n , 0 );
 
-  uint64_t a{};
+  uint32_t mask = ( 1 << n ) - 1;
+  uint32_t A{};
+
+  /* P1 */
 
   /* Update tags using j-buddy algorithm */
-  for ( auto j = 0; j < n; ++j )
+  for ( auto j = 0u; j < n; ++j )
   {
     for ( const auto& p : get_jbuddies( minterms, j ) )
     {
@@ -120,18 +158,12 @@ void quine_mccluskey( const TT& tt )
     }
   }
 
-  //std::cout << "Minterms:\n";
-  //for ( auto i = 0; i < m; ++i )
-  //{
-  //  std::cout << std::setw( 3 ) << minterms[i] << ": " << std::setw( 8 ) << std::hex << tags[i] << "\n";
-  //}
-
-  auto t = 0;
-  for ( auto s = 0; s < m; ++s )
+  auto t = 0u;
+  for ( auto s = 0u; s < m; ++s )
   {
-    if ( tags[s] == 0 )
+    if ( tags[s] == 0u )
     {
-      // TODO output cube
+      cubes.emplace_back( minterms[s], mask );
     }
     else
     {
@@ -141,34 +173,19 @@ void quine_mccluskey( const TT& tt )
     }
   }
 
-  std::cout << "After step P1\n";
-  std::cout << "T =";
-  for ( auto j = 0; j < t; ++j )
-  {
-    std::cout << " " << tags[j];
-  }
-
-  std::cout << "\nS =";
-  for ( auto j = 0; j < t; ++j )
-  {
-    std::cout << " " << stack[j];
-  }
-
-  std::cout << "\nt = " << t << "\n";
-
   stack.push_back( 0 );
-  auto A = 0;
 
   while ( true )
   {
     /* P2 */
-    auto j = 0;
+    auto j = 0u;
     if ( stack[t] == t )
     {
       while ( j < n && ( ( A >> j ) & 1 ) == 0 )
       {
         ++j;
       }
+      assert( j == n || ( A >> j ) & 1 );
     }
 
     while ( j < n && ( ( A >> j ) & 1 ) != 0 )
@@ -188,59 +205,46 @@ void quine_mccluskey( const TT& tt )
     assert( !( ( A >> j ) & 1 ) );
     A |= ( 1 << j );
 
-    std::cout << "After step P2\n";
-    std::cout << "j = " << j << " t = " << t << " A = " << A << "\n";
-
-    // P3
+    /* P3 */
     auto r = t;
     auto s = stack[t];
 
-    std::vector<uint32_t> subterms( r - s );
-    for ( auto i = 0; i < r - s; ++i )
-    {
-      subterms[i] = stack[s + i];
-    }
-
-    assert( !subterms.empty() );
     assert( j < n );
 
-    if ( subterms.size() > 1 )
+    for ( const auto& p : get_jbuddies( stack.begin() + s, stack.begin() + r, j ) )
     {
-      assert( subterms.size() > 1 );
-      for ( const auto& p : get_jbuddies( subterms, j ) )
-      {
-        std::cout << "loop\n";
-        auto x = tags[p.first] & tags[p.second];
-        //assert( ( x >> j ) & 1 );
-        x -= 1 << j;
+      auto x = tags[s + p.first] & tags[s + p.second];
+      assert( ( x >> j ) & 1 );
+      x &= ~( 1 << j );
 
-        if ( x == 0 )
-        {
-          std::cout << "CUBE(" << A << ", " << stack[p.first] << ")\n";
-          // TODO output cube
-        }
-        else
-        {
-          ++t;
-          stack[t] = stack[p.first];
-          tags[t] = x;
-        }
+      if ( x == 0 )
+      {
+        cubes.emplace_back( stack[s + p.first], ~A & mask );
+      }
+      else
+      {
+        ++t;
+        stack[t] = stack[s + p.first];
+        tags[t] = x;
       }
     }
 
     ++t;
     stack[t] = r + 1;
-
-    std::cout << "After step P3\n";
-    std::cout << "\nS =";
-    for ( auto j = 0; j <= t; ++j )
-    {
-      std::cout << " " << stack[j];
-    }
-    std::cout << "\nt = " << t << "\n";
-
-    //return;
-    //break;
   }
+
+  return cubes;
+}
+
+/*! \brief Computes all prime implicants (from truth table)
+
+  Computes minterms from truth table and calls overloaded function.
+
+  \param tt Truth table
+*/
+template<typename TT>
+std::vector<cube> get_prime_implicants_morreale( const TT& tt )
+{
+  return get_prime_implicants_morreale( get_minterms( tt ), tt.num_vars() );
 }
 } // namespace kitty

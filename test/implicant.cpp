@@ -69,9 +69,30 @@ TEST_F( ImplicantTest, get_jbuddies )
   }
 }
 
-TEST_F( ImplicantTest, quine_mccluskey )
+TEST_F( ImplicantTest, prime_implicants_morreale )
 {
-  //std::cout << to_binary( from_hex<4>( "cafe" ) ) << std::endl;
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    static_truth_table<4> func;
+    create_random( func );
+    const auto cubes = get_prime_implicants_morreale( func );
 
-  quine_mccluskey( from_hex<3>( "e8" ) );
+    auto tt = func.construct();
+    create_from_cubes( tt, cubes );
+    EXPECT_EQ( func, tt );
+  }
+
+  for ( auto n = 1u; n < 8u; ++n )
+  {
+    for ( auto i = 0u; i < 10u; ++i )
+    {
+      dynamic_truth_table func( n );
+      create_random( func );
+      const auto cubes = get_prime_implicants_morreale( func );
+
+      auto tt = func.construct();
+      create_from_cubes( tt, cubes );
+      EXPECT_EQ( func, tt );
+    }
+  }
 }
