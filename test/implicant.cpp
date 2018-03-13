@@ -49,24 +49,18 @@ TEST_F( ImplicantTest, get_jbuddies )
 
   auto buddies = get_jbuddies( minterms, 0 );
   EXPECT_EQ( buddies.size(), 1u );
-  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 2, 3 ) ) );
+  EXPECT_EQ( *buddies.front().first, 6u );
+  EXPECT_EQ( *buddies.front().second, 7u );
 
   buddies = get_jbuddies( minterms, 1 );
   EXPECT_EQ( buddies.size(), 1u );
-  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 1, 3 ) ) );
+  EXPECT_EQ( *buddies.front().first, 5u );
+  EXPECT_EQ( *buddies.front().second, 7u );
 
   buddies = get_jbuddies( minterms, 2 );
   EXPECT_EQ( buddies.size(), 1u );
-  EXPECT_EQ( buddies.front(), ( std::pair<uint32_t, uint32_t>( 0, 3 ) ) );
-
-  {
-    auto minterms = get_minterms( from_hex<4>( "cafe" ) );
-
-    for ( auto j = 0; j < 4; ++j )
-    {
-      get_jbuddies( minterms, j );
-    }
-  }
+  EXPECT_EQ( *buddies.front().first, 3u );
+  EXPECT_EQ( *buddies.front().second, 7u );
 }
 
 TEST_F( ImplicantTest, prime_implicants_morreale )

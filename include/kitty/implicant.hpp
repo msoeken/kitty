@@ -58,9 +58,9 @@ std::vector<uint32_t> get_minterms( const TT& tt )
 
 /*! \cond PRIVATE */
 template<typename Iterator>
-inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( Iterator begin, Iterator end, uint32_t j )
+inline std::vector<std::pair<Iterator, Iterator>> get_jbuddies( Iterator begin, Iterator end, uint32_t j )
 {
-  std::vector<std::pair<uint32_t, uint32_t>> buddies;
+  std::vector<std::pair<Iterator, Iterator>> buddies;
 
   auto mask = uint32_t( 1 ) << j;
   auto k = begin;
@@ -89,7 +89,7 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( Iterator begin, 
 
     if ( *kk == ( *k | mask ) )
     {
-      buddies.emplace_back( std::distance( begin, k ), std::distance( begin, kk ) );
+      buddies.emplace_back( k, kk );
     }
 
     ++k;
@@ -109,7 +109,7 @@ inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( Iterator begin, 
   \param minterms Vector of minterms
   \param j Bit position
 */
-inline std::vector<std::pair<uint32_t, uint32_t>> get_jbuddies( const std::vector<uint32_t>& minterms, uint32_t j )
+inline std::vector<std::pair<std::vector<uint32_t>::const_iterator, std::vector<uint32_t>::const_iterator>> get_jbuddies( const std::vector<uint32_t>& minterms, uint32_t j )
 {
   return get_jbuddies( minterms.begin(), minterms.end(), j );
 }
@@ -147,14 +147,11 @@ inline std::vector<cube> get_prime_implicants_morreale( const std::vector<uint32
   {
     for ( const auto& p : get_jbuddies( minterms, j ) )
     {
-      assert( p.first < m );
-      assert( p.second < m );
-      assert( j <= n );
+      const auto k = std::distance( minterms.begin(), p.first );
+      const auto kk = std::distance( minterms.begin(), p.second );
 
-      assert( !( ( tags[p.first] >> j ) & 1 ) );
-      tags[p.first] |= ( 1 << j );
-      assert( !( ( tags[p.second] >> j ) & 1 ) );
-      tags[p.second] |= ( 1 << j );
+      tags[k] |= ( 1 << j );
+      tags[kk] |= ( 1 << j );
     }
   }
 
@@ -185,46 +182,41 @@ inline std::vector<cube> get_prime_implicants_morreale( const std::vector<uint32
       {
         ++j;
       }
-      assert( j == n || ( A >> j ) & 1 );
     }
 
     while ( j < n && ( ( A >> j ) & 1 ) != 0 )
     {
       t = stack[t] - 1;
-
-      assert( ( A >> j ) & 1 );
       A &= ~( 1 << j );
       ++j;
     }
 
     if ( j >= n )
     {
-      break;
+      /* terminate */
+      return cubes;
     }
 
-    assert( !( ( A >> j ) & 1 ) );
     A |= ( 1 << j );
 
     /* P3 */
-    auto r = t;
-    auto s = stack[t];
+    const auto r = t;
+    const auto s = stack.begin() + stack[t];
 
-    assert( j < n );
-
-    for ( const auto& p : get_jbuddies( stack.begin() + s, stack.begin() + r, j ) )
+    for ( const auto& p : get_jbuddies( s, stack.begin() + r, j ) )
     {
-      auto x = tags[s + p.first] & tags[s + p.second];
-      assert( ( x >> j ) & 1 );
-      x &= ~( 1 << j );
+      const auto k = std::distance( stack.begin(), p.first );
+      const auto kk = std::distance( stack.begin(), p.second );
+      const auto x = tags[k] & tags[kk] & ~( 1 << j );
 
       if ( x == 0 )
       {
-        cubes.emplace_back( stack[s + p.first], ~A & mask );
+        cubes.emplace_back( stack[k], ~A & mask );
       }
       else
       {
         ++t;
-        stack[t] = stack[s + p.first];
+        stack[t] = stack[k];
         tags[t] = x;
       }
     }
@@ -232,8 +224,6 @@ inline std::vector<cube> get_prime_implicants_morreale( const std::vector<uint32
     ++t;
     stack[t] = r + 1;
   }
-
-  return cubes;
 }
 
 /*! \brief Computes all prime implicants (from truth table)
