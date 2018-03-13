@@ -18,6 +18,9 @@ v0.4 (not yet released)
 * Print all cubes: ``print_cubes``
   `#44 <https://github.com/msoeken/kitty/pull/44>`_
 
+* Generate implicants and prime implicants: ``get_minterms``, ``get_jbuddies``, ``get_prime_implicants_morreale``
+  `#46 <https://github.com/msoeken/kitty/pull/46>`_
+
 v0.3 (February 25, 2018)
 ------------------------
 

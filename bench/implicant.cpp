@@ -23,41 +23,42 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <benchmark/benchmark.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/constructors.hpp>
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/implicant.hpp>
 
-#pragma once
+using namespace kitty;
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+void BM_minterms( benchmark::State& state )
+{
+  dynamic_truth_table tt( state.range( 0 ) );
+  create_majority( tt );
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "spectral.hpp"
+  while ( state.KeepRunning() )
+  {
+    get_minterms( tt );
+  }
+}
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+void BM_jbuddies( benchmark::State& state )
+{
+  dynamic_truth_table tt( state.range( 0 ) );
+  create_majority( tt );
+
+  const auto minterms = get_minterms( tt );
+
+  while ( state.KeepRunning() )
+  {
+    for ( auto i = 0u; i < state.range( 0 ); ++i )
+    {
+      get_jbuddies( minterms, 0 );
+    }
+  }
+}
+
+BENCHMARK( BM_minterms )->Arg( 9 )->Arg( 11 )->Arg( 13 )->Arg( 15 );
+BENCHMARK( BM_jbuddies )->Arg( 9 )->Arg( 11 )->Arg( 13 )->Arg( 15 );
+
+BENCHMARK_MAIN()

@@ -27,6 +27,7 @@ Welcome to kitty's documentation!
    operators
    print
    hash
+   implicant
    canonization
    cube
    permutation
