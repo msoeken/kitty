@@ -38,10 +38,20 @@
 #include <iterator>
 
 #include "algorithm.hpp"
+#include "dynamic_truth_table.hpp"
 #include "static_truth_table.hpp"
 
 namespace kitty
 {
+
+/* forward declarations */
+/*! \cond PRIVATE */
+template<typename TT>
+TT create( unsigned num_vars );
+
+template<>
+dynamic_truth_table create<dynamic_truth_table>( unsigned num_vars );
+/*! \endcond */
 
 /*! \brief Inverts all bits in a truth table */
 template<typename TT>
@@ -716,6 +726,22 @@ inline static_truth_table<NumVars> extend_to( const TTFrom& from )
   return tt;
 }
 
+/*! \brief Extends smaller truth table to larger dynamic one
+
+  This is a special version of `extend_to` that has the truth table as a return
+  value.  It only works for creating dynamic truth tables.  The parameter
+  `num_vars` must be equal or larger to the number of variables in `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<typename TTFrom>
+inline dynamic_truth_table extend_to( const TTFrom& from, unsigned num_vars )
+{
+  auto tt = create<dynamic_truth_table>( num_vars );
+  extend_to( tt, from );
+  return tt;
+}
+
 /*! \brief Shrinks larger truth table to smaller one
 
   The function expects that the most significant bits, which are cut off, are
@@ -751,6 +777,22 @@ template<int NumVars, typename TTFrom>
 inline static_truth_table<NumVars> shrink_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
+  shrink_to( tt, from );
+  return tt;
+}
+
+/*! \brief Shrinks larger truth table to smaller dynamic one
+
+  This is a special version of `shrink_to` that has the truth table as a return
+  value.  It only works for creating dynamic tables.  The parameter `num_vars`
+  must be equal or smaller to the number of variables in `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<typename TTFrom>
+inline dynamic_truth_table shrink_to( const TTFrom& from, unsigned num_vars )
+{
+  auto tt = create<dynamic_truth_table>( num_vars );
   shrink_to( tt, from );
   return tt;
 }

@@ -482,6 +482,11 @@ TEST_F( OperationsTest, extend_to )
   extend_to( th_extend, th );
 
   EXPECT_EQ( cofactor0( maj, 8 ), th_extend );
+
+  EXPECT_EQ( extend_to<3>( from_hex<2>( "a" ) ), from_hex<3>( "aa" ) );
+  EXPECT_EQ( extend_to<3>( from_hex( 2, "a" ) ), from_hex<3>( "aa" ) );
+  EXPECT_EQ( extend_to( from_hex<2>( "a" ), 3 ), from_hex( 3, "aa" ) );
+  EXPECT_EQ( extend_to( from_hex( 2, "a" ), 3 ), from_hex( 3, "aa" ) );
 }
 
 TEST_F( OperationsTest, extend_to_same )
@@ -507,6 +512,12 @@ TEST_F( OperationsTest, shrink_to )
   EXPECT_EQ( shrink_to<2>( from_hex( 2, "8" ) ), from_hex<2>( "8" ) );
 
   EXPECT_EQ( shrink_to<5>( from_hex( 7, "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+
+  EXPECT_EQ( shrink_to( from_hex( 3, "aa" ), 2 ), from_hex( 2, "a" ) );
+  EXPECT_EQ( shrink_to( from_hex( 3, "1a" ), 2 ), from_hex( 2, "a" ) );
+  EXPECT_EQ( shrink_to( from_hex( 2, "8" ), 2 ), from_hex( 2, "8" ) );
+
+  EXPECT_EQ( shrink_to( from_hex( 7, "cafecafecafecafecafecafecafecafe" ), 5 ), from_hex( 5, "cafecafe") );
 }
 
 TEST_F( OperationsTest, shift_left )
