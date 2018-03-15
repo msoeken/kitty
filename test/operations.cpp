@@ -479,7 +479,7 @@ TEST_F( OperationsTest, extend_to )
 
   create_majority( maj );
   create_threshold( th, 4 );
-  extend_to( th_extend, th );
+  extend_to_inplace( th_extend, th );
 
   EXPECT_EQ( cofactor0( maj, 8 ), th_extend );
 
@@ -494,7 +494,7 @@ TEST_F( OperationsTest, extend_to_same )
   static_truth_table<9> tt1, tt2;
 
   create_random( tt1 );
-  extend_to( tt2, tt1 );
+  extend_to_inplace( tt2, tt1 );
 
   EXPECT_EQ( tt1, tt2 );
 }
@@ -611,7 +611,7 @@ void majority_decomposition_acw( TT& f1, TT& f2 )
 
   dynamic_truth_table lhs( 2 * k - 1 );
   create_majority( lhs );
-  extend_to( f1, lhs );
+  extend_to_inplace( f1, lhs );
 
   dynamic_truth_table rhs1( 2 * k - 1 );
   dynamic_truth_table rhs2( 2 * k - 1 );
@@ -621,8 +621,8 @@ void majority_decomposition_acw( TT& f1, TT& f2 )
 
   auto rhs1_e = f2.construct();
   auto rhs2_e = f2.construct();
-  extend_to( rhs1_e, rhs1 );
-  extend_to( rhs2_e, rhs2 );
+  extend_to_inplace( rhs1_e, rhs1 );
+  extend_to_inplace( rhs2_e, rhs2 );
 
   create_nth_var( f2, 2 * k - 1 );
 
@@ -703,7 +703,7 @@ TEST_F( OperationsTest, majority_odd_conjecture )
   static_truth_table<n - 2> f1_m3;
   create_majority( f1_m3 );
   static_truth_table<n - 1> f1;
-  extend_to( f1, f1_m3 );
+  extend_to_inplace( f1, f1_m3 );
 
   /* create f2 */
   static_truth_table<n - 1> f2, rem;
@@ -726,8 +726,8 @@ TEST_F( OperationsTest, majority_odd_conjecture )
   
   /* create majority */
   static_truth_table<n> f1_e, f2_e;
-  extend_to( f1_e, f1 );
-  extend_to( f2_e, f2 );
+  extend_to_inplace( f1_e, f1 );
+  extend_to_inplace( f2_e, f2 );
 
   EXPECT_EQ( maj, ternary_majority( nth<n>( n - 1 ), f1_e, f2_e ) );
 }

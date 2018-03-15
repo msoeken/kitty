@@ -9,8 +9,12 @@ v0.4 (not yet released)
   `#43 <https://github.com/msoeken/kitty/pull/43>`_
   `#45 <https://github.com/msoeken/kitty/pull/45>`_
 
-* Operations: ``shrink_to``
+* Operations: ``shrink_to`` and ``shrink_to_inplace``
   `#42 <https://github.com/msoeken/kitty/pull/42>`_
+  `#47 <https://github.com/msoeken/kitty/pull/47>`_
+
+* Operation ``extend_to`` is now called ``extend_to_inplace``, new special out-of-place versions ``extend_to``
+  `#47 <https://github.com/msoeken/kitty/pull/47>`_
 
 * CNF generation: ``cnf_characteristic``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_

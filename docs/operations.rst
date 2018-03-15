@@ -36,7 +36,9 @@ Combination and manipulation
    flip
    min_base_inplace
    expand_inplace
+   extend_to_inplace
    extend_to
+   shrink_to_inplace
    shrink_to
    shift_left_inplace
    shift_left

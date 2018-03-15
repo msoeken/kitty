@@ -834,7 +834,7 @@ inline void create_characteristic( TT& tt, const TTFrom& from )
   create_nth_var( var, from.num_vars() );
 
   auto ext = tt.construct();
-  extend_to( ext, from );
+  extend_to_inplace( ext, from );
 
   tt = ~var ^ ext;
 }
