@@ -40,6 +40,10 @@ class PrintTest : public kitty::testing::Test
 
 TEST_F( PrintTest, print_binary )
 {
+  EXPECT_EQ( to_binary( from_hex<0>( "0" ) ), "0" );
+  EXPECT_EQ( to_binary( from_hex<0>( "1" ) ), "1" );
+  EXPECT_EQ( to_binary( from_hex<1>( "1" ) ), "01" );
+  EXPECT_EQ( to_binary( from_hex<1>( "2" ) ), "10" );
   EXPECT_EQ( to_binary( from_hex<2>( "8" ) ), "1000" );
   EXPECT_EQ( to_binary( from_hex<3>( "e8" ) ), "11101000" );
   EXPECT_EQ( to_binary( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "11111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
@@ -47,6 +51,10 @@ TEST_F( PrintTest, print_binary )
 
 TEST_F( PrintTest, print_hex )
 {
+  EXPECT_EQ( to_hex( from_hex<0>( "0" ) ), "0" );
+  EXPECT_EQ( to_hex( from_hex<0>( "1" ) ), "1" );
+  EXPECT_EQ( to_hex( from_hex<1>( "1" ) ), "1" );
+  EXPECT_EQ( to_hex( from_hex<1>( "2" ) ), "2" );
   EXPECT_EQ( to_hex( from_hex<2>( "8" ) ), "8" );
   EXPECT_EQ( to_hex( from_hex<3>( "e8" ) ), "e8" );
   EXPECT_EQ( to_hex( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "fffefee8fee8e880fee8e880e8808000" );
