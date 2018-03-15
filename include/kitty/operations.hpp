@@ -684,7 +684,7 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   \param from Smaller truth table to copy from
 */
 template<typename TT, typename TTFrom>
-void extend_to( TT& tt, const TTFrom& from )
+void extend_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() >= from.num_vars() );
 
@@ -711,10 +711,10 @@ void extend_to( TT& tt, const TTFrom& from )
 
 /*! \brief Extends smaller truth table to larger static one
 
-  This is a special version of `extend_to` that has the truth table as a return
-  value.  It only works for creating static truth tables.  The template
-  parameter `NumVars` must be equal or larger to the number of variables in
-  `from`.
+  This is an out-of-place version of `extend_to_inplace` that has the truth
+  table as a return value.  It only works for creating static truth tables.  The
+  template parameter `NumVars` must be equal or larger to the number of
+  variables in `from`.
 
   \param from Smaller truth table to copy from
 */
@@ -722,15 +722,16 @@ template<int NumVars, typename TTFrom>
 inline static_truth_table<NumVars> extend_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
-  extend_to( tt, from );
+  extend_to_inplace( tt, from );
   return tt;
 }
 
 /*! \brief Extends smaller truth table to larger dynamic one
 
-  This is a special version of `extend_to` that has the truth table as a return
-  value.  It only works for creating dynamic truth tables.  The parameter
-  `num_vars` must be equal or larger to the number of variables in `from`.
+  This is an out-of-place version of `extend_to_inplace` that has the truth
+  table as a return value.  It only works for creating dynamic truth tables.
+  The parameter `num_vars` must be equal or larger to the number of variables in
+  `from`.
 
   \param from Smaller truth table to copy from
 */
@@ -738,7 +739,7 @@ template<typename TTFrom>
 inline dynamic_truth_table extend_to( const TTFrom& from, unsigned num_vars )
 {
   auto tt = create<dynamic_truth_table>( num_vars );
-  extend_to( tt, from );
+  extend_to_inplace( tt, from );
   return tt;
 }
 
@@ -752,7 +753,7 @@ inline dynamic_truth_table extend_to( const TTFrom& from, unsigned num_vars )
   \param from Larger truth table to copy from
 */
 template<typename TT, typename TTFrom>
-void shrink_to( TT& tt, const TTFrom& from )
+void shrink_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() <= from.num_vars() );
 
@@ -766,8 +767,8 @@ void shrink_to( TT& tt, const TTFrom& from )
 
 /*! \brief Shrinks larger truth table to smaller static one
 
-  This is a special version of `shrink_to` that has the truth table as a return
-  value.  It only works for creating static truth tables.  The template
+  This is an out-of-place version of `shrink_to` that has the truth table as a
+  return value.  It only works for creating static truth tables.  The template
   parameter `NumVars` must be equal or smaller to the number of variables in
   `from`.
 
@@ -777,15 +778,15 @@ template<int NumVars, typename TTFrom>
 inline static_truth_table<NumVars> shrink_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
-  shrink_to( tt, from );
+  shrink_to_inplace( tt, from );
   return tt;
 }
 
 /*! \brief Shrinks larger truth table to smaller dynamic one
 
-  This is a special version of `shrink_to` that has the truth table as a return
-  value.  It only works for creating dynamic tables.  The parameter `num_vars`
-  must be equal or smaller to the number of variables in `from`.
+  This is an out-of-place version of `shrink_to` that has the truth table as a
+  return value.  It only works for creating dynamic tables.  The parameter
+  `num_vars` must be equal or smaller to the number of variables in `from`.
 
   \param from Smaller truth table to copy from
 */
@@ -793,7 +794,7 @@ template<typename TTFrom>
 inline dynamic_truth_table shrink_to( const TTFrom& from, unsigned num_vars )
 {
   auto tt = create<dynamic_truth_table>( num_vars );
-  shrink_to( tt, from );
+  shrink_to_inplace( tt, from );
   return tt;
 }
 
