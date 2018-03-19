@@ -23,42 +23,74 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/properties.hpp>
 
-#pragma once
+#include "utility.hpp"
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+using namespace kitty;
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "properties.hpp"
-#include "spectral.hpp"
+class PropertiesTest : public kitty::testing::Test
+{
+};
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+TEST_F( PropertiesTest, chow_small_example )
+{
+  auto r = chow_parameters( from_hex<2>( "e" ) );
+  EXPECT_EQ( r.first, 3u );
+  EXPECT_EQ( r.second.size(), 2u );
+  EXPECT_EQ( r.second[0u], 2u );
+  EXPECT_EQ( r.second[1u], 2u );
+}
+
+TEST_F( PropertiesTest, is_canalizing )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do {
+    if ( is_canalizing( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 3514u );
+}
+
+TEST_F( PropertiesTest, is_horn )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do {
+    if ( is_horn( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 4960u );
+}
+
+TEST_F( PropertiesTest, is_krom )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do {
+    if ( is_krom( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 4170u );
+}

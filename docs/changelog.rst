@@ -25,6 +25,9 @@ v0.4 (not yet released)
 * Generate implicants and prime implicants: ``get_minterms``, ``get_jbuddies``, ``get_prime_implicants_morreale``
   `#46 <https://github.com/msoeken/kitty/pull/46>`_
 
+* Function properties: ``chow_parameters``, ``is_canalizing``, ``is_horn``, ``is_krom``
+  `#48 <https://github.com/msoeken/kitty/pull/48>`_
+
 v0.3 (February 25, 2018)
 ------------------------
 
