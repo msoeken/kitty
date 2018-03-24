@@ -27,7 +27,7 @@
 
 #include <kitty/kitty.hpp>
 
-int main( int argc, char** argv )
+int main( int argc, char ** argv )
 {
   /* we initialize TT using a lambda, since we do not know its size yet */
   const auto tt = [&]() {

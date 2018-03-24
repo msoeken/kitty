@@ -13,10 +13,10 @@ option(KITTY_TIDY "Check code with clang-tidy" OFF)
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-fcolor-diagnostics" HAS_FCOLOR_DIAGNOSTICS)
 if (HAS_FCOLOR_DIAGNOSTICS)
-  add_definitions(-fcolor-diagnostics)
+  add_compile_options(-fcolor-diagnostics)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall")
+add_compile_options(-W -Wall -Werror)
 
 add_subdirectory(include)
 

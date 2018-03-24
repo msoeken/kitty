@@ -47,7 +47,7 @@ void BM_for_each_one_bit_naive( benchmark::State& state )
     {
       set_bit( tt, dist( gen ) );
     }
-    for_each_one_bit_naive( tt, []( auto bit ) {} );
+    for_each_one_bit_naive( tt, []( auto ) {} );
   }
 }
 
@@ -65,7 +65,7 @@ void BM_for_each_one_bit_jump( benchmark::State& state )
     {
       set_bit( tt, dist( gen ) );
     }
-    for_each_one_bit_jump( tt, []( auto bit ) {} );
+    for_each_one_bit_jump( tt, []( auto ) {} );
   }
 }
 

@@ -51,7 +51,7 @@ void BM_jbuddies( benchmark::State& state )
 
   while ( state.KeepRunning() )
   {
-    for ( auto i = 0u; i < state.range( 0 ); ++i )
+    for ( auto i = 0; i < state.range( 0 ); ++i )
     {
       get_jbuddies( minterms, 0 );
     }

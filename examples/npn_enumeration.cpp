@@ -32,7 +32,7 @@
 /* compile time constant for the number of variables */
 auto constexpr num_vars = 4;
 
-int main( int argc, char** argv )
+int main()
 {
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;

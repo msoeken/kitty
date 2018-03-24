@@ -28,7 +28,7 @@
 
 #include <kitty/kitty.hpp>
 
-int main( int argc, char** argv )
+int main()
 {
   /* This is the Boolean chain described in Fig. 1 of [J. Boyar and R. Peralta,
      SEC (2012), 287-298] */

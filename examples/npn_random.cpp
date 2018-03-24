@@ -35,7 +35,7 @@ auto constexpr num_vars = 6;
 /* number of random functions to generate */
 auto constexpr num_functions = 10000;
 
-int main( int argc, char** argv )
+int main()
 {
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;

@@ -38,7 +38,7 @@ auto constexpr progress = false;
 /* truth table type in this example */
 using truth_table = kitty::static_truth_table<num_vars>;
 
-int main( int argc, char** argv )
+int main()
 {
   static_assert( num_vars <= 5, "number of variables is limited to 5" );
 

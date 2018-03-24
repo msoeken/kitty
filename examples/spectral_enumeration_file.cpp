@@ -33,8 +33,10 @@
 /* compile time constant for the number of variables */
 auto constexpr num_vars = 4;
 
-int main( int argc, char** argv )
+int main( int argc, char ** argv )
 {
+  (void)argc;
+
   static_assert( num_vars <= 5, "number of variables is limited to 5" );
 
   /* truth table type in this example */

@@ -62,6 +62,7 @@ namespace kitty
 template<typename TT>
 inline TT create( unsigned num_vars )
 {
+  (void)num_vars;
   TT tt;
   assert( tt.num_vars() == static_cast<int>( num_vars ) );
   return tt;
