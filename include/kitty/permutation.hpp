@@ -271,7 +271,7 @@ std::vector<TT> compute_permutation_masks( const TT& tt, const std::vector<uint3
   }
 
   auto mask = tt.construct();
-  for ( uint64_t i = 0u; i < ( tt.num_bits() >> uint64_t( 1 ) ); ++i )
+  for ( uint64_t i = 0u; i < ( static_cast<uint64_t>( tt.num_bits() ) >> 1 ); ++i )
   {
     if ( left[i] != right[i] )
     {
