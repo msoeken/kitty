@@ -472,6 +472,21 @@ TEST_F( OperationsTest, min_base )
   }
 }
 
+TEST_F( OperationsTest, expand )
+{
+  /* create [(ac){bd}] from (ab) and {ac} */
+  auto f_and = from_hex( 2, "8" );
+  auto f_or = from_hex( 2, "e" );
+
+  auto f_and_e = extend_to( f_and, 4 );
+  auto f_or_e = extend_to( f_or, 4 );
+
+  expand_inplace( f_and_e, std::vector<uint8_t>{0, 2} );
+  expand_inplace( f_or_e, std::vector<uint8_t>{1, 3} );
+
+  EXPECT_EQ( f_and_e ^ f_or_e, from_hex( 4, "5f6c" ) );
+}
+
 TEST_F( OperationsTest, extend_to )
 {
   static_truth_table<9> maj, th_extend;
@@ -505,25 +520,25 @@ TEST_F( OperationsTest, shrink_to )
   EXPECT_EQ( shrink_to<2>( from_hex<3>( "1a" ) ), from_hex<2>( "a" ) );
   EXPECT_EQ( shrink_to<2>( from_hex<2>( "8" ) ), from_hex<2>( "8" ) );
 
-  EXPECT_EQ( shrink_to<5>( from_hex<7>( "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+  EXPECT_EQ( shrink_to<5>( from_hex<7>( "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe" ) );
 
   EXPECT_EQ( shrink_to<2>( from_hex( 3, "aa" ) ), from_hex<2>( "a" ) );
   EXPECT_EQ( shrink_to<2>( from_hex( 3, "1a" ) ), from_hex<2>( "a" ) );
   EXPECT_EQ( shrink_to<2>( from_hex( 2, "8" ) ), from_hex<2>( "8" ) );
 
-  EXPECT_EQ( shrink_to<5>( from_hex( 7, "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe") );
+  EXPECT_EQ( shrink_to<5>( from_hex( 7, "cafecafecafecafecafecafecafecafe" ) ), from_hex<5>( "cafecafe" ) );
 
   EXPECT_EQ( shrink_to( from_hex( 3, "aa" ), 2 ), from_hex( 2, "a" ) );
   EXPECT_EQ( shrink_to( from_hex( 3, "1a" ), 2 ), from_hex( 2, "a" ) );
   EXPECT_EQ( shrink_to( from_hex( 2, "8" ), 2 ), from_hex( 2, "8" ) );
 
-  EXPECT_EQ( shrink_to( from_hex( 7, "cafecafecafecafecafecafecafecafe" ), 5 ), from_hex( 5, "cafecafe") );
+  EXPECT_EQ( shrink_to( from_hex( 7, "cafecafecafecafecafecafecafecafe" ), 5 ), from_hex( 5, "cafecafe" ) );
 }
 
 TEST_F( OperationsTest, shift_left )
 {
-  EXPECT_EQ( shift_left( from_hex<3>( "e8"), 1 ), from_hex<3>( "d0" ) );
-  EXPECT_EQ( shift_left( from_hex<4>( "cafe"), 4 ), from_hex<4>( "afe0" ) );
+  EXPECT_EQ( shift_left( from_hex<3>( "e8" ), 1 ), from_hex<3>( "d0" ) );
+  EXPECT_EQ( shift_left( from_hex<4>( "cafe" ), 4 ), from_hex<4>( "afe0" ) );
   EXPECT_EQ( shift_left( from_hex<7>( "cafeaffe12345678acabacab91837465" ), 4 ), from_hex<7>( "afeaffe12345678acabacab918374650" ) );
   EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 8 ), from_hex( 7, "feaffe12345678acabacab9183746500" ) );
   EXPECT_EQ( shift_left( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 64 ), from_hex( 7, "acabacab918374650000000000000000" ) );
@@ -533,8 +548,8 @@ TEST_F( OperationsTest, shift_left )
 
 TEST_F( OperationsTest, shift_right )
 {
-  EXPECT_EQ( shift_right( from_hex<3>( "e8"), 1 ), from_hex<3>( "74" ) );
-  EXPECT_EQ( shift_right( from_hex<4>( "cafe"), 4 ), from_hex<4>( "0caf" ) );
+  EXPECT_EQ( shift_right( from_hex<3>( "e8" ), 1 ), from_hex<3>( "74" ) );
+  EXPECT_EQ( shift_right( from_hex<4>( "cafe" ), 4 ), from_hex<4>( "0caf" ) );
   EXPECT_EQ( shift_right( from_hex<7>( "cafeaffe12345678acabacab91837465" ), 4 ), from_hex<7>( "0cafeaffe12345678acabacab9183746" ) );
   EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 8 ), from_hex( 7, "00cafeaffe12345678acabacab918374" ) );
   EXPECT_EQ( shift_right( from_hex( 7, "cafeaffe12345678acabacab91837465" ), 64 ), from_hex( 7, "0000000000000000cafeaffe12345678" ) );
@@ -580,12 +595,12 @@ TEST_F( OperationsTest, majority7 )
 
   const auto th0 = cofactor0( maj7, 6 ); /* threshold-4 function (hamming weight >= 4) */
   const auto th1 = cofactor1( maj7, 6 ); /* threshold-3 function (hamming weight >= 3) */
-  const auto te = th1 & ~th0; /* =3 function (hamming weight = 3) */
+  const auto te = th1 & ~th0;            /* =3 function (hamming weight = 3) */
 
   EXPECT_EQ( ~th0 | ( sf0 & sf1 ), one );
   EXPECT_EQ( th0 | ( ~sf0 | ~sf1 ), one );
   EXPECT_EQ( ~th1 | ( sf0 | sf1 ), one );
-  EXPECT_EQ( th1 | ( ~sf0 & ~sf1), one );
+  EXPECT_EQ( th1 | ( ~sf0 & ~sf1 ), one );
 
   const auto factor1 = d ^ e ^ f;
   const auto factor2 = a ^ b ^ c;
@@ -604,8 +619,8 @@ template<typename TT>
 void majority_decomposition_acw( TT& f1, TT& f2 )
 {
   /* num_vars is even */
-  ASSERT_EQ( f1.num_vars() % 2, 0 ); 
-  
+  ASSERT_EQ( f1.num_vars() % 2, 0 );
+
   /* k */
   auto k = f1.num_vars() >> 1;
 
@@ -633,8 +648,8 @@ template<typename TT>
 void majority_decomposition_even( TT& f1, TT& f2 )
 {
   /* num_vars is even */
-  ASSERT_EQ( f1.num_vars() % 2, 0 ); 
-  
+  ASSERT_EQ( f1.num_vars() % 2, 0 );
+
   /* k is odd */
   auto k = f1.num_vars() >> 1;
   ASSERT_EQ( k % 2, 1 );
@@ -723,7 +738,7 @@ TEST_F( OperationsTest, majority_odd_conjecture )
   auto f2_alt2 = f2_alt2_p1 | ( f2_alt2_p2 & nth<n - 1>( n - 2 ) );
 
   EXPECT_EQ( f2, f2_alt2 );
-  
+
   /* create majority */
   static_truth_table<n> f1_e, f2_e;
   extend_to_inplace( f1_e, f1 );
