@@ -117,6 +117,11 @@ inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
 template<typename TT>
 inline bool equal( const TT& first, const TT& second )
 {
+  if ( first.num_vars() != second.num_vars() )
+  {
+    return false;
+  }
+
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
