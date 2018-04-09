@@ -78,7 +78,7 @@ template<typename TT>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
   const auto chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
-  for_each_block_reversed( tt, [&tt, &os, chunk_size]( auto word ) {
+  for_each_block_reversed( tt, [&os, chunk_size]( auto word ) {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
