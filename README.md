@@ -42,3 +42,9 @@ create_nth_var( c, 2 );
 const auto sum = a ^ b ^ c;
 const auto carry = ternary_majority( a, b, c );
 ```
+
+## EPFL logic sythesis libraries
+
+kitty is part of the [EPFL logic synthesis](https://lsi.epfl.ch/page-138455-en.html) libraries.  The other libraries and several examples on how to use and integrate the libraries can be found in the [logic synthesis tool showcase](https://github.com/lsils/lstools-showcase).
+
+
