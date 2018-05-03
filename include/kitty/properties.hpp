@@ -59,7 +59,7 @@ std::pair<uint32_t, std::vector<uint32_t>> chow_parameters( const TT& tt )
   const auto nf = count_ones( tt );
 
   std::vector<uint32_t> sf( n, 0u );
-  for_each_one_bit( tt, [n, &sf]( auto minterm ) {
+  for_each_one_bit( tt, [&sf]( auto minterm ) {
     for ( auto i = 0u; minterm; ++i )
     {
       if ( minterm & 1 )
