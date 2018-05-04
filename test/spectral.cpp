@@ -25,6 +25,10 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <iostream>
+
+#include <kitty/print.hpp>
 #include <kitty/spectral.hpp>
 #include <kitty/static_truth_table.hpp>
 
@@ -148,4 +152,33 @@ TEST_F( SpectralTest, transformations )
     s.to_truth_table( tt2 );
     EXPECT_EQ( tt, tt2 );
   }
+}
+
+TEST_F( SpectralTest, rademacher_walsh_spectrum )
+{
+  EXPECT_EQ( rademacher_walsh_spectrum( from_hex<3>( "e8" ) ), std::vector<int32_t>( {0, 4, 4, 0, 4, 0, 0, -4} ) );
+}
+
+TEST_F( SpectralTest, autocorrelation_spectrum )
+{
+  EXPECT_EQ( autocorrelation_spectrum( from_hex<3>( "6a" ) ), std::vector<int32_t>( {8, -8, 0, 0, 0, 0, 0, 0} ) );
+}
+
+TEST_F( SpectralTest, distribution_test )
+{
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aa55aa55" ) ) ), std::vector<uint32_t>( {31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aa55ab55" ) ) ), std::vector<uint32_t>( {0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aa55bb55" ) ) ), std::vector<uint32_t>( {16, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aa5dbb55" ) ) ), std::vector<uint32_t>( {0, 24, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aaddbb55" ) ) ), std::vector<uint32_t>( {24, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "aa5dbb51" ) ) ), std::vector<uint32_t>( {12, 0, 16, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0} ) );
+  EXPECT_EQ( spectrum_distribution( rademacher_walsh_spectrum( from_hex<5>( "2a5dbb51" ) ) ), std::vector<uint32_t>( {0, 20, 0, 10, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0} ) );
+
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa55aa55" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa55ab55" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 1} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa55bb55" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 2} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa5dbb55" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 3, 0, 1} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aaddbb55" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 4} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa5dbb51" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 6, 0, 0, 0, 1} ) );
+  EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "2a5dbb51" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 10, 0, 0, 0, 0, 0, 1} ) );
 }

@@ -14,7 +14,11 @@ based on spectral transformations.
 
 .. doc_brief_table::
    exact_spectral_canonization
+   exact_spectral_canonization_limit
    print_spectrum
+   rademacher_walsh_spectrum
+   autocorrelation_spectrum
+   spectrum_distribution
 
 The header ``<kitty/affine.hpp>`` implements canonization algorithms based on
 linear and affine transformations.
