@@ -61,7 +61,14 @@ int main()
 
   std::cout << "[i] enumerated "
             << ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
-            << classes.size() << " classes." << std::endl;
+            << classes.size() << " classes.\n[i] spectrums:\n";
+
+  for ( const auto& r : classes )
+  {
+    const auto spectrum = kitty::rademacher_walsh_spectrum( r );
+    std::copy( spectrum.begin(), spectrum.end(), std::ostream_iterator<int32_t>( std::cout, " " ) );
+    std::cout << "\n";
+  }
 
   return 0;
 }

@@ -380,7 +380,8 @@ private:
 
   bool normalize_rec( spectrum& lspec, unsigned v )
   {
-    if ( ++step_counter == step_limit ) return false;
+    if ( ++step_counter == step_limit )
+      return false;
 
     if ( v == num_vars_exp ) /* leaf case */
     {
@@ -415,7 +416,8 @@ private:
     {
       auto& spec2 = specs.at( num_vars_exp );
       spec2 = lspec;
-      if ( !normalize_rec( spec2, num_vars_exp ) ) return false;
+      if ( !normalize_rec( spec2, num_vars_exp ) )
+        return false;
     }
     else
     {
@@ -454,7 +456,8 @@ private:
           insert( spec2.permutation( k, v ) );
         }
 
-        if ( !normalize_rec( spec2, v << 1 ) ) return false;
+        if ( !normalize_rec( spec2, v << 1 ) )
+          return false;
 
         if ( v == 1 && min == max )
         {
@@ -668,10 +671,230 @@ inline std::vector<uint32_t> spectrum_distribution( const std::vector<int32_t>& 
 
   for ( auto c : spectrum )
   {
-    dist[abs(c) >> 1]++;
+    dist[abs( c ) >> 1]++;
   }
 
   return dist;
+}
+
+/*! \brief Returns unique index for a spectral equivalence class
+
+  This functions works for functions with up to 5 inputs.  It uses the
+  distribution of coefficients in the Rademacher Walsh spectrum, and in case
+  of ambiguity also the coeffcienents in the auto-correlation spectrum.  It
+  does not compute the transformation sequences in order to get to the
+  class representative and is therefore faster than canoninization.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline uint32_t get_spectral_class( const TT& tt )
+{
+  assert( tt.num_vars() <= 5 );
+
+  const auto rwd = spectrum_distribution( rademacher_walsh_spectrum( tt ) );
+
+  switch ( tt.num_vars() )
+  {
+  case 0u:
+  case 1u:
+    return 0;
+  case 2u:
+    return rwd[2] ? 0 : 1;
+    break;
+  case 3u:
+  {
+    if ( rwd[4] )
+      return 0;
+    else if ( rwd[3] )
+      return 1;
+    else if ( rwd[2] )
+      return 2;
+  }
+  case 4u:
+  {
+    if ( rwd[8] )
+      return 0;
+    else if ( rwd[7] )
+      return 1;
+    else if ( rwd[6] )
+      return 2;
+    else if ( rwd[5] )
+      return 3;
+    else if ( rwd[4] )
+      return rwd[4] == 4 ? 4 : 5;
+    else if ( rwd[3] )
+      return 6;
+    else if ( rwd[2] )
+      return 7;
+  }
+  break;
+
+  case 5u:
+  {
+    if ( rwd[16] )
+      return 0;
+    else if ( rwd[15] )
+      return 1;
+    else if ( rwd[14] )
+      return 2;
+    else if ( rwd[13] )
+      return 3;
+    else if ( rwd[12] )
+      return rwd[4] == 7 ? 4 : 5;
+    else if ( rwd[11] )
+      return rwd[5] == 1 ? 6 : 7;
+    else if ( rwd[10] )
+    {
+      switch ( rwd[2] )
+      {
+      case 30:
+        return 8;
+      case 15:
+        return 9;
+      case 14:
+        return 10;
+      default:
+        return 11;
+      }
+    }
+    else if ( rwd[9] )
+    {
+      switch ( rwd[3] )
+      {
+      case 15:
+        return 12;
+      case 12:
+        return 13;
+      case 9:
+        return 14;
+      case 6:
+        return 15;
+      default:
+        return 16;
+      }
+    }
+    else if ( rwd[8] )
+    {
+      switch ( rwd[0] )
+      {
+      case 28:
+        return 17;
+      case 19:
+        return 18;
+      case 22:
+        return 19;
+      case 7:
+        return 20;
+      case 9:
+        return 21;
+      case 10:
+        return 22;
+      case 11:
+        return 23;
+      default:
+        return 24;
+      }
+    }
+    else if ( rwd[7] )
+    {
+      switch ( rwd[1] )
+      {
+      case 15:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        return acd[2] == 22 ? 25 : 26;
+      }
+      break;
+      case 18:
+        return 27;
+      case 19:
+        return 28;
+      case 21:
+        return 29;
+      default:
+        return 30;
+      }
+    }
+    else if ( rwd[6] )
+    {
+      switch ( rwd[2] )
+      {
+      case 28:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        return acd[0] == 12 ? 31 : 32;
+      }
+      break;
+      case 15:
+        return 33;
+      case 14:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        return acd[0] == 15 ? 34 : 35;
+      }
+      break;
+      case 13:
+        return 36;
+      case 12:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        return acd[0] == 18 ? 37 : 38;
+      }
+      break;
+      default:
+        return 39;
+      }
+    }
+    else if ( rwd[5] )
+    {
+      switch ( rwd[3] )
+      {
+      case 16:
+        return 40;
+      default:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        switch ( acd[2] )
+        {
+        case 25:
+          return 41;
+        case 27:
+          return 42;
+        default:
+          return 43;
+        }
+      }
+      break;
+      }
+    }
+    else if ( rwd[4] )
+    {
+      switch ( rwd[0] )
+      {
+      case 16:
+      {
+        const auto acd = spectrum_distribution( autocorrelation_spectrum( tt ) );
+        switch ( acd[0] )
+        {
+        case 30:
+          return 44;
+        case 15:
+          return 45;
+        default:
+          return 46;
+        }
+      }
+      break;
+      default:
+        return 47;
+      }
+    }
+  }
+  break;
+  }
+
+  return 48;
 }
 
 } /* namespace kitty */

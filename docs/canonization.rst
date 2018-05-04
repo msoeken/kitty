@@ -19,6 +19,7 @@ based on spectral transformations.
    rademacher_walsh_spectrum
    autocorrelation_spectrum
    spectrum_distribution
+   get_spectral_class
 
 The header ``<kitty/affine.hpp>`` implements canonization algorithms based on
 linear and affine transformations.

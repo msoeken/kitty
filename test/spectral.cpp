@@ -182,3 +182,71 @@ TEST_F( SpectralTest, distribution_test )
   EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "aa5dbb51" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 0, 6, 0, 0, 0, 1} ) );
   EXPECT_EQ( spectrum_distribution( autocorrelation_spectrum( from_hex<5>( "2a5dbb51" ) ) ), std::vector<uint32_t>( {0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 10, 0, 0, 0, 0, 0, 1} ) );
 }
+
+TEST_F( SpectralTest, spectral_class )
+{
+  EXPECT_EQ( get_spectral_class( from_hex<2>( "0" ) ), 0u );
+  EXPECT_EQ( get_spectral_class( from_hex<2>( "8" ) ), 1u );
+
+  EXPECT_EQ( get_spectral_class( from_hex<3>( "00" ) ), 0u );
+  EXPECT_EQ( get_spectral_class( from_hex<3>( "80" ) ), 1u );
+  EXPECT_EQ( get_spectral_class( from_hex<3>( "88" ) ), 2u );
+
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "0000" ) ), 0u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "8000" ) ), 1u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "8080" ) ), 2u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "0888" ) ), 3u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "8888" ) ), 4u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "7080" ) ), 5u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "7880" ) ), 6u );
+  EXPECT_EQ( get_spectral_class( from_hex<4>( "7888" ) ), 7u );
+
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aa55aa55" ) ), 0u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aa55ab55" ) ), 1u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aa55bb55" ) ), 2u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aa5dbb55" ) ), 3u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aaddbb55" ) ), 4u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aa5dbb51" ) ), 5u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "2a5dbb51" ) ), 6u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aaddbb51" ) ), 7u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "2a5dbf51" ) ), 8u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "6a5dbb51" ) ), 9u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "2addbb51" ) ), 10u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "a8ddbb51" ) ), 11u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aeddda51" ) ), 12u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "0a5dbf51" ) ), 13u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8addda51" ) ), 14u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "a8dd9b51" ) ), 15u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88ddbb51" ) ), 16u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88ddbb11" ) ), 17u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8c5dda51" ) ), 18u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "a89d9b51" ) ), 19u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8eddda51" ) ), 20u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "aefdda51" ) ), 21u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "025dbf51" ) ), 22u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88ddda51" ) ), 23u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88dd9b51" ) ), 24u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "ceddda51" ) ), 25u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "0eddda51" ) ), 26u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "425dbf51" ) ), 27u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8cddda51" ) ), 28u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88dddb51" ) ), 29u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "289d9b51" ) ), 30u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "86fdda51" ) ), 31u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "88dddb71" ) ), 32u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "cefdda51" ) ), 33u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "0efdda51" ) ), 34u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "288d9b51" ) ), 35u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8cfdda51" ) ), 36u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8cdddb51" ) ), 37u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "8ccdda51" ) ), 38u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "289d9b41" ) ), 39u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "488ddb51" ) ), 40u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "ccfdda51" ) ), 41u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "688d9b51" ) ), 42u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "288d9b41" ) ), 43u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "288d1b41" ) ), 44u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "dcfdda51" ) ), 45u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "68ad9b51" ) ), 46u );
+  EXPECT_EQ( get_spectral_class( from_hex<5>( "688ddb51" ) ), 47u );
+}
