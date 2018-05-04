@@ -34,6 +34,9 @@ v0.4 (not yet released)
 * Compute different spectra: ``rademacher_walsh_spectrum``, ``autocorrelation_spectrum``, ``spectrum_distribution``
   `#49 <https://github.com/msoeken/kitty/pull/49>`_
 
+* Compute spectral equivalence class index: ``get_spectral_class``
+  `#50 <https://github.com/msoeken/kitty/pull/50>`_
+
 v0.3 (February 25, 2018)
 ------------------------
 
