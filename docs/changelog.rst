@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.4 (not yet released)
------------------------
+v0.4 (May 4, 2018)
+------------------
 
 * Constructors: ``create``, ``create_from_clauses``, ``create_characteristic``, ``create_multiple_from_chain``
   `#41 <https://github.com/msoeken/kitty/pull/41>`_
