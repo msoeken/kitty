@@ -35,6 +35,12 @@
 #include <cstdint>
 #include <numeric>
 
+// Use Windows popcount version where appropriate
+#ifdef _MSC_VER
+#include <intrin.h>
+#define __builtin_popcount __popcnt
+#endif
+
 #include "static_truth_table.hpp"
 
 namespace kitty
@@ -240,7 +246,7 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
   {
     return -1;
   }
-  
+
   return 64 * std::distance( tt.cbegin(), it ) + find_first_bit_in_word( *it );
 }
 
