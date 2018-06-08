@@ -31,7 +31,7 @@ if(KITTY_BENCH)
 endif()
 
 if(KITTY_TEST)
-  add_subdirectory(test EXCLUDE_FROM_ALL)
+  add_subdirectory(test)
 endif()
 
 if(KITTY_TIDY)
