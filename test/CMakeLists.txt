@@ -1,4 +1,4 @@
-add_subdirectory(googletest/googletest)
+add_subdirectory(googletest/googletest EXCLUDE_FROM_ALL)
 
 include_directories(googletest/googletest/include)
 
