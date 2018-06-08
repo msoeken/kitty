@@ -7,7 +7,6 @@ platform:
 
 configuration:
   - Release
-  - Debug
 
 install:
   - git submodule update --init --recursive
