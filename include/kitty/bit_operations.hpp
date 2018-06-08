@@ -35,13 +35,8 @@
 #include <cstdint>
 #include <numeric>
 
-// Use Windows popcount version where appropriate
-#ifdef _MSC_VER
-#include <intrin.h>
-#define __builtin_popcount __popcnt
-#endif
-
 #include "static_truth_table.hpp"
+#include "detail/mscfix.hpp"
 
 namespace kitty
 {

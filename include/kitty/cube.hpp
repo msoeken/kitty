@@ -37,6 +37,7 @@
 #include <string>
 
 #include "hash.hpp"
+#include "detail/mscfix.hpp"
 
 namespace kitty
 {

@@ -39,6 +39,7 @@
 #pragma once
 
 #include "bit_operations.hpp"
+#include "detail/mscfix.hpp"
 
 #include <cmath>
 #include <iomanip>
