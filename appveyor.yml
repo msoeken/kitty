@@ -13,7 +13,7 @@ install:
   - git submodule update --init --recursive
 
 before_build:
-  - cmake -G "Visual Studio 15 2017 Win64" -DKITTY_EXAMPLES=OFF -DKITTY_TEST=ON .
+  - cmake -G "Visual Studio 15 2017 Win64" -DKITTY_EXAMPLES=OFF -DKITTY_TEST=ON -DCMAKE_CXX_FLAGS=/D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING .
 
 build:
   project: $(APPVEYOR_BUILD_FOLDER)\$(APPVEYOR_PROJECT_NAME).sln
