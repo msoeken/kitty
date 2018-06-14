@@ -7,6 +7,9 @@ v0.5 (not yet released)
 * Cube methods: ``difference`` (contributed by Heinz Riener)
   `#52 <https://github.com/msoeken/kitty/pull/52>`_
 
+* Type traits: ``is_truth_table``
+  `#53 <https://github.com/msoeken/kitty/pull/53>`_
+
 v0.4 (May 4, 2018)
 ------------------
 
