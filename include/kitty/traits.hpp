@@ -34,6 +34,9 @@
 
 #include <type_traits>
 
+#include "dynamic_truth_table.hpp"
+#include "static_truth_table.hpp"
+
 namespace kitty
 {
 
