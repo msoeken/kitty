@@ -10,6 +10,9 @@ v0.5 (not yet released)
 * Type traits: ``is_truth_table``
   `#53 <https://github.com/msoeken/kitty/pull/53>`_
 
+* Assignment operator for truth tables
+  `#54 <https://github.com/msoeken/kitty/pull/54>`_
+
 v0.4 (May 4, 2018)
 ------------------
 

@@ -746,3 +746,38 @@ TEST_F( OperationsTest, majority_odd_conjecture )
 
   EXPECT_EQ( maj, ternary_majority( nth<n>( n - 1 ), f1_e, f2_e ) );
 }
+
+TEST_F( OperationsTest, copy_truth_tables )
+{
+  kitty::dynamic_truth_table tt1( 3 ), tt2( 7 );
+  kitty::static_truth_table<3> tt3;
+  kitty::static_truth_table<7> tt4;
+
+  kitty::create_random( tt1 );
+  kitty::create_random( tt2 );
+  kitty::create_random( tt3 );
+  kitty::create_random( tt4 );
+
+  kitty::dynamic_truth_table tt;
+
+  tt = tt1;
+  EXPECT_EQ( tt, tt1 );
+  tt = tt2;
+  EXPECT_EQ( tt, tt2 );
+  tt = tt3;
+  EXPECT_TRUE( std::equal( tt.begin(), tt.end(), tt3.begin() ) );
+  tt = tt4;
+  EXPECT_TRUE( std::equal( tt.begin(), tt.end(), tt4.begin() ) );
+
+  static_truth_table<3> tt_s3;
+  tt_s3 = tt1;
+  EXPECT_TRUE( std::equal( tt_s3.begin(), tt_s3.end(), tt1.begin() ) );
+  tt_s3 = tt3;
+  EXPECT_EQ( tt_s3, tt3 );
+
+  static_truth_table<7> tt_s7;
+  tt_s7 = tt2;
+  EXPECT_TRUE( std::equal( tt_s7.begin(), tt_s7.end(), tt2.begin() ) );
+  tt_s7 = tt4;
+  EXPECT_EQ( tt_s7, tt4 );
+}
