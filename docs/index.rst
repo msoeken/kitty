@@ -35,6 +35,7 @@ Welcome to kitty's documentation!
    esop
    isop
    cnf
+   traits
    reference
 
 Indices and tables
