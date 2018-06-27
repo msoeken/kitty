@@ -13,6 +13,9 @@ v0.5 (not yet released)
 * Assignment operator for truth tables
   `#54 <https://github.com/msoeken/kitty/pull/54>`_
 
+* Function properties: ``is_symmetric_in``
+  `#55 <https://github.com/msoeken/kitty/pull/55>`_
+
 v0.4 (May 4, 2018)
 ------------------
 

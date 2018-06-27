@@ -9,3 +9,4 @@ properties.
    is_canalizing
    is_horn
    is_krom
+   is_symmetric_in
