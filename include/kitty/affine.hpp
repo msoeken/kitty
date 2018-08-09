@@ -144,7 +144,7 @@ TT exact_linear_canonization_old( const TT& tt )
 template<typename TT>
 TT exact_linear_output_canonization( const TT& tt )
 {
-  return std::min( exact_linear_canonization( tt ), exact_linear_canonization( ~tt ) );
+  return std::min( exact_linear_canonization_old( tt ), exact_linear_canonization_old( ~tt ) );
 }
 
 /*! \brief Applies exact affine classification
@@ -174,13 +174,13 @@ TT exact_affine_canonization_old( const TT& tt )
 
   const auto& flips = detail::flips[num_vars - 2u];
   
-  auto min = exact_linear_canonization( copy );
+  auto min = exact_linear_canonization_old( copy );
 
   for ( int j = flips.size() - 1; j >= 0; --j )
   {
     const auto pos = flips[j];
     flip_inplace( copy, pos );
-    min = std::min( min, exact_linear_canonization( copy ) );
+    min = std::min( min, exact_linear_canonization_old( copy ) );
   }
 
   return min;
@@ -199,7 +199,7 @@ TT exact_affine_canonization_old( const TT& tt )
 template<typename TT>
 TT exact_affine_output_canonization( const TT& tt )
 {
-  return std::min( exact_affine_canonization( tt ), exact_affine_canonization( ~tt ) );
+  return std::min( exact_affine_canonization_old( tt ), exact_affine_canonization_old( ~tt ) );
 }
 
 } /* namespace kitty */
