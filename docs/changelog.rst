@@ -16,6 +16,9 @@ v0.5 (not yet released)
 * Function properties: ``is_symmetric_in``
   `#55 <https://github.com/msoeken/kitty/pull/55>`_
 
+* Bit operations: ``flip_bit``
+  `#56 <https://github.com/msoeken/kitty/pull/56>`_
+
 v0.4 (May 4, 2018)
 ------------------
 
