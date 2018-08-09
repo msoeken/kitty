@@ -23,6 +23,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <chrono>
 #include <cstdint>
 #include <stack>
 #include <vector>
@@ -43,6 +44,9 @@ int main()
   /* truth table type in this example */
   using truth_table = kitty::static_truth_table<num_vars>;
 
+  /* start time counting */
+  const auto start = std::chrono::steady_clock::now();
+
   /* Initialization */
   std::vector<truth_table> fs( 1u ), gs( num_bits );
   uint32_t num{1};
@@ -59,6 +63,7 @@ int main()
     {
       gs[j] = g;
       flip_bit( gs[j], j );
+      /* can also be: exact_linear_canonization or exact_affine_canonization */
       gs[j] = exact_spectral_canonization( gs[j] );
     }
 
@@ -77,10 +82,12 @@ int main()
       {
         ++num;
         fs.push_back( gs[j] );
-        stack.push( gs[j] ); 
+        stack.push( gs[j] );
       }
     }
   }
 
-  std::cout << "Found " << fs.size() << " classes.\n";
+  const auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double> duration = end - start;
+  std::cout << "Found " << fs.size() << " classes in " << duration.count() << " s.\n";
 }
