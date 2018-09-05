@@ -19,6 +19,9 @@ v0.5 (not yet released)
 * Bit operations: ``flip_bit``
   `#56 <https://github.com/msoeken/kitty/pull/56>`_
 
+* Constructors: ``create_from_expression``
+  `#58 <https://github.com/msoeken/kitty/pull/58>`_
+
 v0.4 (May 4, 2018)
 ------------------
 
