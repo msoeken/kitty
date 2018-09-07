@@ -27,6 +27,7 @@
 #include <vector>
 
 #include <kitty/kitty.hpp>
+#include <kitty/esop.hpp> // example will eventually be moved to the showcase
 
 int main()
 {
