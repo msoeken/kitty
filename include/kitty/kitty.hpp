@@ -41,7 +41,6 @@
 #include "cnf.hpp"
 #include "constructors.hpp"
 #include "cube.hpp"
-#include "esop.hpp"
 #include "hash.hpp"
 #include "implicant.hpp"
 #include "isop.hpp"
