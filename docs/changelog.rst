@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+v0.5 (Upcoming release)
+-----------------------
+
+* Marked ``esop_from_pprm`` and ``esop_from_optimum_pkrm`` as deprecated
+  `#59 <https://github.com/msoeken/kitty/pull/59>`_
+
 v0.4 (May 4, 2018)
 ------------------
 
