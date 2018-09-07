@@ -308,7 +308,7 @@ TEST( ConstructorsTest, create_from_chain_fail )
   check_for( "x4 = x1 @ x2", "error in \"@\": invalid operator" );
 }
 
-TEST( ConstructorsTst, create_multiple_from_chain )
+TEST( ConstructorsTest, create_multiple_from_chain )
 {
   std::vector<std::string> steps{
     "x5 = x1 | x3",
@@ -331,4 +331,100 @@ TEST( ConstructorsTst, create_multiple_from_chain )
 
   EXPECT_EQ( fs[10], f1 );
   EXPECT_EQ( fs[11], f2 );
+}
+
+TEST( ConstrutorsTest, create_unary_from_expression )
+{
+  kitty::static_truth_table<3> f1;
+
+  create_from_expression( f1, "0" );
+  EXPECT_EQ( f1, f1.construct() );
+
+  create_from_expression( f1, "1" );
+  EXPECT_EQ( f1, ~f1.construct() );
+
+  create_from_expression( f1, "!0" );
+  EXPECT_EQ( f1, ~f1.construct() );
+
+  create_from_expression( f1, "!1" );
+  EXPECT_EQ( f1, f1.construct() );
+
+  create_from_expression( f1, "a" );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_expression( f1, "b" );
+  EXPECT_EQ( f1._bits, 0xccu );
+
+  create_from_expression( f1, "c" );
+  EXPECT_EQ( f1._bits, 0xf0u );
+
+  create_from_expression( f1, "!a" );
+  EXPECT_EQ( f1._bits, 0x55u );
+
+  create_from_expression( f1, "!!!!a" );
+  EXPECT_EQ( f1._bits, 0xaau );
+}
+
+TEST( ConstrutorsTest, create_from_nary_expression )
+{
+  kitty::static_truth_table<3> f1;
+
+  create_from_expression( f1, "()" );
+  EXPECT_EQ( f1._bits, 0xffu );
+
+  create_from_expression( f1, "(a)" );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_expression( f1, "(ab)" );
+  EXPECT_EQ( f1._bits, 0x88u );
+
+  create_from_expression( f1, "(abc)" );
+  EXPECT_EQ( f1._bits, 0x80u );
+
+  create_from_expression( f1, "{}" );
+  EXPECT_EQ( f1._bits, 0x00u );
+
+  create_from_expression( f1, "{a}" );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_expression( f1, "{ab}" );
+  EXPECT_EQ( f1._bits, 0xeeu );
+
+  create_from_expression( f1, "{abc}" );
+  EXPECT_EQ( f1._bits, 0xfeu );
+
+  create_from_expression( f1, "[]" );
+  EXPECT_EQ( f1._bits, 0x00u );
+
+  create_from_expression( f1, "[a]" );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_expression( f1, "[ab]" );
+  EXPECT_EQ( f1._bits, 0x66u );
+
+  create_from_expression( f1, "[abc]" );
+  EXPECT_EQ( f1._bits, 0x96u );
+}
+
+TEST( ConstrutorsTest, create_from_expression )
+{
+  kitty::static_truth_table<3> f1;
+
+  create_from_expression( f1, "[(ab)(!ac)]" );
+  EXPECT_EQ( f1._bits, 0xd8u );
+
+  create_from_expression( f1, "[(ab)(ac)(bc)]" );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_expression( f1, "{(ab)(ac)(bc)}" );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_expression( f1, "({ab}{ac}{bc})" );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_expression( f1, "<abc>" );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_expression( f1, "!(!(a!(ab))!(b!(ab)))" );
+  EXPECT_EQ( f1._bits, 0x66u );
 }

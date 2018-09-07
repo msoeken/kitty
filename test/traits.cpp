@@ -23,43 +23,21 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <kitty/dynamic_truth_table.hpp>
+#include <kitty/static_truth_table.hpp>
+#include <kitty/traits.hpp>
 
-#pragma once
+using namespace kitty;
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+TEST( TraitsTest, supports_traits )
+{
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "properties.hpp"
-#include "spectral.hpp"
-#include "traits.hpp"
+EXPECT_TRUE( is_truth_table<dynamic_truth_table>::value );
+EXPECT_TRUE( is_truth_table<static_truth_table<4>>::value );
+EXPECT_TRUE( is_truth_table<static_truth_table<5>>::value );
+EXPECT_TRUE( is_truth_table<static_truth_table<6>>::value );
+EXPECT_FALSE( is_truth_table<uint64_t>::value );
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+}

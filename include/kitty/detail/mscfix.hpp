@@ -24,42 +24,16 @@
  */
 
 /*!
-  \file kitty.hpp
-  \brief Main header for kitty
+  \file mscfix.hpp
+  \brief Fixes some compatibility issues with MS VC compilers
 
   \author Mathias Soeken
 */
 
 #pragma once
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
-
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "esop.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "properties.hpp"
-#include "spectral.hpp"
-#include "traits.hpp"
-
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+// Use Windows popcount version where appropriate
+#ifdef _MSC_VER
+#include <intrin.h>
+#define __builtin_popcount __popcnt
+#endif
