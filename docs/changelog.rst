@@ -22,6 +22,10 @@ v0.5 (not yet released)
 * Constructors: ``create_from_expression``
   `#58 <https://github.com/msoeken/kitty/pull/58>`_
 
+* Marked ``esop_from_pprm`` and ``esop_from_optimum_pkrm`` as deprecated
+  `#59 <https://github.com/msoeken/kitty/pull/59>`_
+
+
 v0.4 (May 4, 2018)
 ------------------
 
