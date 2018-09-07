@@ -17,7 +17,9 @@ if (HAS_FCOLOR_DIAGNOSTICS)
 endif()
 
 if (UNIX)
-    add_compile_options(-W -Wall)
+  add_compile_options(-W -Wall)
+else()
+  add_compile_options(/EHsc)
 endif()
 
 add_subdirectory(include)
@@ -31,7 +33,7 @@ if(KITTY_BENCH)
 endif()
 
 if(KITTY_TEST)
-  add_subdirectory(test EXCLUDE_FROM_ALL)
+  add_subdirectory(test)
 endif()
 
 if(KITTY_TIDY)

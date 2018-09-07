@@ -1,6 +1,27 @@
 Change Log
 ==========
 
+v0.5 (not yet released)
+-----------------------
+
+* Cube methods: ``difference`` (contributed by Heinz Riener)
+  `#52 <https://github.com/msoeken/kitty/pull/52>`_
+
+* Type traits: ``is_truth_table``
+  `#53 <https://github.com/msoeken/kitty/pull/53>`_
+
+* Assignment operator for truth tables
+  `#54 <https://github.com/msoeken/kitty/pull/54>`_
+
+* Function properties: ``is_symmetric_in``
+  `#55 <https://github.com/msoeken/kitty/pull/55>`_
+
+* Bit operations: ``flip_bit``
+  `#56 <https://github.com/msoeken/kitty/pull/56>`_
+
+* Constructors: ``create_from_expression``
+  `#58 <https://github.com/msoeken/kitty/pull/58>`_
+
 v0.4 (May 4, 2018)
 ------------------
 

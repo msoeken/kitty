@@ -72,6 +72,10 @@ TYPED_TEST( BitOperationsTestT, set_get_clear )
     EXPECT_EQ( get_bit( tt_s, i ), 1u );
     clear_bit( tt_s, i );
     EXPECT_EQ( get_bit( tt_s, i ), 0u );
+    flip_bit( tt_s, i );
+    EXPECT_EQ( get_bit( tt_s, i ), 1u );
+    flip_bit( tt_s, i );
+    EXPECT_EQ( get_bit( tt_s, i ), 0u );
   }
 
   dynamic_truth_table tt_d( tt_s.num_vars() );
@@ -81,6 +85,10 @@ TYPED_TEST( BitOperationsTestT, set_get_clear )
     set_bit( tt_d, i );
     EXPECT_EQ( get_bit( tt_d, i ), 1u );
     clear_bit( tt_d, i );
+    EXPECT_EQ( get_bit( tt_d, i ), 0u );
+    flip_bit( tt_d, i );
+    EXPECT_EQ( get_bit( tt_d, i ), 1u );
+    flip_bit( tt_d, i );
     EXPECT_EQ( get_bit( tt_d, i ), 0u );
   }
 }

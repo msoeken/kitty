@@ -20,5 +20,6 @@ The header ``<kitty/constructors.hpp>`` implements operations to construct truth
    create_from_chain
    create_multiple_from_chain
    create_characteristic
+   create_from_expression
 
 

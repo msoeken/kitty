@@ -35,13 +35,8 @@
 #include <cstdint>
 #include <numeric>
 
-// Use Windows popcount version where appropriate
-#ifdef _MSC_VER
-#include <intrin.h>
-#define __builtin_popcount __popcnt
-#endif
-
 #include "static_truth_table.hpp"
+#include "detail/mscfix.hpp"
 
 namespace kitty
 {
@@ -106,6 +101,24 @@ void clear_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
   tt._bits &= ~( uint64_t( 1 ) << index );
 }
 /*! \endcond */
+
+/*! \brief Flip bit at index
+
+  \param tt Truth table
+  \param index Bit index
+*/
+template<typename TT>
+void flip_bit( TT& tt, uint64_t index )
+{
+  tt._bits[index >> 6] ^= uint64_t( 1 ) << ( index & 0x3f );
+}
+
+/*! \cond PRIVATE */
+template<int NumVars>
+void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
+{
+  tt._bits ^= uint64_t( 1 ) << index;
+}
 
 /*! \brief Clears all bits
 
