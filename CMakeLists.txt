@@ -17,7 +17,7 @@ if (HAS_FCOLOR_DIAGNOSTICS)
 endif()
 
 if (UNIX)
-    add_compile_options(-W -Wall -Werror)
+    add_compile_options(-W -Wall)
 endif()
 
 add_subdirectory(include)
