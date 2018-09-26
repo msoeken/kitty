@@ -99,3 +99,25 @@ TEST_F( CubeTest, set_get_clear_cube )
     }
   }
 }
+
+TEST_F( CubeTest, flip_bit_and_mask )
+{
+  for ( auto i = 1; i <= 32; ++i )
+  {
+    auto c = cube::neg_cube( i );
+    for ( auto j = 0; j < i; ++j )
+    {
+      EXPECT_EQ( c.get_bit( j ), false );
+      c.flip_bit( j );
+      EXPECT_EQ( c.get_bit( j ), true );
+      c.flip_bit( j );
+      EXPECT_EQ( c.get_bit( j ), false );
+
+      EXPECT_EQ( c.get_mask( j ), true );
+      c.flip_mask( j );
+      EXPECT_EQ( c.get_mask( j ), false );
+      c.flip_mask( j );
+      EXPECT_EQ( c.get_mask( j ), true );
+    }
+  }
+}
