@@ -4,8 +4,9 @@ Change Log
 v0.5 (not yet released)
 -----------------------
 
-* Cube methods: ``difference`` (contributed by Heinz Riener)
+* Cube methods: ``difference``, ``flip_bit``, ``flip_mask`` (contributed by Heinz Riener)
   `#52 <https://github.com/msoeken/kitty/pull/52>`_
+  `#60 <https://github.com/msoeken/kitty/pull/60>`_
 
 * Type traits: ``is_truth_table``
   `#53 <https://github.com/msoeken/kitty/pull/53>`_
