@@ -26,6 +26,8 @@ v0.5 (not yet released)
 * Marked ``esop_from_pprm`` and ``esop_from_optimum_pkrm`` as deprecated
   `#59 <https://github.com/msoeken/kitty/pull/59>`_
 
+* Function representative enumeration
+  `#61 <https://github.com/msoeken/kitty/pull/61>`_
 
 v0.4 (May 4, 2018)
 ------------------

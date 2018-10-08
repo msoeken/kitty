@@ -30,6 +30,7 @@ Welcome to kitty's documentation!
    hash
    implicant
    canonization
+   enumeration
    cube
    permutation
    esop
