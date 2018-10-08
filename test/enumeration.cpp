@@ -23,28 +23,32 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <chrono>
-#include <vector>
+#include <gtest/gtest.h>
 
-#include <kitty/kitty.hpp>
+#include <kitty/enumeration.hpp>
+#include <kitty/npn.hpp>
+#include <kitty/static_truth_table.hpp>
+#include <kitty/spectral.hpp>
 
-/* This example is based on Algorithm 4.2.1 in the PhD thesis
- * "Analysis of Affine Equivalent Boolean Functions for Cryptography"
- * by J.E. Fuller (Queensland University of Technology)
- */
+using namespace kitty;
 
-/* compile time constant for the number of variables */
-auto constexpr num_vars = 5;
-
-int main()
+TEST( EnumerationTest, small_spectral )
 {
-  /* truth table type in this example */
-  using truth_table = kitty::static_truth_table<num_vars>;
+  std::vector<static_truth_table<4>> functions( 1u );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return exact_spectral_canonization( tt ); } );
+  ASSERT_EQ( functions.size(), 8u );
+}
 
-  const auto start = std::chrono::steady_clock::now();
-  std::vector<truth_table> fs( 1 );
-  fuller_neighborhood_enumeration( fs, []( const auto& tt ) { return exact_spectral_canonization( tt ); } );
-  const auto end = std::chrono::steady_clock::now();
-  std::chrono::duration<double> duration = end - start;
-  std::cout << "Found " << fs.size() << " classes in " << duration.count() << " s.\n";
+TEST( EnumerationTest, small_npn )
+{
+  std::vector<static_truth_table<4>> functions( 1u );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return std::get<0>( exact_npn_canonization( tt ) ); } );
+  ASSERT_EQ( functions.size(), 222u );
+}
+
+TEST( EnumerationTest, small_spectral_dynamic )
+{
+  std::vector<dynamic_truth_table> functions( 1u, dynamic_truth_table( 4u ) );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return exact_spectral_canonization( tt ); } );
+  ASSERT_EQ( functions.size(), 8u );
 }
