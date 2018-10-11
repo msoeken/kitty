@@ -32,14 +32,57 @@
 
 #pragma once
 
+#include <algorithm>
+#include <cstdint>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "algorithm.hpp"
 
 namespace kitty
 {
+
+namespace detail
+{
+
+inline void print_xmas_tree( std::ostream& os, uint32_t num_vars )
+{
+  /* create rows */
+  std::vector<std::vector<std::string>> current( 1, {""} ), next;
+
+  for ( auto i = 0u; i < num_vars; ++i )
+  {
+    for ( const auto& row : current )
+    {
+      if ( row.size() != 1u )
+      {
+        next.emplace_back();
+        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( const auto& cell ) { return cell + "0"; } );
+      }
+      next.emplace_back( 1, row.front() + "0" );
+      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( const auto& cell ) { return cell + "1"; } );
+    }
+
+    std::swap( current, next );
+    next.clear();
+  }
+
+  for ( const auto& row : current )
+  {
+    /* white space padding to center columns */
+    os << std::string( ( ( num_vars + 1 ) - row.size() ) / 2 * ( num_vars + 1 ), ' ' );
+    for ( const auto& col : row )
+    {
+      os << " " << "\033[31m" << col << "\033[0m";
+    }
+    os << "\n";
+  }
+}
+
+} // namespace detail
 
 /*! \brief Prints truth table in binary representation
 
@@ -141,6 +184,12 @@ inline std::string to_hex( const TT& tt )
   std::stringstream st;
   print_hex( tt, st );
   return st.str();
+}
+
+template<class TT>
+void print_xmas_tree_for_function( const TT& func )
+{
+  detail::print_xmas_tree( std::cout, func.num_vars() );
 }
 
 } /* namespace kitty */
