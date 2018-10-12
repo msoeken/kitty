@@ -234,6 +234,22 @@ void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
                             {[&]( auto v ) { return !get_bit( tt, v ); }, {31}}} );
 }
 
+/*! \brief Prints all Boolean functions of n variables in christmas tree pattern
+
+  This function prints all Boolean functions of n variables and arranges them
+  according to the christmas tree pattern as described in Section 7.2.1.6 in
+  The Art of Computer Programming by Donald E. Knuth.  Functions can be printed
+  in different styles according to some properties.
+
+  \param tt Number of variables
+  \param style_predicates Each pair has a predicate `bool(TT const&)` to check
+                          whether a certain property holds for the truth table
+                          the element in the tree represents.  If this predicate
+                          evaluates to true, then the second element in the pair
+                          are indexes of style (ANSI term) to change the
+                          string in the output.
+  \param os Output stream
+*/
 template<class TT>
 void print_xmas_tree_for_functions( uint32_t num_vars,
                                     const std::vector<std::pair<std::function<bool( TT const& )>, std::vector<int>>>& style_predicates = {},
