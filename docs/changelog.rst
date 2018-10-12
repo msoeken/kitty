@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+v0.6 (not yet released)
+-----------------------
+
+* Print function and functions in christmas tree pattern
+  `#62 <https://github.com/msoeken/kitty/pull/62>`_
+
 v0.5 (October 8, 2018)
 ----------------------
 
