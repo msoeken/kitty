@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <sstream>
@@ -41,6 +42,7 @@
 #include <vector>
 
 #include "algorithm.hpp"
+#include "operations.hpp"
 
 namespace kitty
 {
@@ -48,10 +50,27 @@ namespace kitty
 namespace detail
 {
 
-inline void print_xmas_tree( std::ostream& os, uint32_t num_vars )
+inline std::string to_binary( uint16_t value, uint32_t num_vars )
+{
+  std::string res( num_vars, '0' );
+  auto it = res.end() - 1;
+  while ( value )
+  {
+    if ( value & 1 )
+    {
+      *it = '1';
+    }
+    value >>= 1;
+    --it;
+  }
+  return res;
+}
+
+inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
+                             const std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>>& style_predicates = {} )
 {
   /* create rows */
-  std::vector<std::vector<std::string>> current( 1, {""} ), next;
+  std::vector<std::vector<uint16_t>> current( 1, {0} ), next;
 
   for ( auto i = 0u; i < num_vars; ++i )
   {
@@ -60,10 +79,10 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars )
       if ( row.size() != 1u )
       {
         next.emplace_back();
-        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( const auto& cell ) { return cell + "0"; } );
+        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( auto cell ) { return cell << 1; } );
       }
-      next.emplace_back( 1, row.front() + "0" );
-      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( const auto& cell ) { return cell + "1"; } );
+      next.emplace_back( 1, row.front() << 1 );
+      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( auto cell ) { return ( cell << 1 ) ^ 1; } );
     }
 
     std::swap( current, next );
@@ -76,7 +95,18 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars )
     os << std::string( ( ( num_vars + 1 ) - row.size() ) / 2 * ( num_vars + 1 ), ' ' );
     for ( const auto& col : row )
     {
-      os << " " << "\033[31m" << col << "\033[0m";
+      os << " ";
+      for ( const auto& pred : style_predicates )
+      {
+        if ( pred.first( col ) )
+        {
+          for ( auto style : pred.second )
+          {
+            os << "\033[" << style << "m";
+          }
+        }
+      }
+      os << to_binary( col, num_vars ) << "\033[0m";
     }
     os << "\n";
   }
@@ -186,10 +216,38 @@ inline std::string to_hex( const TT& tt )
   return st.str();
 }
 
+/*! \brief Prints minterms of a Boolean function in christmas tree pattern
+
+  This function prints all minterms of a Boolean function and arranges them
+  according to the christmas tree pattern as described in Section 7.2.1.6 in
+  The Art of Computer Programming by Donald E. Knuth.  Minterms from the
+  off-set are printed in red, minterms from the on-set are printed in green.
+
+  \param tt Truth table
+  \param os Output stream
+*/
 template<class TT>
-void print_xmas_tree_for_function( const TT& func )
+void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
-  detail::print_xmas_tree( std::cout, func.num_vars() );
+  detail::print_xmas_tree( os, tt.num_vars(),
+                           {{[&]( auto v ) { return get_bit( tt, v ); }, {32}},
+                            {[&]( auto v ) { return !get_bit( tt, v ); }, {31}}} );
+}
+
+template<class TT>
+void print_xmas_tree_for_functions( uint32_t num_vars,
+                                    const std::vector<std::pair<std::function<bool( TT const& )>, std::vector<int>>>& style_predicates = {},
+                                    std::ostream& os = std::cout )
+{
+  std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>> _preds;
+  std::transform( style_predicates.begin(), style_predicates.end(), std::back_inserter( _preds ),
+                  [&]( const auto& p ) { return std::make_pair( [&]( uint16_t v ) {
+                                           auto tt = create<TT>( num_vars );
+                                           std::copy( &v, &v + 1, tt.begin() );
+                                           return p.first( tt );
+                                         },
+                                                                p.second ); } );
+  detail::print_xmas_tree( os, 1 << num_vars, _preds );
 }
 
 } /* namespace kitty */

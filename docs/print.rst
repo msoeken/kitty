@@ -9,3 +9,4 @@ The header ``<kitty/print.hpp>`` implements functions to print truth tables.
    print_raw
    to_binary
    to_hex
+   print_xmas_tree_for_function
