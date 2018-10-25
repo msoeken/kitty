@@ -49,7 +49,8 @@ TEST_F( PropertiesTest, is_canalizing )
   static_truth_table<4> tt;
   uint32_t counter{};
 
-  do {
+  do
+  {
     if ( is_canalizing( tt ) )
     {
       ++counter;
@@ -66,7 +67,8 @@ TEST_F( PropertiesTest, is_horn )
   static_truth_table<4> tt;
   uint32_t counter{};
 
-  do {
+  do
+  {
     if ( is_horn( tt ) )
     {
       ++counter;
@@ -83,7 +85,8 @@ TEST_F( PropertiesTest, is_krom )
   static_truth_table<4> tt;
   uint32_t counter{};
 
-  do {
+  do
+  {
     if ( is_krom( tt ) )
     {
       ++counter;
@@ -93,4 +96,15 @@ TEST_F( PropertiesTest, is_krom )
   } while ( !is_const0( tt ) );
 
   EXPECT_EQ( counter, 4170u );
+}
+
+TEST_F( PropertiesTest, runlength_pattern )
+{
+  auto xor2 = from_hex<2>( "6" );
+  auto xor3 = from_hex<3>( "96" );
+  auto xor4 = from_hex<4>( "6996" );
+
+  EXPECT_EQ( runlength_pattern( xor2 ), ( std::vector<uint32_t>{{1, 2, 1}} ) );
+  EXPECT_EQ( runlength_pattern( xor3 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 1}} ) );
+  EXPECT_EQ( runlength_pattern( xor4 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1}} ) );
 }
