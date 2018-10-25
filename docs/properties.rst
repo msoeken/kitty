@@ -10,3 +10,5 @@ properties.
    is_horn
    is_krom
    is_symmetric_in
+   foreach_runlength
+   runlength_pattern
