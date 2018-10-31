@@ -240,6 +240,21 @@ TEST( ConstructorsTest, create_symmetric )
   EXPECT_EQ( small._bits, 0xfu );
 }
 
+TEST( ConstructorsTest, create_parity )
+{
+  std::string vars = "abcdefghij";
+
+  for ( auto i = 2u; i <= vars.size(); ++i )
+  {
+    kitty::dynamic_truth_table expr( i ), parity( i );
+
+    kitty::create_from_expression( expr, "[" + vars.substr( 0, i ) + "]" );
+    kitty::create_parity( parity );
+
+    EXPECT_EQ( expr, parity );
+  }
+}
+
 TEST( ConstructorsTest, create_from_cubes )
 {
   std::vector<cube> cubes;
@@ -311,15 +326,14 @@ TEST( ConstructorsTest, create_from_chain_fail )
 TEST( ConstructorsTest, create_multiple_from_chain )
 {
   std::vector<std::string> steps{
-    "x5 = x1 | x3",
-    "x6 = x1 < x4",
-    "x7 = x2 > x4",
-    "x8 = x2 < x4",
-    "x9 = x5 | x7",
-    "x10 = x3 & x8",
-    "x11 = x9 ^ x10",
-    "x12 = x6 ^ x9"
-  };
+      "x5 = x1 | x3",
+      "x6 = x1 < x4",
+      "x7 = x2 > x4",
+      "x8 = x2 < x4",
+      "x9 = x5 | x7",
+      "x10 = x3 & x8",
+      "x11 = x9 ^ x10",
+      "x12 = x6 ^ x9"};
 
   static_truth_table<4> f1, f2;
   std::vector<static_truth_table<4>> fs;
