@@ -781,3 +781,10 @@ TEST_F( OperationsTest, copy_truth_tables )
   tt_s7 = tt4;
   EXPECT_EQ( tt_s7, tt4 );
 }
+
+TEST_F( OperationsTest, implies )
+{
+  EXPECT_TRUE( implies( from_hex<3>( "88" ), from_hex<3>( "e8" ) ) );
+  EXPECT_TRUE( implies( from_hex<3>( "e8" ), from_hex<3>( "e8" ) ) );
+  EXPECT_TRUE( !implies( from_hex<3>( "e8" ), from_hex<3>( "88" ) ) );
+}
