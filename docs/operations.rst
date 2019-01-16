@@ -11,6 +11,7 @@ Predicates
    less_than
    has_var
    is_const0
+   implies
 
 Combination and manipulation
 ----------------------------
