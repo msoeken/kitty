@@ -109,6 +109,12 @@ inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
 }
 
+/*! \brief Muxes two truth tables based on a variable
+
+  \param var_index Variable index
+  \param then_ Truth table for the then-case
+  \param else_ Truth table for the else-case
+*/
 template<typename TT>
 inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
 {
@@ -121,18 +127,15 @@ inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
   else
   {
     const auto step = 1u << ( var_index - 6u );
+    auto j = 0u;
     auto res = then_.construct();
-    auto it = res.begin();
-    auto it0 = else_.begin();
-    auto it1 = then_.begin();
-    for ( ; it < res.end(); it += 2u * step, it0 += 2u * step, it1 += 2u * step )
-    {
-      for ( auto j = 0u; j < step; ++j )
-      {
-        *( it + j ) = *( it0 + j );
-        *( it + step + j ) = *( it1 + step + j );
+
+    std::transform( then_.begin(), then_.end(), else_.begin(), res.begin(),
+      [&]( auto a, auto b ) {
+        return ( j++ % ( 2 * step ) ) < step ? b : a;
       }
-    }
+    );
+
     return res;
   }
 }

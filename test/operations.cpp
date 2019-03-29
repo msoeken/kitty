@@ -794,7 +794,7 @@ TEST_F( OperationsTest, mux_var )
 {
   std::default_random_engine gen;
 
-  for ( auto n = 3u; n < 10u; ++n )
+  for ( auto n = 3u; n < 12u; ++n )
   {
     kitty::dynamic_truth_table tt( n );
     std::uniform_int_distribution<int> distribution( 0u, n - 1u );
