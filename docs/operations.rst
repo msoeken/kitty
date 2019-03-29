@@ -23,6 +23,7 @@ Combination and manipulation
    binary_xor
    ternary_ite
    ternary_majority
+   mux_var
    next_inplace
    next
    cofactor0_inplace
