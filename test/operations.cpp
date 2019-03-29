@@ -26,6 +26,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <random>
 
 #include <kitty/dynamic_truth_table.hpp>
 #include <kitty/operations.hpp>
@@ -787,4 +788,26 @@ TEST_F( OperationsTest, implies )
   EXPECT_TRUE( implies( from_hex<3>( "88" ), from_hex<3>( "e8" ) ) );
   EXPECT_TRUE( implies( from_hex<3>( "e8" ), from_hex<3>( "e8" ) ) );
   EXPECT_TRUE( !implies( from_hex<3>( "e8" ), from_hex<3>( "88" ) ) );
+}
+
+TEST_F( OperationsTest, mux_var )
+{
+  std::default_random_engine gen;
+
+  for ( auto n = 3u; n < 10u; ++n )
+  {
+    kitty::dynamic_truth_table tt( n );
+    std::uniform_int_distribution<int> distribution( 0u, n - 1u );
+
+    for ( auto r = 0u; r < 100u; ++r )
+    {
+      kitty::create_random( tt );
+      const auto var = distribution( gen );
+      const auto then_ = cofactor1( tt, var );
+      const auto else_ = cofactor0( tt, var );
+      const auto res = mux_var( var, then_, else_ );
+
+      EXPECT_EQ( res, tt );
+    }
+  }
 }

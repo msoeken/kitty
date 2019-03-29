@@ -109,6 +109,34 @@ inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
 }
 
+template<typename TT>
+inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
+{
+  if ( var_index < 6u )
+  {
+    return binary_operation( then_, else_,
+                             [&]( auto a, auto b ) { return ( a & detail::projections[var_index] ) |
+                                                            ( b & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1u << ( var_index - 6u );
+    auto res = then_.construct();
+    auto it = res.begin();
+    auto it0 = else_.begin();
+    auto it1 = then_.begin();
+    for ( ; it < res.end(); it += 2u * step, it0 += 2u * step, it1 += 2u * step )
+    {
+      for ( auto j = 0u; j < step; ++j )
+      {
+        *( it + j ) = *( it0 + j );
+        *( it + step + j ) = *( it1 + step + j );
+      }
+    }
+    return res;
+  }
+}
+
 /*! \brief Checks whether two truth tables are equal
 
   \param first First truth table
