@@ -54,7 +54,10 @@ enum class bottom_decomposition
 {
   none,
   and_,
-  or_
+  or_,
+  lt_,
+  le_,
+  xor_
 };
 
 template<class TT>
@@ -230,10 +233,51 @@ bool _is_or_bottom_decomposable( const TT& tt, uint32_t var_index1, uint32_t var
   return true;
 }
 
+//
+// i1  i2   f
+//  0   0   a
+//  0   1   b
+//  1   0   c
+//  1   1   d
+//
+//  a = b = c
+//  i1 <- AND(i1, i2)
+//  i1  i2   f   f'
+//   0   0   a   a
+//   0   1   a   a
+//   1   0   a   d *
+//   1   1   d   d
+//
+//  a = b = d
+//  i1 <- AND(i1, ~i2)
+//  i1  i2   f   f'
+//   0   0   a   a
+//   0   1   a   a
+//   1   0   d   d
+//   1   1   a   d *
+//
+//  a = c = d
+//  i1 <- AND(~i1, i2)
+//  i1  i2   f   f'
+//   0   0   a   a
+//   0   1   d   a *
+//   1   0   a   d *
+//   1   1   a   d *
+//
+//  b = c = d
+//  i1 <- AND(~i1, ~i2)
+//  i1  i2   f   f'
+//   0   0   d   a *
+//   0   1   a   a
+//   1   0   a   d *
+//   1   1   a   d *
+//
+//  a = b && c = d -> XOR
+
 template<class TT>
 bottom_decomposition is_bottom_decomposable( const TT& tt, uint32_t var_index1, uint32_t var_index2, TT* func = nullptr )
 {
-  if ( _is_and_bottom_decomposable( tt, var_index1, var_index2, func ) )
+  /*if ( _is_and_bottom_decomposable( tt, var_index1, var_index2, func ) )
   {
     return bottom_decomposition::and_;
   }
@@ -241,6 +285,77 @@ bottom_decomposition is_bottom_decomposable( const TT& tt, uint32_t var_index1, 
   {
     return bottom_decomposition::or_;
   }
+  return bottom_decomposition::none;*/
+
+  const auto tt0 = cofactor0( tt, var_index1 );
+  const auto tt1 = cofactor1( tt, var_index1 );
+
+  const auto tt00 = cofactor0( tt0, var_index2 );
+  const auto tt01 = cofactor1( tt0, var_index2 );
+  const auto tt10 = cofactor0( tt1, var_index2 );
+  const auto tt11 = cofactor1( tt1, var_index2 );
+
+  const auto eq01 = equal( tt00, tt01 );
+  const auto eq02 = equal( tt00, tt10 );
+  const auto eq03 = equal( tt00, tt11 );
+  const auto eq12 = equal( tt01, tt10 );
+  const auto eq13 = equal( tt01, tt11 );
+  const auto eq23 = equal( tt10, tt11 );
+
+  const auto num_pairs =
+      static_cast<uint32_t>( eq01 ) +
+      static_cast<uint32_t>( eq02 ) +
+      static_cast<uint32_t>( eq03 ) +
+      static_cast<uint32_t>( eq12 ) +
+      static_cast<uint32_t>( eq13 ) +
+      static_cast<uint32_t>( eq23 );
+
+  if ( num_pairs != 2u && num_pairs != 3 )
+  {
+    return bottom_decomposition::none;
+  }
+
+  if ( !eq01 && !eq02 && !eq03 ) // 00 is different
+  {
+    if ( func )
+    {
+      *func = mux_var( var_index1, tt11, tt00 );
+    }
+    return bottom_decomposition::or_;
+  }
+  else if ( !eq01 && !eq12 && !eq13 ) // 01 is different
+  {
+    if ( func )
+    {
+      *func = mux_var( var_index1, tt01, tt10 );
+    }
+    return bottom_decomposition::lt_;
+  }
+  else if ( !eq02 && !eq12 && !eq23 ) // 10 is different
+  {
+    if ( func )
+    {
+      *func = mux_var( var_index1, tt01, tt10 );
+    }
+    return bottom_decomposition::le_;
+  }
+  else if ( !eq03 && !eq13 && !eq23 ) // 11 is different
+  {
+    if ( func )
+    {
+      *func = mux_var( var_index1, tt11, tt00 );
+    }
+    return bottom_decomposition::and_;
+  }
+  else // XOR
+  {
+    if ( func )
+    {
+      *func = mux_var( var_index1, tt01, tt00 );
+    }
+    return bottom_decomposition::xor_;
+  }
+
   return bottom_decomposition::none;
 }
 

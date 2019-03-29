@@ -78,18 +78,30 @@ TEST_F( DecompositionTest, top_down )
 
 TEST_F( DecompositionTest, bottom_up )
 {
-  kitty::static_truth_table<3> expr1;
-  kitty::static_truth_table<3> expr2, expr2_der;
-  kitty::static_truth_table<3> expr3, expr3_der;
+  kitty::static_truth_table<6> expr1;
+  kitty::static_truth_table<6> expr2, expr2_der;
+  kitty::static_truth_table<6> expr3, expr3_der;
+  kitty::static_truth_table<6> expr4, expr4_der;
+  kitty::static_truth_table<6> expr5, expr5_der;
+  kitty::static_truth_table<6> expr6, expr6_der;
 
-  create_from_expression( expr1, "{a(bc)}" );
-  create_from_expression( expr2, "{ab}" );
-  create_from_expression( expr3, "a" );
+  create_from_expression( expr1, "[a(b{!c(!d{ef})})]" );
+  create_from_expression( expr2, "[a(b{!c(!de)})]" );
+  create_from_expression( expr3, "[a(b{!cd})]" );
+  create_from_expression( expr4, "[a(bc)]" );
+  create_from_expression( expr5, "[ab]" );
+  create_from_expression( expr6, "a" );
 
-  EXPECT_EQ( is_bottom_decomposable( expr1, 1u, 2u, &expr2_der ), bottom_decomposition::and_ );
+  EXPECT_EQ( is_bottom_decomposable( expr1, 4u, 5u, &expr2_der ), bottom_decomposition::or_ );
   EXPECT_EQ( expr2, expr2_der );
-  EXPECT_EQ( is_bottom_decomposable( expr2, 0u, 1u, &expr3_der ), bottom_decomposition::or_ );
+  EXPECT_EQ( is_bottom_decomposable( expr2, 3u, 4u, &expr3_der ), bottom_decomposition::lt_ );
   EXPECT_EQ( expr3, expr3_der );
+  EXPECT_EQ( is_bottom_decomposable( expr3, 2u, 3u, &expr4_der ), bottom_decomposition::le_ );
+  EXPECT_EQ( expr4, expr4_der );
+  EXPECT_EQ( is_bottom_decomposable( expr4, 1u, 2u, &expr5_der ), bottom_decomposition::and_ );
+  EXPECT_EQ( expr5, expr5_der );
+  EXPECT_EQ( is_bottom_decomposable( expr5, 0u, 1u, &expr6_der ), bottom_decomposition::xor_ );
+  EXPECT_EQ( expr6, expr6_der );
 }
 
 TEST_F( DecompositionTest, combined )
