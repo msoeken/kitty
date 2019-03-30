@@ -60,6 +60,28 @@ enum class bottom_decomposition
   xor_
 };
 
+/*! \brief Checks, whether function is top disjoint decomposable
+
+  \verbatim embed:rst
+  Checks whether the input function ``tt`` can be represented by the function
+  :math:`f = g(h(X_1), a)`, where :math:`a \notin X_1`.  The return value
+  is :math:`g`:
+
+  * ``top_decomposition::and_``: :math:`g = a \land h(X_1)`
+  * ``top_decomposition::or_``: :math:`g = a \lor h(X_1)`
+  * ``top_decomposition::lt_``: :math:`g = \bar a \land h(X_1)`
+  * ``top_decomposition::le_``: :math:`g = \bar a \lor h(X_1)`
+  * ``top_decomposition::xor_``: :math:`g = a \oplus h(X_1)`
+  * ``top_decomposition::none``: decomposition does not exist
+  
+  The function can return the remainder function :math:`h`, whic will not depend
+  on :math:`a`.
+  \endverbatim
+
+  \param tt Input function \f$f\f$
+  \param var_index Variable \f$a\f$
+  \param func If not ``null`` and decomposition exists, its value is assigned the remainder \f$h\f$
+*/
 template<class TT>
 top_decomposition is_top_decomposable( const TT& tt, uint32_t var_index, TT* func = nullptr )
 {
@@ -115,6 +137,30 @@ top_decomposition is_top_decomposable( const TT& tt, uint32_t var_index, TT* fun
   return top_decomposition::none;
 }
 
+/*! \brief Checks, whether function is bottom disjoint decomposable
+
+  \verbatim embed:rst
+  Checks whether the input function ``tt`` can be represented by the function
+  :math:`f = h(X_1, g(a, b))`, where :math:`a, b \notin X_1`.  The return value
+  is :math:`g`:
+
+  * ``bottom_decomposition::and_``: :math:`g = a \land b`
+  * ``bottom_decomposition::or_``: :math:`g = a \lor b`
+  * ``bottom_decomposition::lt_``: :math:`g = \bar a \land b`
+  * ``bottom_decomposition::le_``: :math:`g = \bar a \lor b`
+  * ``bottom_decomposition::xor_``: :math:`g = a \oplus b`
+  * ``bottom_decomposition::none``: decomposition does not exist
+  
+  The function can return the remainder function :math:`h` in where :math:`g`
+  is substituted by :math:`a`.  The remainder function will not depend on
+  :math:`b`.
+  \endverbatim
+
+  \param tt Input function \f$f\f$
+  \param var_index1 Variable \f$a\f$
+  \param var_index2 Variable \f$b\f$
+  \param func If not ``null`` and decomposition exists, its value is assigned the remainder \f$h\f$
+*/
 template<class TT>
 bottom_decomposition is_bottom_decomposable( const TT& tt, uint32_t var_index1, uint32_t var_index2, TT* func = nullptr )
 {

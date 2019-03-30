@@ -17,6 +17,9 @@ v0.6 (not yet released)
   `#65 <https://github.com/msoeken/kitty/pull/65>`_
   `#66 <https://github.com/msoeken/kitty/pull/66>`_
 
+* Decomposition (DSD): ``is_top_decomposable``, ``is_bottom_decomposable``
+  `#66 <https://github.com/msoeken/kitty/pull/66>`_
+
 v0.5 (October 8, 2018)
 ----------------------
 
