@@ -443,7 +443,7 @@ TEST( ConstrutorsTest, create_from_expression )
   EXPECT_EQ( f1._bits, 0x66u );
 }
 
-TEST( ConstrutorsTest, create_prime )
+TEST( ConstructorsTest, create_prime )
 {
   kitty::static_truth_table<1> p1;
   kitty::static_truth_table<2> p2;
@@ -460,7 +460,6 @@ TEST( ConstrutorsTest, create_prime )
   EXPECT_EQ( p1._bits, 0x0u );
   EXPECT_EQ( p2._bits, 0xcu );
   EXPECT_EQ( p3._bits, 0xacu );
-  EXPECT_EQ( p4._bits, 0xa8acu );
-
+  EXPECT_EQ( p4._bits, 0x28acu );
   EXPECT_EQ( count_ones( p5 ), 172u );
 }
