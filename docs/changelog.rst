@@ -13,8 +13,12 @@ v0.6 (not yet released)
 * Constructors: ``create_from_parity``
   `#64 <https://github.com/msoeken/kitty/pull/64>`_
 
-* Operations: ``implies`` (contributed by Heinz Riener)
+* Operations: ``implies`` (contributed by Heinz Riener), ``mux_var``
   `#65 <https://github.com/msoeken/kitty/pull/65>`_
+  `#66 <https://github.com/msoeken/kitty/pull/66>`_
+
+* Decomposition (DSD): ``is_top_decomposable``, ``is_bottom_decomposable``
+  `#66 <https://github.com/msoeken/kitty/pull/66>`_
 
 v0.5 (October 8, 2018)
 ----------------------

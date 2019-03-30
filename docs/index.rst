@@ -29,6 +29,7 @@ Welcome to kitty's documentation!
    print
    hash
    implicant
+   decomposition
    canonization
    enumeration
    cube

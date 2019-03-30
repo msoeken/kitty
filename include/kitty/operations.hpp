@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2018  EPFL
+ * Copyright (C) 2017-2019  EPFL
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -107,6 +107,37 @@ template<typename TT>
 inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
 {
   return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
+}
+
+/*! \brief Muxes two truth tables based on a variable
+
+  \param var_index Variable index
+  \param then_ Truth table for the then-case
+  \param else_ Truth table for the else-case
+*/
+template<typename TT>
+inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
+{
+  if ( var_index < 6u )
+  {
+    return binary_operation( then_, else_,
+                             [&]( auto a, auto b ) { return ( a & detail::projections[var_index] ) |
+                                                            ( b & detail::projections_neg[var_index] ); } );
+  }
+  else
+  {
+    const auto step = 1u << ( var_index - 6u );
+    auto j = 0u;
+    auto res = then_.construct();
+
+    std::transform( then_.begin(), then_.end(), else_.begin(), res.begin(),
+      [&]( auto a, auto b ) {
+        return ( j++ % ( 2 * step ) ) < step ? b : a;
+      }
+    );
+
+    return res;
+  }
 }
 
 /*! \brief Checks whether two truth tables are equal
