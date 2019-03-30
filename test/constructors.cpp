@@ -442,3 +442,24 @@ TEST( ConstrutorsTest, create_from_expression )
   create_from_expression( f1, "!(!(a!(ab))!(b!(ab)))" );
   EXPECT_EQ( f1._bits, 0x66u );
 }
+
+TEST( ConstructorsTest, create_prime )
+{
+  kitty::static_truth_table<1> p1;
+  kitty::static_truth_table<2> p2;
+  kitty::static_truth_table<3> p3;
+  kitty::static_truth_table<4> p4;
+  kitty::static_truth_table<10> p5;
+
+  create_prime( p1 );
+  create_prime( p2 );
+  create_prime( p3 );
+  create_prime( p4 );
+  create_prime( p5 );
+
+  EXPECT_EQ( p1._bits, 0x0u );
+  EXPECT_EQ( p2._bits, 0xcu );
+  EXPECT_EQ( p3._bits, 0xacu );
+  EXPECT_EQ( p4._bits, 0x28acu );
+  EXPECT_EQ( count_ones( p5 ), 172u );
+}
