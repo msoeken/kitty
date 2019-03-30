@@ -43,7 +43,7 @@ namespace kitty
 
 /*! \brief Enumerate all representatives using 1-neighborhood search.
 
-  This example is based on Algorithm 4.2.1 in the PhD thesis
+  This function is based on Algorithm 4.2.1 in the PhD thesis
   "Analysis of Affine Equivalent Boolean Functions for Cryptography"
   by J.E. Fuller (Queensland University of Technology)
 
