@@ -10,8 +10,9 @@ v0.6 (not yet released)
 * Get runlength encoding of truth table bits
   `#63 <https://github.com/msoeken/kitty/pull/63>`_
 
-* Constructors: ``create_from_parity``
+* Constructors: ``create_from_parity``, ``create_prime``
   `#64 <https://github.com/msoeken/kitty/pull/64>`_
+  `#67 <https://github.com/msoeken/kitty/pull/67>`_
 
 * Operations: ``implies`` (contributed by Heinz Riener), ``mux_var``
   `#65 <https://github.com/msoeken/kitty/pull/65>`_
