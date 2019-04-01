@@ -5,6 +5,7 @@ The header ``<kitty/npn.hpp>`` implements NPN canonization algorithms.
 
 .. doc_brief_table::
    exact_npn_canonization
+   exact_p_canonization
    flip_swap_npn_canonization
    sifting_npn_canonization
    create_from_npn_config

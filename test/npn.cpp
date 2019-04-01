@@ -100,3 +100,15 @@ TEST_F( NPNTest, random_functions_sifting )
     EXPECT_EQ( create_from_npn_config( res ), tt );
   }
 }
+
+TEST_F( NPNTest, random_functions_exact_p )
+{
+  kitty::static_truth_table<6> tt;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res = exact_p_canonization( tt );
+    EXPECT_EQ( create_from_npn_config( res ), tt );
+  }
+}
