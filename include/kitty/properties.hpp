@@ -221,14 +221,7 @@ bool is_selfdual( const TT& tt )
     tt1 = flip( tt1, i );
   }
 
-  if ( tt2 != tt1 )
-  {
-    return false;
-  }
-  else
-  {
-    return true;
-  }
+  return tt2 == tt1;
 }
 
 /*! \brief Generate runlength encoding of a function
