@@ -184,18 +184,22 @@ template<typename TT>
 bool is_monotone( const TT& tt )
 {
   auto numvars = tt.num_vars();
-  
+
   for ( auto i = 0; i < numvars; i++ )
   {
-    auto const tt1 = cofactor0( tt, i );   
+    auto const tt1 = cofactor0( tt, i );
     auto const tt2 = cofactor1( tt, i );
-    for (auto bit = 0; bit < (2 << (numvars - 1)); bit++)
+    for ( auto bit = 0; bit < ( 2 << ( numvars - 1 ) ); bit++ )
     {
-      if (get_bit(tt1, bit) <= get_bit(tt2, bit))
-      continue; 
-      else return false; 
+      if ( get_bit( tt1, bit ) <= get_bit( tt2, bit ) )
+      {
+        continue;
+      }
+      else
+      {
+        return false;
+      }
     }
-    
   }
   return true;
 }
@@ -210,15 +214,21 @@ template<typename TT>
 bool is_selfdual( const TT& tt )
 {
   auto numvars = tt.num_vars();
-  auto tt1 = tt; 
+  auto tt1 = tt;
   auto tt2 = ~tt1;
   for ( auto i = 0; i < numvars; i++ )
+  {
     tt1 = flip( tt1, i );
+  }
+
   if ( tt2 != tt1 )
   {
     return false;
   }
-  return true;
+  else
+  {
+    return true;
+  }
 }
 
 /*! \brief Generate runlength encoding of a function
