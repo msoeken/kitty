@@ -174,6 +174,56 @@ bool is_symmetric_in( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   return tt == swap( tt, var_index1, var_index2 );
 }
 
+/*! \brief Checks whether a function is monotone
+
+  A function is monotone if f(x) ≤ f(y) whenever x ⊆ y
+
+  \param tt Truth table
+*/
+template<typename TT>
+bool is_monotone( const TT& tt )
+{
+  auto numvars = tt.num_vars();
+
+  for ( auto i = 0; i < numvars; i++ )
+  {
+    auto const tt1 = cofactor0( tt, i );
+    auto const tt2 = cofactor1( tt, i );
+    for ( auto bit = 0; bit < ( 2 << ( numvars - 1 ) ); bit++ )
+    {
+      if ( get_bit( tt1, bit ) <= get_bit( tt2, bit ) )
+      {
+        continue;
+      }
+      else
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+/*! \brief Checks whether a function is selfdual
+
+  A function is selfdual if !f(x, y, ..., z) = f(!x, !y, ..., !z)
+
+  \param tt Truth table
+*/
+template<typename TT>
+bool is_selfdual( const TT& tt )
+{
+  auto numvars = tt.num_vars();
+  auto tt1 = tt;
+  auto tt2 = ~tt1;
+  for ( auto i = 0; i < numvars; i++ )
+  {
+    tt1 = flip( tt1, i );
+  }
+
+  return tt2 == tt1;
+}
+
 /*! \brief Generate runlength encoding of a function
 
   This function iterates through the bits of a function and calls a function
@@ -213,7 +263,7 @@ void foreach_runlength( const TT& tt, Fn&& fn )
   `{3, 1}`, and so it does for the NAND function 0111.
 
   \param tt Truth table
-*/ 
+*/
 template<typename TT>
 std::vector<uint32_t> runlength_pattern( const TT& tt )
 {

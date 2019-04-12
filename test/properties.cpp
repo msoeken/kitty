@@ -26,7 +26,6 @@
 #include <gtest/gtest.h>
 
 #include <kitty/properties.hpp>
-
 #include "utility.hpp"
 
 using namespace kitty;
@@ -60,6 +59,42 @@ TEST_F( PropertiesTest, is_canalizing )
   } while ( !is_const0( tt ) );
 
   EXPECT_EQ( counter, 3514u );
+}
+
+TEST_F( PropertiesTest, is_selfdual )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do
+  {
+    if ( is_selfdual( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 256u );
+}
+
+TEST_F( PropertiesTest, is_monotone )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do
+  {
+    if ( is_monotone( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 168u );
 }
 
 TEST_F( PropertiesTest, is_horn )

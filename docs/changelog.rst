@@ -23,6 +23,9 @@ v0.6 (not yet released)
 
 * Canonization: ``exact_p_canonization`` (contributed by Eleonora Testa)
   `#68 <https://github.com/msoeken/kitty/pull/68>`_
+  
+* Properties: ``is_monotone``, ``is_selfdual`` (contributed by Eleonora Testa)
+  `#69 <https://github.com/msoeken/kitty/pull/69>`_
 
 v0.5 (October 8, 2018)
 ----------------------
