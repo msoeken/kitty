@@ -39,6 +39,8 @@
 #include "bit_operations.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
+#include "constructors.hpp"
+#include "print.hpp"
 
 namespace kitty
 {
@@ -272,6 +274,250 @@ std::vector<uint32_t> runlength_pattern( const TT& tt )
     pattern.push_back( length );
   } );
   return pattern;
+}
+
+/*! \brief Returns the complemented input variables in a majority-7 like function
+
+  Given a truth table which is a majority-7 with some complemented inputs, the 
+  function returns the input variables which are complemented. 
+
+  \param tt Truth table
+*/
+template<typename TT>
+std::vector<uint32_t> maj7_complemented( const TT& tt )
+{
+  std::vector<uint32_t> complemented( 7, 0 );
+  assert( tt.num_vars() == 7 );
+  static_truth_table<7> ss, ff;
+  create_equals( ss, 4 );
+
+  
+  auto f = binary_and( tt, ss );
+  if ( count_ones( f ) == 35 )
+    return complemented;
+  else if ( count_ones( f ) == 0 )
+  {
+    complemented.assign(7, 1);
+    return complemented;
+  }
+  else if ( count_ones( f ) == 15 )
+  {
+    std::vector<uint32_t> m;
+    m.reserve( count_ones( tt ) );
+    for_each_one_bit( tt, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 3 )
+        continue;
+      else
+      {
+          orn = orn | i;      
+      }
+      
+    }
+    auto i = 0; 
+    auto n = 127 - orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      }  
+
+    return complemented; 
+  }
+  else if ( count_ones( f ) == 25 ) // 2 complemented 
+  {
+    std::vector<uint32_t> m;
+    m.reserve( count_ones( tt ) );
+    for_each_one_bit( tt, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 2 )
+        continue;
+      else
+      {
+          orn = orn | i;    
+      }
+    }
+    auto i = 0; 
+    auto n = 127 - orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      } 
+    return complemented; 
+  }
+  else if ( count_ones( f ) == 13 ) // 3 complemented 
+  {
+    std::vector<uint32_t> m; 
+    m.reserve( count_ones( tt ) );
+    for_each_one_bit( tt, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 1 )
+        continue;
+      else
+      {
+          orn = orn | i;    
+      }
+    }
+    auto i = 0; 
+    auto n = 127 - orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      } 
+    return complemented; 
+  }
+  else if ( count_ones( f ) == 22 ) // 4 complemented 
+  {
+    std::vector<uint32_t> m; 
+    ff = ~tt; 
+    m.reserve( count_ones( ff ) );
+    for_each_one_bit( ff, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 1 )
+        continue;
+      else
+      { 
+          orn = orn | i;    
+      }
+    }
+    auto i = 0; 
+    auto n = orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      } 
+    return complemented; 
+  }
+  else if ( count_ones( f ) == 10 ) // 5 complemented 
+  {
+    std::vector<uint32_t> m; 
+    ff = ~tt; 
+    m.reserve( count_ones( ff ) );
+    for_each_one_bit( ff, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 2 )
+        continue;
+      else
+      { 
+          orn = orn | i;    
+      }
+    }
+    auto i = 0; 
+    auto n = orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      } 
+    return complemented; 
+  }
+  else if ( count_ones( f ) == 20 ) // 6 complemented 
+  {
+    std::vector<uint32_t> m; 
+    ff = ~tt; 
+    m.reserve( count_ones( ff ) );
+    for_each_one_bit( ff, [&m]( auto index ) {
+      m.emplace_back( index );
+    } );
+    auto orn = 0;
+    for ( auto& i : m )
+    {
+      auto n = i;
+      unsigned int count = 0;
+      while ( n )
+      {
+        count += n & 1;
+        n >>= 1;
+      }
+      if ( count != 3 )
+        continue;
+      else
+      { 
+          orn = orn | i;    
+      }
+    }
+    auto i = 0; 
+    auto n = orn;
+      while ( n )
+      {
+        if ((n & 1) == 1)
+           complemented[i] = 1; 
+        n >>= 1;
+        i++; 
+      } 
+    return complemented; 
+  }
+  
+  complemented.assign(7, 2);
+  return complemented; 
 }
 
 } // namespace kitty
