@@ -32,7 +32,6 @@ int main( int argc, char** argv )
   using TTh = kitty::static_truth_table<3>;
   using TTf = kitty::static_truth_table<5>;
 
-
   TTf tt, x1, x2, x3, x4, x5;
   kitty::create_nth_var( x1, 0 );
   kitty::create_nth_var( x2, 1 );
@@ -48,21 +47,20 @@ int main( int argc, char** argv )
   TTh h;
   kitty::create_from_binary_string( g, "11111110" );
   kitty::create_from_binary_string( h, "10000000" );
-  
+
   std::vector<uint32_t> ys_idx{2, 3, 4};
-  
+
   std::vector<std::pair<TTg, TTg>> decomposition;
-  
-  if (auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition))
+
+  if ( auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition ) )
     std::cout << "Found " << count << " decompositions" << std::endl;
-  
-  for (const auto &pair: decomposition)
+
+  for ( const auto& pair : decomposition )
   {
     auto g = pair.first;
     auto h = pair.second;
     std::cout << "G: " << kitty::to_binary( g ) << " H: " << kitty::to_binary( h ) << std::endl;
   }
 
-  
   return 0;
 }

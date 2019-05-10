@@ -55,7 +55,7 @@ namespace detail
   \return The composed truth table with vars.size() variables
 */
 template<class TTf, class TTv>
-auto compose_truth_table( const TTf& f, const std::vector<TTv> &vars )
+auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
 {
   assert( vars.size() == f.num_vars() );
   auto composed = vars[0].construct();
@@ -85,7 +85,7 @@ auto compose_truth_table( const TTf& f, const std::vector<TTv> &vars )
   \return Remaining indices
 */
 std::vector<uint32_t>
-enumerate_zs_index(const  std::vector<uint32_t> &ys_index, uint32_t max_index )
+enumerate_zs_index( const std::vector<uint32_t>& ys_index, uint32_t max_index )
 {
 
   std::vector<uint32_t> zs_index;
@@ -117,8 +117,8 @@ enumerate_zs_index(const  std::vector<uint32_t> &ys_index, uint32_t max_index )
 */
 template<class TTf, class TTg, class TTh>
 bool ashenhurst_decomposable( const TTf& tt,
-                              const std::vector<uint32_t> &zs_index,
-                              const std::vector<uint32_t> &ys_index,
+                              const std::vector<uint32_t>& zs_index,
+                              const std::vector<uint32_t>& ys_index,
                               const TTg& outer_func,
                               const TTh& inner_func )
 {
@@ -153,21 +153,23 @@ bool ashenhurst_decomposable( const TTf& tt,
   \return Returns the number of possible decompositions.
 */
 template<class TTf, class TTg, class TTh>
-int ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t> &ys_index, std::vector<std::pair<TTg, TTh>>& decomposition )
+int ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t>& ys_index, std::vector<std::pair<TTg, TTh>>& decomposition )
 {
   std::vector<uint32_t> zs_index = detail::enumerate_zs_index( ys_index, tt.num_vars() - 1 );
   decomposition.clear();
   // g_contradiction and h_contradiction are unsatisfiable functions.
   TTg g, g_contradiction;
-  do {
+  do
+  {
     TTh h, h_contradiction;
-    do {
-      if (ashenhurst_decomposable(tt, zs_index, ys_index, g, h)) 
-        decomposition.push_back(std::make_pair(g, h));
-      next_inplace(h);
-    }while (!equal(h, h_contradiction));
-    next_inplace(g);
-  } while (!equal(g, g_contradiction));
+    do
+    {
+      if ( ashenhurst_decomposable( tt, zs_index, ys_index, g, h ) )
+        decomposition.push_back( std::make_pair( g, h ) );
+      next_inplace( h );
+    } while ( !equal( h, h_contradiction ) );
+    next_inplace( g );
+  } while ( !equal( g, g_contradiction ) );
   return decomposition.size();
 }
 
