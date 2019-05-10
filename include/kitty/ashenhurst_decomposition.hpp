@@ -55,15 +55,14 @@ namespace detail
   \return The composed truth table with vars.size() variables
 */
 template<class TTf, class TTv>
-auto compose_truth_table( const TTf& f, const std::vector<TTv> vars )
+auto compose_truth_table( const TTf& f, const std::vector<TTv> &vars )
 {
   assert( vars.size() == f.num_vars() );
   auto composed = vars[0].construct();
-  uint64_t index;
-
   for ( uint64_t i = 0; i < composed.num_bits(); i++ )
   {
-    index = 0;
+
+    uint64_t index = 0;
     for ( uint64_t j = 0; j < vars.size(); j++ )
     {
       index += get_bit( vars[j], i ) << j;
@@ -125,8 +124,8 @@ std::string make_binary_string( uint64_t val, int length )
 */
 template<class TTf, class TTg, class TTh>
 bool ashenhurst_decomposable( const TTf& tt,
-                              const std::vector<uint32_t> zs_index,
-                              const std::vector<uint32_t> ys_index,
+                              const std::vector<uint32_t> &zs_index,
+                              const std::vector<uint32_t> &ys_index,
                               const TTg& outer_func,
                               const TTh& inner_func )
 {
@@ -161,7 +160,7 @@ bool ashenhurst_decomposable( const TTf& tt,
   \return Returns the number of possible decompositions.
 */
 template<class TTf, class TTg, class TTh>
-int ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t> ys_index, std::vector<std::pair<TTg, TTh>>& decomposition )
+int ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t> &ys_index, std::vector<std::pair<TTg, TTh>>& decomposition )
 {
   std::vector<uint32_t> zs_index = detail::enumerate_zs_index( ys_index, tt.num_vars() - 1 );
   decomposition.clear();
