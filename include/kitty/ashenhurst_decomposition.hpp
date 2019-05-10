@@ -85,7 +85,7 @@ auto compose_truth_table( const TTf& f, const std::vector<TTv> &vars )
   \return Remaining indices
 */
 std::vector<uint32_t>
-enumerate_zs_index( std::vector<uint32_t> ys_index, uint32_t max_index )
+enumerate_zs_index(const  std::vector<uint32_t> &ys_index, uint32_t max_index )
 {
 
   std::vector<uint32_t> zs_index;
@@ -94,13 +94,6 @@ enumerate_zs_index( std::vector<uint32_t> ys_index, uint32_t max_index )
       zs_index.push_back( i );
 
   return zs_index;
-}
-std::string make_binary_string( uint64_t val, int length )
-{
-  std::string str = "";
-  for ( int i = length - 1; i >= 0; i-- )
-    str += std::to_string( ( val >> i ) % 2 );
-  return str;
 }
 
 } // namespace detail
@@ -164,37 +157,17 @@ int ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t> &ys_ind
 {
   std::vector<uint32_t> zs_index = detail::enumerate_zs_index( ys_index, tt.num_vars() - 1 );
   decomposition.clear();
-  //assert( decomposition.empty() );
-  int num_vars_h = ys_index.size();
-  int num_vars_g = tt.num_vars() - num_vars_h + 1;
-
-  uint64_t num_bits_h = ( uint64_t( 1 ) << num_vars_h );
-  uint64_t num_bits_g = ( uint64_t( 1 ) << num_vars_g );
-
-
-  // Note that this implementation does not support decompositions in which
-  // either f or h have more than 6 variables.
-  assert( num_bits_g <= 64 );
-  assert( num_bits_h <= 64 );
-
-  uint64_t num_funcs_h = ( uint64_t( 1 ) << num_bits_h );
-  uint64_t num_funcs_g = ( uint64_t( 1 ) << num_bits_g );
-
-  for ( uint64_t i = 0; i < num_funcs_g; i++ )
-  {
-    auto g_string = detail::make_binary_string( i, num_bits_g );
-    TTg g;
-    create_from_binary_string( g, g_string );
-    for ( uint64_t j = 0; j < num_funcs_h; j++ )
-    {
-      auto h_string = detail::make_binary_string( j, num_bits_h );
-      TTh h;
-      create_from_binary_string( h, h_string );
-      if ( ashenhurst_decomposable( tt, zs_index, ys_index, g, h ) )
-        decomposition.push_back( std::make_pair( g, h ) );
-    }
-  }
-
+  // g_contradiction and h_contradiction are unsatisfiable functions.
+  TTg g, g_contradiction;
+  do {
+    TTh h, h_contradiction;
+    do {
+      if (ashenhurst_decomposable(tt, zs_index, ys_index, g, h)) 
+        decomposition.push_back(std::make_pair(g, h));
+      next_inplace(h);
+    }while (!equal(h, h_contradiction));
+    next_inplace(g);
+  } while (!equal(g, g_contradiction));
   return decomposition.size();
 }
 

@@ -28,8 +28,12 @@
 
 int main( int argc, char** argv )
 {
+  using TTg = kitty::static_truth_table<3>;
+  using TTh = kitty::static_truth_table<3>;
+  using TTf = kitty::static_truth_table<5>;
 
-  kitty::static_truth_table<5> tt, x1, x2, x3, x4, x5;
+
+  TTf tt, x1, x2, x3, x4, x5;
   kitty::create_nth_var( x1, 0 );
   kitty::create_nth_var( x2, 1 );
   kitty::create_nth_var( x3, 2 );
@@ -40,18 +44,22 @@ int main( int argc, char** argv )
 
   std::cout << "tt = \t\t" << kitty::to_binary( tt ) << std::endl;
 
-  kitty::static_truth_table<3> g, h;
+  TTg g;
+  TTh h;
   kitty::create_from_binary_string( g, "11111110" );
   kitty::create_from_binary_string( h, "10000000" );
+  
   std::vector<uint32_t> ys_idx{2, 3, 4};
-  typedef typename kitty::static_truth_table<3> TTg;
+  
   std::vector<std::pair<TTg, TTg>> decomposition;
+  
   if (auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition))
     std::cout << "Found " << count << " decompositions" << std::endl;
-  for ( int i = 0; i < decomposition.size(); i++ )
+  
+  for (const auto &pair: decomposition)
   {
-    auto g = decomposition[i].first;
-    auto h = decomposition[i].second;
+    auto g = pair.first;
+    auto h = pair.second;
     std::cout << "G: " << kitty::to_binary( g ) << " H: " << kitty::to_binary( h ) << std::endl;
   }
 
