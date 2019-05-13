@@ -41,6 +41,7 @@
 #include "cnf.hpp"
 #include "constructors.hpp"
 #include "cube.hpp"
+#include "decomposition.hpp"
 #include "enumeration.hpp"
 #include "hash.hpp"
 #include "implicant.hpp"
@@ -54,7 +55,6 @@
 #include "spectral.hpp"
 #include "traits.hpp"
 
-#include "ashenhurst_decomposition.hpp"
 /*
          /\___/\
         (  o o  )

@@ -25,8 +25,9 @@
 
 /*!
   \file decomposition.hpp
-  \brief Check decomposition properties of a function
+  \brief Check decomposition properties (and perform decomposition) of a function
 
+  \author Mahyar Emami (mahyar.emami@epfl.ch)
   \author Mathias Soeken
 */
 
@@ -234,6 +235,111 @@ bottom_decomposition is_bottom_decomposable( const TT& tt, uint32_t var_index1, 
   }
 
   return bottom_decomposition::none;
+}
+
+namespace detail
+{
+
+/*! \brief A helper function to enumerate missing indices.
+
+  \param ys_index A list of already selected indices
+  \param max_index The maximum value for an index
+  \return Remaining indices
+*/
+std::vector<uint32_t> enumerate_zs_index( const std::vector<uint32_t>& ys_index, uint32_t max_index )
+{
+  std::vector<uint32_t> zs_index;
+  for ( uint32_t i = 0u; i <= max_index; ++i )
+  {
+    if ( std::find( ys_index.begin(), ys_index.end(), i ) == ys_index.end() )
+    {
+      zs_index.push_back( i );
+    }
+  }
+
+  return zs_index;
+}
+
+} // namespace detail
+
+/*! \brief Checks, whether a function is Ashenhurst decomposable.
+
+  Given functions f(.), g(.), and h(.) and a partition
+  on arguments into z and y. This function determines whether 
+  f(x) is decomposable into g(z, h(y)) where x = union(z,y) and 
+  intersect(z, y) = null.
+  This function does not check for permutation of variables given by
+  zs_index and ys_index. The elements in these vectors are treated as ordered
+  values.
+
+  \param tt The function to the check the decomposition on (function f)
+  \param zs_index The ordered set of indices of vector x (input to f) that
+                  are the inputs to outer_func (g).
+  \param ys_index The ordered set of indices of vector x (input to f) that are
+                  input to the inner_func (h).
+  \param outer_func The outer decomposition function (function g).
+  \param inner_func The inner decomposition function (function h).
+  \return true if the given decomposition is a valid one, false otherwise.
+*/
+template<class TTf, class TTg, class TTh>
+bool is_ashenhurst_decomposable( const TTf& tt,
+                                 const std::vector<uint32_t>& zs_index,
+                                 const std::vector<uint32_t>& ys_index,
+                                 const TTg& outer_func,
+                                 const TTh& inner_func )
+{
+  std::vector<TTf> y_vars;
+  std::vector<TTf> z_vars;
+
+  for ( const auto idx : ys_index )
+  {
+    auto var = tt.construct();
+    create_nth_var( var, idx );
+    y_vars.push_back( var );
+  }
+  for ( const auto idx : zs_index )
+  {
+    auto var = tt.construct();
+    create_nth_var( var, idx );
+    z_vars.push_back( var );
+  }
+  auto h = compose_truth_table( inner_func, y_vars );
+  z_vars.push_back( h );
+  auto f = compose_truth_table( outer_func, z_vars );
+  return equal( f, tt );
+}
+
+/*! \brief Finds all of the possible Ashenhurst decompositions of a function
+  given an input partitioning.
+
+  \param tt The function to find all of its decompositions 
+  \param ys_index Indices indicating the partitioning of inputs
+  \param decomposition A vector of decomposition pairs. This serves as a return
+                       return container.
+  \return Returns the number of possible decompositions.
+*/
+template<class TTf, class TTg, class TTh>
+uint32_t ashenhurst_decomposition( const TTf& tt, const std::vector<uint32_t>& ys_index, std::vector<std::pair<TTg, TTh>>& decomposition )
+{
+  std::vector<uint32_t> zs_index = detail::enumerate_zs_index( ys_index, tt.num_vars() - 1 );
+  decomposition.clear();
+
+  // TODO: this does not work for dynamic_truth_table (number of variables not known)
+  TTg g;
+  do
+  {
+    TTh h;
+    do
+    {
+      if ( is_ashenhurst_decomposable( tt, zs_index, ys_index, g, h ) )
+      {
+        decomposition.emplace_back( g, h );
+      }
+      next_inplace( h );
+    } while ( !is_const0( h ) );
+    next_inplace( g );
+  } while ( !is_const0( g ) );
+  return decomposition.size();
 }
 
 } // namespace kitty
