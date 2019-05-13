@@ -22,45 +22,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+#include <iostream>
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <kitty/kitty.hpp>
 
-  \author Mathias Soeken
-*/
+int main( int argc, char** argv )
+{
+  using TTg = kitty::static_truth_table<3>;
+  using TTh = kitty::static_truth_table<3>;
+  using TTf = kitty::static_truth_table<5>;
 
-#pragma once
+  TTf tt, x1, x2, x3, x4, x5;
+  kitty::create_nth_var( x1, 0 );
+  kitty::create_nth_var( x2, 1 );
+  kitty::create_nth_var( x3, 2 );
+  kitty::create_nth_var( x4, 3 );
+  kitty::create_nth_var( x5, 4 );
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
+  tt = x1 | x2 | ( x3 & x4 & x5 );
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "enumeration.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "properties.hpp"
-#include "spectral.hpp"
-#include "traits.hpp"
+  std::cout << "tt = \t\t" << kitty::to_binary( tt ) << std::endl;
 
-#include "ashenhurst_decomposition.hpp"
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+  TTg g;
+  TTh h;
+  kitty::create_from_binary_string( g, "11111110" );
+  kitty::create_from_binary_string( h, "10000000" );
+
+  std::vector<uint32_t> ys_idx{2, 3, 4};
+
+  std::vector<std::pair<TTg, TTg>> decomposition;
+
+  if ( auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition ) )
+    std::cout << "Found " << count << " decompositions" << std::endl;
+
+  for ( const auto& pair : decomposition )
+  {
+    auto g = pair.first;
+    auto h = pair.second;
+    std::cout << "G: " << kitty::to_binary( g ) << " H: " << kitty::to_binary( h ) << std::endl;
+  }
+
+  return 0;
+}
