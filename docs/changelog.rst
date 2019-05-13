@@ -21,6 +21,9 @@ v0.6 (not yet released)
 * Decomposition (DSD): ``is_top_decomposable``, ``is_bottom_decomposable``
   `#66 <https://github.com/msoeken/kitty/pull/66>`_
 
+* Ashenhurst decomposition: ``is_ashenhurst_decomposable``, ``ashenhurst_decomposition`` (contributed by Mahyar Emami)
+  `#70 <https://github.com/msoeken/kitty/pull/70>`_
+
 * Canonization: ``exact_p_canonization`` (contributed by Eleonora Testa)
   `#68 <https://github.com/msoeken/kitty/pull/68>`_
   

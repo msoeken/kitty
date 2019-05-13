@@ -8,3 +8,5 @@ of the general operations).
 .. doc_brief_table::
    is_top_decomposable
    is_bottom_decomposable
+   is_ashenhurst_decomposable
+   ashenhurst_decomposition

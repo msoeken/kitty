@@ -28,6 +28,7 @@
 #include <kitty/constructors.hpp>
 #include <kitty/dynamic_truth_table.hpp>
 #include <kitty/decomposition.hpp>
+#include <kitty/print.hpp>
 #include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
@@ -130,4 +131,30 @@ TEST_F( DecompositionTest, combined )
   EXPECT_EQ( expr5, expr5_der );
   EXPECT_EQ( is_top_decomposable( expr5, 1u, &expr6_der ), top_decomposition::xor_ );
   EXPECT_EQ( expr6, expr6_der );
+}
+
+TEST_F( DecompositionTest, ashenhurst )
+{
+  using TTg = static_truth_table<3>;
+  using TTf = static_truth_table<5>;
+
+  TTf tt, x1, x2, x3, x4, x5;
+  create_nth_var( x1, 0 );
+  create_nth_var( x2, 1 );
+  create_nth_var( x3, 2 );
+  create_nth_var( x4, 3 );
+  create_nth_var( x5, 4 );
+
+  tt = x1 | x2 | ( x3 & x4 & x5 );
+  std::vector<uint32_t> ys_idx{2, 3, 4};
+
+  std::vector<std::pair<TTg, TTg>> decomposition;
+  const auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition );
+  EXPECT_EQ( 2u, count );
+  EXPECT_EQ( 2u, decomposition.size() );
+
+  EXPECT_EQ( decomposition[0].first, from_hex<3>( "ef" ) );
+  EXPECT_EQ( decomposition[0].second, from_hex<3>( "7f" ) );
+  EXPECT_EQ( decomposition[1].first, from_hex<3>( "fe" ) );
+  EXPECT_EQ( decomposition[1].second, from_hex<3>( "80" ) );
 }
