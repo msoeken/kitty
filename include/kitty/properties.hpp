@@ -276,7 +276,7 @@ std::vector<uint32_t> runlength_pattern( const TT& tt )
   return pattern;
 }
 
-/*! \brief Returns the complemented input variables in a majority-7 like function
+/*! \brief Returns the complemented input variables in a majority-7 function
 
   Given a truth table which is a majority-7 with some complemented inputs, the 
   function returns the input variables which are complemented. 

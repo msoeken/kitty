@@ -131,3 +131,25 @@ TEST_F( DecompositionTest, combined )
   EXPECT_EQ( is_top_decomposable( expr5, 1u, &expr6_der ), top_decomposition::xor_ );
   EXPECT_EQ( expr6, expr6_der );
 }
+
+TEST_F( DecompositionTest, bi_decomposition )
+{
+  kitty::static_truth_table<4> tt;
+  kitty::static_truth_table<4> dc;
+
+  for (auto i = 0; i < 50; i++)
+  {
+    create_random ( tt );
+    create_random ( dc , i);
+    auto f = is_bi_decomposable(tt, dc); 
+    
+    /*if ((std::get<1>(f) == bi_decomposition::and_) || (std::get<1>(f) == bi_decomposition::weak_and_))
+    {
+        auto q_and_r = std::get<2>(f); 
+        auto a = binary_and(q_and_r[0],q_and_r[1] );
+        auto b = binary_and(q_and_r[2],q_and_r[3] );
+        //EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(binary_and(a,b), dc) );
+    }*/
+    EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(tt, dc) );
+  }
+}
