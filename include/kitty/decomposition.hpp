@@ -254,7 +254,7 @@ bottom_decomposition is_bottom_decomposable( const TT& tt, uint32_t var_index1, 
 namespace detail
 {
 
-template<typename TT>
+template<class TT>
 TT exist_set( const TT& tt, std::vector<int> set )
 {
   auto exist = tt;
@@ -294,7 +294,9 @@ bool check_or_decomp( const TT& tt, const TT& dc, std::vector<int> i, std::vecto
   auto p = binary_and( q, binary_and( exist_set( r, i ), exist_set( r, j ) ) );
 
   if ( !is_const0( p ) )
+  {
     return false;
+  }
 
   return true;
 }
@@ -320,7 +322,9 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, s
       qb = exist_set( binary_or( binary_and( q, ra ), binary_and( r, qa ) ), i );
       rb = exist_set( binary_or( binary_and( q, qa ), binary_and( r, ra ) ), i );
       if ( !is_const0( binary_and( qb, rb ) ) )
+      {
         return ( std::make_pair( false, q_and_rs ) );
+      }
       q = binary_and( q, ~binary_or( qa, ra ) );
       r = binary_and( r, ~binary_or( qa, ra ) );
 
@@ -330,7 +334,9 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, s
       qa = exist_set( binary_or( binary_and( q, rb ), binary_and( r, qb ) ), j );
       ra = exist_set( binary_or( binary_and( q, qb ), binary_and( r, rb ) ), j );
       if ( !is_const0( binary_and( qa, ra ) ) )
+      {
         return ( std::make_pair( false, q_and_rs ) );
+      }
       q = binary_and( q, ~binary_or( qb, rb ) );
       r = binary_and( r, ~binary_or( qb, rb ) );
 
@@ -351,9 +357,13 @@ bool check_weak_decomp( const TT& tt, const TT& dc, std::vector<int> i )
 {
   auto p = exist_set( binary_and( ~tt, dc ), i );
   if ( is_const0( binary_and( binary_and( tt, dc ), ~p ) ) )
+  {
     return false;
+  }
   else
+  {
     return true;
+  }
 }
 
 template<class TT>
@@ -365,7 +375,9 @@ std::pair<std::vector<int>, std::vector<int>> find_initial_or( const TT& tt, con
     for ( auto& j : s )
     {
       if ( j == i )
+      {
         continue;
+      }
       std::vector<int> var_a_p( 1, i );
       std::vector<int> var_b_p( 1, j );
       if ( check_or_decomp( tt, dc, var_a_p, var_b_p ) )
@@ -390,7 +402,9 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> find_initial_xor
     for ( auto& j : s )
     {
       if ( j == i )
+      {
         continue;
+      }
       std::vector<int> var_a_p( 1, i );
       std::vector<int> var_b_p( 1, j );
       auto f = check_xor_decomp( tt, dc, var_a_p, var_b_p );
@@ -432,15 +446,21 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_or( const TT& tt, 
   xa = var_x.first;
   xb = var_x.second;
   if ( ( xa.size() == 0 ) && ( xb.size() == 0 ) )
+  {
     return var_x;
+  }
   for ( auto h : s )
   {
     auto it = find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
+    {
       continue;
+    }
     it = find( xb.begin(), xb.end(), h );
     if ( it != xb.end() )
+    {
       continue;
+    }
 
     if ( xa.size() <= xb.size() )
     {
@@ -449,9 +469,13 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_or( const TT& tt, 
       xa_p.push_back( h );
       xb_p.push_back( h );
       if ( check_or_decomp( tt, dc, xa_p, xb ) )
+      {
         xa.push_back( h );
+      }
       else if ( check_or_decomp( tt, dc, xa, xb_p ) )
+      {
         xb.push_back( h );
+      }
     }
     else
     {
@@ -480,12 +504,16 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_weak_or( const TT&
   xa = var_x.first;
   xb = var_x.second;
   if ( ( xa.size() == 0 ) && ( xb.size() == 0 ) )
+  {
     return var_x;
+  }
   for ( auto h : s )
   {
     auto it = find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
+    {
       continue;
+    }
     auto xa_p = xa;
     xa_p.push_back( h );
     if ( check_weak_decomp( tt, dc, xa_p ) )
@@ -506,15 +534,21 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> group_variables_
   xb = std::get<1>( var_x );
   q_and_r = std::get<2>( var_x );
   if ( ( xa.size() == 0 ) && ( xb.size() == 0 ) )
+  {
     return var_x;
+  }
   for ( auto h : s )
   {
     auto it = find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
+    {
       continue;
+    }
     it = find( xb.begin(), xb.end(), h );
     if ( it != xb.end() )
+    {
       continue;
+    }
 
     if ( xa.size() <= xb.size() )
     {
@@ -562,27 +596,49 @@ std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_g
 {
   int diff_or = x_or.first.size() - x_or.second.size();
   if ( ( x_or.first.size() == 0 ) || ( x_or.second.size() == 0 ) )
+  {
     diff_or = 100;
+  }
   if ( diff_or < 0 )
+  {
     diff_or = -diff_or;
+  }
+
   int diff_and = x_and.first.size() - x_and.second.size();
   if ( ( x_and.first.size() == 0 ) || ( x_and.second.size() == 0 ) )
+  {
     diff_and = 100;
+  }
   if ( diff_and < 0 )
+  {
     diff_and = -diff_and;
+  }
+
   int diff_xor = x_xor.first.size() - x_xor.second.size();
   if ( ( x_xor.first.size() == 0 ) || ( x_xor.second.size() == 0 ) )
+  {
     diff_xor = 100;
+  }
   if ( diff_xor < 0 )
+  {
     diff_xor = -diff_xor;
+  }
   if ( ( diff_or == 100 ) && ( diff_and == 100 ) && ( diff_xor == 100 ) )
+  {
     return std::make_tuple( x_or.first, x_or.second, bi_decomposition::none );
+  }
   if ( ( diff_or <= diff_and ) && ( diff_or <= diff_xor ) )
+  {
     return std::make_tuple( x_or.first, x_or.second, bi_decomposition::or_ );
+  }
   else if ( ( diff_and <= diff_xor ) && ( diff_and <= diff_or ) )
+  {
     return std::make_tuple( x_and.first, x_and.second, bi_decomposition::and_ );
+  }
   else //if ( ( diff_xor <= diff_or ) && ( diff_xor <= diff_and ) )
+  {
     return std::make_tuple( x_xor.first, x_xor.second, bi_decomposition::xor_ );
+  }
 }
 
 template<typename TT>
@@ -642,22 +698,23 @@ std::vector<TT> derive_a( const TT& tt, const TT& dc, std::tuple<std::vector<int
 } /* namespace detail */
 /* \endcond */
 
-/*! \brief Algorithm for bi-decomposition of a logic function 
+/*! \brief Checks whether a function is bi-decomposable. 
 
   \verbatim embed:rst
-  Given the on-set and the dc-set of an incompletely specified Boolean function (ISF), the algorith computes the bi-decomposition of the function.
+  Checks whether an incompletely specified function (ISF) ``tt`` can be represented by the function
+  :math:`f = h(l(X_1, X_3), g(X_2, X_3))`.  
   It returns a tuple of: 
-  1. a truth table, being a completely specified function f, compatible with the input ISF 
-  2. the type of decomposition (and, or, xor, weak and, weak or)
-  3. a vector of four truth tables, which considers the two functions used in the decomposition, each given as on set and dc- set. 
+  1. :math:'f', which is a completely specified Boolean function compatible with the input ISF 
+  2. :math:'h', which is the type of decomposition (and, or, xor, weak and, weak or)
+  3. :math:'l' and :math:'g', given as ISF (ON-set and DC-set)
 
   The algorithm is inspired by "An Algorithm for Bi-Decomposition of Logic Functions" by A. Mishchenko et al. 
   presented in DAC 2001. 
 
   \endverbatim
 
-  \param tt Truth table (on-set)
-  \param dc DCset of the ISF 
+  \param tt ON-set of the input function \f$f\f$
+  \param dc DC-set of the input function \f$f\f$
 */
 
 template<class TT>
@@ -669,25 +726,28 @@ std::tuple<TT, bi_decomposition, std::vector<TT>> is_bi_decomposable( const TT& 
   std::vector<TT> qa, qb;
 
   if ( is_const0( dc ) )
+  {
     return std::make_tuple( dc, bi_decomposition::none, qa );
+  }
 
   std::vector<int> support;
   for ( auto x = 0; x < tt.num_vars(); x++ )
   {
     if ( has_var( binary_and( tt, dc ), x ) )
+    {
       support.push_back( x );
+    }
   }
 
   if ( support.size() <= 1 )
+  {
     return std::make_tuple( tt, bi_decomposition::none, qa );
+  }
 
-  std::pair<std::vector<int>, std::vector<int>> x_or, x_and;
-  std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> x_xor;
-  std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> x_best;
-  x_or = detail::group_variables_or( tt, dc, support );
-  x_and = detail::group_variables_or( ~tt, dc, support );
-  x_xor = detail::group_variables_xor( tt, dc, support );
-  x_best = detail::best_variable_grouping( x_or, x_and, std::make_pair( std::get<0>( x_xor ), std::get<1>( x_xor ) ) );
+  auto x_or = detail::group_variables_or( tt, dc, support );
+  auto x_and = detail::group_variables_or( ~tt, dc, support );
+  auto x_xor = detail::group_variables_xor( tt, dc, support );
+  auto x_best = detail::best_variable_grouping( x_or, x_and, std::make_pair( std::get<0>( x_xor ), std::get<1>( x_xor ) ) );
 
   if ( std::get<2>( x_best ) == bi_decomposition::none )
   {

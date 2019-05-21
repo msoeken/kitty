@@ -135,38 +135,39 @@ TEST_F( DecompositionTest, combined )
 
 TEST_F( DecompositionTest, bi_decomposition )
 {
-  kitty::static_truth_table<4> tt;
-  kitty::static_truth_table<4> dc;
+  kitty::static_truth_table<5> tt;
+  kitty::static_truth_table<5> dc;
 
-  for (auto i = 0; i < 50; i++)
+  for ( auto i = 0; i < 50; i++ )
   {
-    create_random ( tt );
-    create_random ( dc , i);
-    auto f = is_bi_decomposable(tt, dc); 
-    
-    if ((std::get<1>(f) == bi_decomposition::and_) || (std::get<1>(f) == bi_decomposition::weak_and_))
+    create_random( tt );
+    create_random( dc, i );
+    auto f = is_bi_decomposable( tt, dc );
+
+    if ( std::get<1>( f ) == bi_decomposition::none )
     {
-        auto q_and_r = std::get<2>(f); 
-        auto a = binary_and(q_and_r[0],q_and_r[1] );
-        auto b = binary_and(q_and_r[2],q_and_r[3] );
-        EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(binary_and(a,b), dc) );
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( tt, dc ) );
+      continue;
     }
-    else if ((std::get<1>(f) == bi_decomposition::or_) || (std::get<1>(f) == bi_decomposition::weak_or_))
+
+    auto q_and_r = std::get<2>( f );
+    auto a = binary_and( q_and_r[0], q_and_r[1] );
+    auto b = binary_and( q_and_r[2], q_and_r[3] );
+
+    if ( ( std::get<1>( f ) == bi_decomposition::and_ ) || ( std::get<1>( f ) == bi_decomposition::weak_and_ ) )
     {
-        auto q_and_r = std::get<2>(f); 
-        auto a = binary_and(q_and_r[0],q_and_r[1] );
-        auto b = binary_and(q_and_r[2],q_and_r[3] );
-        EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(binary_or(a,b), dc) );
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_and( a, b ), dc ) );
     }
-    else if (std::get<1>(f) == bi_decomposition::xor_) 
+    else if ( ( std::get<1>( f ) == bi_decomposition::or_ ) || ( std::get<1>( f ) == bi_decomposition::weak_or_ ) )
     {
-        auto q_and_r = std::get<2>(f); 
-        auto a = binary_and(q_and_r[0],q_and_r[1] );
-        auto b = binary_and(q_and_r[2],q_and_r[3] );
-        EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(binary_xor(a,b), dc) );
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_or( a, b ), dc ) );
     }
-    
-    EXPECT_EQ(binary_and(std::get<0>(f), dc), binary_and(tt, dc) );
+    else if ( std::get<1>( f ) == bi_decomposition::xor_ )
+    {
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_xor( a, b ), dc ) );
+    }
+
+    EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( tt, dc ) );
   }
 }
 
@@ -195,4 +196,3 @@ TEST_F( DecompositionTest, ashenhurst )
   EXPECT_EQ( decomposition[1].first, from_hex<3>( "fe" ) );
   EXPECT_EQ( decomposition[1].second, from_hex<3>( "80" ) );
 }
-
