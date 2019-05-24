@@ -293,12 +293,7 @@ bool check_or_decomp( const TT& tt, const TT& dc, std::vector<int> i, std::vecto
   auto r = binary_and( ~tt, dc );
   auto p = binary_and( q, binary_and( exist_set( r, i ), exist_set( r, j ) ) );
 
-  if ( !is_const0( p ) )
-  {
-    return false;
-  }
-
-  return true;
+  return is_const0( p ) );
 }
 
 template<class TT>
@@ -356,14 +351,7 @@ template<class TT>
 bool check_weak_decomp( const TT& tt, const TT& dc, std::vector<int> i )
 {
   auto p = exist_set( binary_and( ~tt, dc ), i );
-  if ( is_const0( binary_and( binary_and( tt, dc ), ~p ) ) )
-  {
-    return false;
-  }
-  else
-  {
-    return true;
-  }
+  return !is_const0( binary_and( binary_and( tt, dc ), ~p ) ) );
 }
 
 template<class TT>
