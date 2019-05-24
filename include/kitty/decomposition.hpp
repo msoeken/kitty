@@ -39,7 +39,6 @@
 #include "constructors.hpp"
 #include "operations.hpp"
 #include "implicant.hpp"
-#include "print.hpp"
 
 namespace kitty
 {
