@@ -10,3 +10,4 @@ of the general operations).
    is_bottom_decomposable
    is_ashenhurst_decomposable
    ashenhurst_decomposition
+   is_bi_decomposable
