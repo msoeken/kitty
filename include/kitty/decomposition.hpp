@@ -29,6 +29,7 @@
 
   \author Mahyar Emami (mahyar.emami@epfl.ch)
   \author Mathias Soeken
+  \author Eleonora Testa
 */
 
 #pragma once
@@ -254,7 +255,7 @@ namespace detail
 {
 
 template<class TT>
-TT exist_set( const TT& tt, std::vector<int> set )
+TT exist_set( const TT& tt, const std::vector<int>& set )
 {
   auto exist = tt;
   for ( auto x = 0u; x < set.size(); x++ )
@@ -286,7 +287,7 @@ TT select_one_cube( const TT& q )
 }
 
 template<class TT>
-bool check_or_decomp( const TT& tt, const TT& dc, std::vector<int> i, std::vector<int> j )
+bool check_or_decomp( const TT& tt, const TT& dc, const std::vector<int>& i, const std::vector<int>& j )
 {
   auto q = binary_and( tt, dc );
   auto r = binary_and( ~tt, dc );
@@ -296,7 +297,7 @@ bool check_or_decomp( const TT& tt, const TT& dc, std::vector<int> i, std::vecto
 }
 
 template<class TT>
-std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, std::vector<int> i, std::vector<int> j )
+std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, const std::vector<int>& i, const std::vector<int>& j )
 {
   auto q = binary_and( tt, dc );
   auto r = binary_and( ~tt, dc );
@@ -317,7 +318,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, s
       rb = exist_set( binary_or( binary_and( q, qa ), binary_and( r, ra ) ), i );
       if ( !is_const0( binary_and( qb, rb ) ) )
       {
-        return ( std::make_pair( false, q_and_rs ) );
+        return {false, q_and_rs};
       }
       q = binary_and( q, ~binary_or( qa, ra ) );
       r = binary_and( r, ~binary_or( qa, ra ) );
@@ -329,7 +330,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, s
       ra = exist_set( binary_or( binary_and( q, qb ), binary_and( r, rb ) ), j );
       if ( !is_const0( binary_and( qa, ra ) ) )
       {
-        return ( std::make_pair( false, q_and_rs ) );
+        return {false, q_and_rs};
       }
       q = binary_and( q, ~binary_or( qb, rb ) );
       r = binary_and( r, ~binary_or( qb, rb ) );
@@ -343,11 +344,11 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, s
     q_and_rs[1] = binary_or( q_and_rs[1], exist_set( r, j ) );
     q_and_rs[3] = binary_or( q_and_rs[3], exist_set( r, i ) );
   }
-  return std::make_pair( true, q_and_rs );
+  return {true, q_and_rs};
 }
 
 template<class TT>
-bool check_weak_decomp( const TT& tt, const TT& dc, std::vector<int> i )
+bool check_weak_decomp( const TT& tt, const TT& dc, const std::vector<int>& i )
 {
   auto p = exist_set( binary_and( ~tt, dc ), i );
   return !is_const0( binary_and( binary_and( tt, dc ), ~p ) );
@@ -371,11 +372,11 @@ std::pair<std::vector<int>, std::vector<int>> find_initial_or( const TT& tt, con
       {
         var_a_vect.push_back( i );
         var_b_vect.push_back( j );
-        return std::make_pair( var_a_vect, var_b_vect );
+        return {var_a_vect, var_b_vect};
       }
     }
   }
-  return ( std::make_pair( var_a_vect, var_b_vect ) );
+  return {var_a_vect, var_b_vect};
 }
 
 template<class TT>
@@ -404,7 +405,7 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> find_initial_xor
       }
     }
   }
-  return ( std::make_tuple( var_a_vect, var_b_vect, q_and_r ) );
+  return std::make_tuple( var_a_vect, var_b_vect, q_and_r );
 }
 
 template<class TT>
@@ -419,10 +420,10 @@ std::pair<std::vector<int>, std::vector<int>> find_initial_weak_or( const TT& tt
     {
       var_a_vect.push_back( i );
       var_b_vect.push_back( i );
-      return std::make_pair( var_a_vect, var_b_vect );
+      return {var_a_vect, var_b_vect};
     }
   }
-  return ( std::make_pair( var_a_vect, var_b_vect ) );
+  return {var_a_vect, var_b_vect};
 }
 
 template<class TT>
@@ -438,12 +439,12 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_or( const TT& tt, 
   }
   for ( auto h : s )
   {
-    auto it = find( xa.begin(), xa.end(), h );
+    auto it = std::find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
     {
       continue;
     }
-    it = find( xb.begin(), xb.end(), h );
+    it = std::find( xb.begin(), xb.end(), h );
     if ( it != xb.end() )
     {
       continue;
@@ -480,7 +481,7 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_or( const TT& tt, 
       }
     }
   }
-  return ( std::make_pair( xa, xb ) );
+  return {xa, xb};
 }
 
 template<class TT>
@@ -496,7 +497,7 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_weak_or( const TT&
   }
   for ( auto h : s )
   {
-    auto it = find( xa.begin(), xa.end(), h );
+    auto it = std::find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
     {
       continue;
@@ -508,7 +509,7 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_weak_or( const TT&
       xa.push_back( h );
     }
   }
-  return ( std::make_pair( xa, xb ) );
+  return {xa, xb};
 }
 
 template<class TT>
@@ -526,12 +527,12 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> group_variables_
   }
   for ( auto h : s )
   {
-    auto it = find( xa.begin(), xa.end(), h );
+    auto it = std::find( xa.begin(), xa.end(), h );
     if ( it != xa.end() )
     {
       continue;
     }
-    it = find( xb.begin(), xb.end(), h );
+    it = std::find( xb.begin(), xb.end(), h );
     if ( it != xb.end() )
     {
       continue;
@@ -576,10 +577,10 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> group_variables_
       }
     }
   }
-  return ( std::make_tuple( xa, xb, q_and_r ) );
+  return std::make_tuple( xa, xb, q_and_r );
 }
 
-std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_grouping( std::pair<std::vector<int>, std::vector<int>> x_or, std::pair<std::vector<int>, std::vector<int>> x_and, std::pair<std::vector<int>, std::vector<int>> x_xor )
+std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_grouping( const std::pair<std::vector<int>, std::vector<int>>& x_or, const std::pair<std::vector<int>, std::vector<int>>& x_and, const std::pair<std::vector<int>, std::vector<int>>& x_xor )
 {
   int diff_or = x_or.first.size() - x_or.second.size();
   if ( ( x_or.first.size() == 0 ) || ( x_or.second.size() == 0 ) )
@@ -629,7 +630,7 @@ std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_g
 }
 
 template<typename TT>
-std::vector<TT> derive_b( const TT& tt, const TT& dc, std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> x_best, TT& fa )
+std::vector<TT> derive_b( const TT& tt, const TT& dc, const std::tuple<std::vector<int>, std::vector<int>, bi_decomposition>& x_best, const TT& fa )
 {
   std::vector<TT> qb;
   if ( ( std::get<2>( x_best ) == bi_decomposition::or_ ) || ( std::get<2>( x_best ) == bi_decomposition::weak_or_ ) )
@@ -649,7 +650,7 @@ std::vector<TT> derive_b( const TT& tt, const TT& dc, std::tuple<std::vector<int
 }
 
 template<class TT>
-std::vector<TT> derive_a( const TT& tt, const TT& dc, std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> x_best )
+std::vector<TT> derive_a( const TT& tt, const TT& dc, const std::tuple<std::vector<int>, std::vector<int>, bi_decomposition>& x_best )
 {
   std::vector<TT> qa;
   if ( std::get<2>( x_best ) == bi_decomposition::or_ )
