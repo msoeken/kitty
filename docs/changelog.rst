@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.6 (not yet released)
------------------------
+v0.6 (June 2, 2019)
+-------------------
 
 * Print function and functions in christmas tree pattern
   `#62 <https://github.com/msoeken/kitty/pull/62>`_
@@ -23,6 +23,9 @@ v0.6 (not yet released)
 
 * Ashenhurst decomposition: ``is_ashenhurst_decomposable``, ``ashenhurst_decomposition`` (contributed by Mahyar Emami)
   `#70 <https://github.com/msoeken/kitty/pull/70>`_
+
+* Bi-decomposition: ``is_bi_decomposable`` (contributed by Eleonora Testa)
+  `#72 <https://github.com/msoeken/kitty/pull/72>`_
 
 * Canonization: ``exact_p_canonization`` (contributed by Eleonora Testa)
   `#68 <https://github.com/msoeken/kitty/pull/68>`_
