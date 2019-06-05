@@ -580,6 +580,7 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> group_variables_
   return std::make_tuple( xa, xb, q_and_r );
 }
 
+
 inline std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_grouping( const std::pair<std::vector<int>, std::vector<int>>& x_or, const std::pair<std::vector<int>, std::vector<int>>& x_and, const std::pair<std::vector<int>, std::vector<int>>& x_xor )
 {
   int diff_or = x_or.first.size() - x_or.second.size();
