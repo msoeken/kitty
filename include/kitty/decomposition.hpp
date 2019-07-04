@@ -580,7 +580,7 @@ std::tuple<std::vector<int>, std::vector<int>, std::vector<TT>> group_variables_
   return std::make_tuple( xa, xb, q_and_r );
 }
 
-std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_grouping( const std::pair<std::vector<int>, std::vector<int>>& x_or, const std::pair<std::vector<int>, std::vector<int>>& x_and, const std::pair<std::vector<int>, std::vector<int>>& x_xor )
+inline std::tuple<std::vector<int>, std::vector<int>, bi_decomposition> best_variable_grouping( const std::pair<std::vector<int>, std::vector<int>>& x_or, const std::pair<std::vector<int>, std::vector<int>>& x_and, const std::pair<std::vector<int>, std::vector<int>>& x_xor )
 {
   int diff_or = x_or.first.size() - x_or.second.size();
   if ( ( x_or.first.size() == 0 ) || ( x_or.second.size() == 0 ) )
@@ -786,7 +786,7 @@ namespace detail
   \param max_index The maximum value for an index
   \return Remaining indices
 */
-std::vector<uint32_t> enumerate_zs_index( const std::vector<uint32_t>& ys_index, uint32_t max_index )
+inline std::vector<uint32_t> enumerate_zs_index( const std::vector<uint32_t>& ys_index, uint32_t max_index )
 {
   std::vector<uint32_t> zs_index;
   for ( uint32_t i = 0u; i <= max_index; ++i )
