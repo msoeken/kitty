@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+v0.7 (Not yet released)
+-----------------------
+
+* Properties: ``is_normal``, ``is_trivial`` (contributed by Winston Haaswijk)
+
 v0.6 (June 2, 2019)
 -------------------
 
