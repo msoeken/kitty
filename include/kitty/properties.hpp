@@ -217,7 +217,7 @@ bool is_selfdual( const TT& tt )
 template<typename TT>
 bool is_normal( const TT& tt )
 {
-  return !kitty::get_bit( tt, 0u );
+  return !get_bit( tt, 0u );
 }
 
 /*! \brief Checks if a function is trivial
@@ -229,14 +229,14 @@ template<typename TT>
 bool is_trivial( const TT& tt )
 {
   /* compare to constants */
-  if ( kitty::is_const0( tt ) || kitty::is_const0( ~tt ) )
+  if ( is_const0( tt ) || is_const0( ~tt ) )
     return true;
 
   /* compare to variables */
   TT tt_check = tt;
   for ( auto i = 0; i < tt.num_vars(); ++i )
   {
-    kitty::create_nth_var( tt_check, i );
+    create_nth_var( tt_check, i );
     if ( tt == tt_check || tt == ~tt_check )
       return true;
   }
