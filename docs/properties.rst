@@ -6,11 +6,13 @@ properties.
 
 .. doc_brief_table::
    chow_parameters
+   foreach_runlength
    is_canalizing
    is_horn
    is_krom
-   is_symmetric_in
    is_monotone
+   is_normal
    is_selfdual
-   foreach_runlength
+   is_symmetric_in
+   is_trivial
    runlength_pattern

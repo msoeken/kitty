@@ -79,6 +79,42 @@ TEST_F( PropertiesTest, is_selfdual )
   EXPECT_EQ( counter, 256u );
 }
 
+TEST_F( PropertiesTest, is_trivial )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do
+  {
+    if ( is_trivial( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 10u );
+}
+
+TEST_F( PropertiesTest, is_normal )
+{
+  static_truth_table<4> tt;
+  uint32_t counter{};
+
+  do
+  {
+    if ( is_normal( tt ) )
+    {
+      ++counter;
+    }
+
+    next_inplace( tt );
+  } while ( !is_const0( tt ) );
+
+  EXPECT_EQ( counter, 32768 );
+}
+
 TEST_F( PropertiesTest, is_monotone )
 {
   static_truth_table<4> tt;
