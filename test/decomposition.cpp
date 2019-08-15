@@ -151,8 +151,46 @@ TEST_F( DecompositionTest, bi_decomposition )
     }
 
     auto q_and_r = std::get<2>( f );
-    auto a = binary_and( q_and_r[0], q_and_r[1] );
-    auto b = binary_and( q_and_r[2], q_and_r[3] );
+    auto a = q_and_r[0];
+    auto b = q_and_r[2];
+
+    if ( ( std::get<1>( f ) == bi_decomposition::and_ ) || ( std::get<1>( f ) == bi_decomposition::weak_and_ ) )
+    {
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_and( a, b ), dc ) );
+    }
+    else if ( ( std::get<1>( f ) == bi_decomposition::or_ ) || ( std::get<1>( f ) == bi_decomposition::weak_or_ ) )
+    {
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_or( a, b ), dc ) );
+    }
+    else if ( std::get<1>( f ) == bi_decomposition::xor_ )
+    {
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( binary_xor( a, b ), dc ) );
+    }
+
+    EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( tt, dc ) );
+  }
+}
+
+TEST_F( DecompositionTest, bi_decomposition_mc )
+{
+  kitty::static_truth_table<5> tt;
+  kitty::static_truth_table<5> dc;
+
+  for ( auto i = 0; i < 50; i++ )
+  {
+    create_random( tt );
+    create_random( dc, i );
+    auto f = is_bi_decomposable_mc( tt, dc );
+
+    if ( std::get<1>( f ) == bi_decomposition::none )
+    {
+      EXPECT_EQ( binary_and( std::get<0>( f ), dc ), binary_and( tt, dc ) );
+      continue;
+    }
+
+    auto q_and_r = std::get<2>( f );
+    auto a = q_and_r[0];
+    auto b = q_and_r[2];
 
     if ( ( std::get<1>( f ) == bi_decomposition::and_ ) || ( std::get<1>( f ) == bi_decomposition::weak_and_ ) )
     {

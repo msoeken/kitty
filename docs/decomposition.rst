@@ -11,3 +11,4 @@ of the general operations).
    is_ashenhurst_decomposable
    ashenhurst_decomposition
    is_bi_decomposable
+   is_bi_decomposable_mc
