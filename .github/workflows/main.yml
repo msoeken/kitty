@@ -8,5 +8,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
-    - name: Install CMake
-      run: apt install cmake
+    - name: Build kitty
+      run: |
+        mkdir build
+        cd build
+        cmake -DKITTY_TEST=ON ..
+        make run_tests
+    - name: Run tests
+      run: ./tests/run_tests
