@@ -17,4 +17,6 @@ jobs:
         cmake -DKITTY_TEST=ON ..
         make run_tests
     - name: Run tests
-      run: ./tests/run_tests
+      run: |
+        cd build
+        ./test/run_tests
