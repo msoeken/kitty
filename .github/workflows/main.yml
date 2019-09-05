@@ -8,6 +8,7 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+      submodules: true
     - name: Build kitty
       run: |
         mkdir build
