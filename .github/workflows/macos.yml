@@ -1,0 +1,22 @@
+name: MacOS CI
+
+on: [push]
+
+jobs:
+   build:
+     runs-on: macOS-latest
+
+   steps:
+     - uses: actions/checkout@v1
+       with:
+         submodules: true
+     - name: Build kitty
+       run: |
+         mkdir build
+         cd build
+         cmake -DKITTY_TEST=ON ..
+         make run_tests
+     - name: Run tests
+       run: |
+         cd build
+         ./test/run_tests
