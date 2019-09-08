@@ -1,0 +1,22 @@
+name: Windows CI
+
+  on: [push]
+
+  jobs:
+    build:
+      runs-on: windows-latest
+
+      steps:
+      - uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: Build kitty
+        run: |
+          mkdir build
+          cd build
+          cmake -G "Visual Studio 16 2019" -DKITTY_TEST=ON ..
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" kitty.sln
+      - name: Run tests
+        run: |
+          cd build
+          .\test\run_tests
