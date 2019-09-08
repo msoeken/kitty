@@ -6,7 +6,7 @@ jobs:
    build:
      runs-on: macOS-latest
 
-   steps:
+     steps:
      - uses: actions/checkout@v1
        with:
          submodules: true
