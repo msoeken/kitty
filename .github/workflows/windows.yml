@@ -15,8 +15,8 @@ jobs:
         mkdir build
         cd build
         cmake -G "Visual Studio 16 2019" -DKITTY_TEST=ON ..
-        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" kitty.sln
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" kitty.sln /t:run_tests
     - name: Run tests
       run: |
         cd build
-        .\test\run_tests
+        .\test\Debug\run_tests
