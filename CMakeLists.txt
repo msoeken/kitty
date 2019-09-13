@@ -19,7 +19,7 @@ endif()
 if (UNIX)
   add_compile_options(-W -Wall)
 else()
-  add_compile_options(/EHsc)
+  add_compile_options(/EHsc /MTd)
 endif()
 
 add_subdirectory(include)
