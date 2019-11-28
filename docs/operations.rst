@@ -46,4 +46,5 @@ Combination and manipulation
    shift_left
    shift_right_inplace
    shift_right
-
+   shift_with_mask_inplace
+   shift_with_mask
