@@ -11,7 +11,12 @@ jobs:
       with:
         submodules: true
     - name: Check path
-      run: ls "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe"
+      run: |
+        mkdir build
+        cd build
+        pwd
+    - name: Next
+      run: pwd
     - name: Build kitty
       run: |
         mkdir build
