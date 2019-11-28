@@ -17,7 +17,7 @@ jobs:
       working-directory: ./build
     - name: Build kitty
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" kitty.sln /t:run_tests
+        'C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe' kitty.sln /t:run_tests
       working-directory: ./build
     - name: Run tests
       run: |
