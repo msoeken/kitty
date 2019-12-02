@@ -7,6 +7,9 @@ v0.7 (Not yet released)
 * Properties: ``is_normal``, ``is_trivial`` (contributed by Winston Haaswijk)
   `#75 <https://github.com/msoeken/kitty/pull/75>`_
 
+* Operations: ``shift_with_mask_inplace`` and ``shift_with_mask``
+  `#80 <https://github.com/msoeken/kitty/pull/80>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
