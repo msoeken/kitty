@@ -75,6 +75,9 @@ TEST_F( DecompositionTest, top_down )
   EXPECT_EQ( expr2, expr2_der );
   EXPECT_EQ( is_top_decomposable( expr2, 1u, &expr3_der ), top_decomposition::or_ );
   EXPECT_EQ( expr3, expr3_der );
+
+  auto res = is_top_decomposable<kitty::static_truth_table<3>>( expr1, 0u, nullptr, false );
+  EXPECT_EQ( res, top_decomposition::none );
 }
 
 TEST_F( DecompositionTest, bottom_up )
@@ -103,6 +106,9 @@ TEST_F( DecompositionTest, bottom_up )
   EXPECT_EQ( expr5, expr5_der );
   EXPECT_EQ( is_bottom_decomposable( expr5, 0u, 1u, &expr6_der ), bottom_decomposition::xor_ );
   EXPECT_EQ( expr6, expr6_der );
+
+  auto res = is_bottom_decomposable<kitty::static_truth_table<6>>( expr5, 0u, 1u, nullptr, false );
+  EXPECT_EQ( res, bottom_decomposition::none );
 }
 
 TEST_F( DecompositionTest, combined )
