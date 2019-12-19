@@ -8,6 +8,7 @@ endfunction()
 
 add_example(gf16_inverse gf16_inverse.cpp)
 add_example(isop isop.cpp)
+add_example(cube_printing cube_printing.cpp)
 add_example(npn_enumeration npn_enumeration.cpp)
 add_example(npn_enumeration_map npn_enumeration_map.cpp)
 add_example(npn_random npn_random.cpp)
