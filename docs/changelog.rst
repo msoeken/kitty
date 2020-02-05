@@ -13,6 +13,12 @@ v0.7 (Not yet released)
 * Compute simple SPP from ESOP form
   `#83 <https://github.com/msoeken/kitty/pull/83>`_
 
+* Bit operation: ``count_zeros``
+  `#84 <https://github.com/msoeken/kitty/pull/84>`_
+
+* Properties: ``absolute_disinguishing_power``, ``relative_distinguishing_power``
+  `#84 <https://github.com/msoeken/kitty/pull/84>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
@@ -41,7 +47,7 @@ v0.6 (June 2, 2019)
 
 * Canonization: ``exact_p_canonization`` (contributed by Eleonora Testa)
   `#68 <https://github.com/msoeken/kitty/pull/68>`_
-  
+
 * Properties: ``is_monotone``, ``is_selfdual`` (contributed by Eleonora Testa)
   `#69 <https://github.com/msoeken/kitty/pull/69>`_
 
