@@ -42,6 +42,7 @@
 #include <vector>
 
 #include "algorithm.hpp"
+#include "constructors.hpp"
 #include "cube.hpp"
 #include "hash.hpp"
 #include "operations.hpp"
