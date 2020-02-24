@@ -179,3 +179,13 @@ TEST_F( PropertiesTest, runlength_pattern )
   EXPECT_EQ( runlength_pattern( xor3 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 1}} ) );
   EXPECT_EQ( runlength_pattern( xor4 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1}} ) );
 }
+
+TEST_F( PropertiesTest, polynomial_degree )
+{
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "80" ) ), 3u );
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "f7" ) ), 3u );
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "e8" ) ), 2u );
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "aa" ) ), 1u );
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "ff" ) ), 0u );
+  EXPECT_EQ( polynomial_degree( from_hex<3>( "00" ) ), 0u );
+}

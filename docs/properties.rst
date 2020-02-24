@@ -16,5 +16,6 @@ properties.
    is_symmetric_in
    is_trivial
    runlength_pattern
+   polynomial_degree
    absolute_disinguishing_power
    relative_distinguishing_power
