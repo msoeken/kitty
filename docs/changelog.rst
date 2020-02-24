@@ -19,6 +19,9 @@ v0.7 (Not yet released)
 * Properties: ``absolute_disinguishing_power``, ``relative_distinguishing_power``
   `#84 <https://github.com/msoeken/kitty/pull/84>`_
 
+* Properties: ``polynomial_degree``
+  `#86 <https://github.com/msoeken/kitty/pull/86>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
