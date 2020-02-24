@@ -292,6 +292,11 @@ std::vector<uint32_t> runlength_pattern( const TT& tt )
   return pattern;
 }
 
+/*! \brief Compute polynomial degree
+  The polyomial degree is the number of variables in the largest monomial in
+  the functoons ANF (PPRM).
+  \param tt Truth table
+*/
 template<typename TT>
 inline uint32_t polynomial_degree( const TT& tt )
 {
