@@ -155,7 +155,7 @@ inline uint64_t count_ones( const TT& tt )
 template<int NumVars>
 inline uint64_t count_ones( const static_truth_table<NumVars, true>& tt )
 {
-  return __builtin_popcount( tt._bits );
+  return __builtin_popcount( tt._bits & 0xffffffff ) + __builtin_popcount( tt._bits >> 32 );
 }
 /*! \endcond */
 
