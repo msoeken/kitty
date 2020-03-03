@@ -433,12 +433,21 @@ template<typename TT>
 void create_equals( TT& tt, uint8_t bitcount )
 {
   clear( tt );
+  if ( bitcount > tt.num_vars() ) return;
 
-  for ( uint64_t x = 0; x < tt.num_bits(); ++x )
+  if ( tt.num_vars() <= 6 )
   {
-    if ( __builtin_popcount( x ) == bitcount )
+    const auto word = detail::onehots[tt.num_vars()][bitcount];
+    create_from_words( tt, &word, &word + 1 );
+  }
+  else
+  {
+    for ( uint64_t x = 0; x < tt.num_bits(); ++x )
     {
-      set_bit( tt, x );
+      if ( __builtin_popcount( x ) == bitcount )
+      {
+        set_bit( tt, x );
+      }
     }
   }
 }

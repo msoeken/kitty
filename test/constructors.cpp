@@ -194,9 +194,10 @@ TEST( ConstructorsTest, create_threshold7 )
   } );
 }
 
-TEST( ConstructorsTest, create_equals )
+template<int NumVars>
+static void test_create_equals()
 {
-  static_truth_table<9> total;
+  static_truth_table<NumVars> total;
   uint64_t total_bits{0};
 
   for ( auto k = 0; k <= total.num_vars(); ++k )
@@ -204,11 +205,25 @@ TEST( ConstructorsTest, create_equals )
     auto tt = total.construct();
     create_equals( tt, k );
     total_bits += count_ones( tt );
-    total |= tt;
+    total ^= tt;
   }
 
   EXPECT_TRUE( is_const0( ~total ) );
   EXPECT_EQ( total_bits, uint64_t( 1 ) << total.num_vars() );
+}
+
+TEST( ConstructorsTest, create_equals )
+{
+  test_create_equals<0>();
+  test_create_equals<1>();
+  test_create_equals<2>();
+  test_create_equals<3>();
+  test_create_equals<4>();
+  test_create_equals<5>();
+  test_create_equals<6>();
+  test_create_equals<7>();
+  test_create_equals<8>();
+  test_create_equals<9>();
 }
 
 TEST( ConstructorsTest, create_symmetric )
