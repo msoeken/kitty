@@ -39,6 +39,7 @@
 #pragma once
 
 #include "bit_operations.hpp"
+#include "constructors.hpp"
 #include "detail/mscfix.hpp"
 
 #include <cmath>
@@ -910,6 +911,35 @@ inline uint32_t get_spectral_class( const TT& tt )
   }
 
   return 48;
+}
+
+namespace detail
+{
+static std::vector<uint64_t> spectral_repr[] = {
+    {0x0},
+    {0x0},
+    {0x0, 0x8},
+    {0x00, 0x80, 0x88},
+    {0x0000, 0x8000, 0x8080, 0x0888, 0x8888, 0x7080, 0x7880, 0x7888},
+    {0xaa55aa55, 0xaa55ab55, 0xaa55bb55, 0xaa5dbb55, 0xaaddbb55, 0xaa5dbb51, 0x2a5dbb51, 0xaaddbb51, 0x2a5dbf51, 0x6a5dbb51, 0x2addbb51, 0xa8ddbb51, 0xaeddda51, 0x0a5dbf51, 0x8addda51, 0xa8dd9b51, 0x88ddbb51, 0x88ddbb11, 0x8c5dda51, 0xa89d9b51, 0x8eddda51, 0xaefdda51, 0x025dbf51, 0x88ddda51, 0x88dd9b51, 0xceddda51, 0x0eddda51, 0x425dbf51, 0x8cddda51, 0x88dddb51, 0x289d9b51, 0x86fdda51, 0x88dddb71, 0xcefdda51, 0x0efdda51, 0x288d9b51, 0x8cfdda51, 0x8cdddb51, 0x8ccdda51, 0x289d9b41, 0x488ddb51, 0xccfdda51, 0x688d9b51, 0x288d9b41, 0x288d1b41, 0xdcfdda51, 0x68ad9b51, 0x688ddb51}};
+}
+
+/*! \brief Returns spectral representative using lookup
+ *
+ * This function returns the spectral representative for functions with up to 5
+ * variables, but does not give the possibility to obtain the transformation
+ * sequence to obtain the function from the representative.
+ *
+ * \brief func Truth table for function with at most 5 variables.
+ */
+template<class TT>
+TT spectral_representative( const TT& func )
+{
+  auto r = func.construct();
+  const auto index = get_spectral_class( func );
+  const auto word = detail::spectral_repr[func.num_vars()][index];
+  kitty::create_from_words( r, &word, &word + 1 );
+  return r;
 }
 
 } /* namespace kitty */

@@ -21,6 +21,7 @@ based on spectral transformations.
    autocorrelation_spectrum
    spectrum_distribution
    get_spectral_class
+   spectral_representative
 
 The header ``<kitty/affine.hpp>`` implements canonization algorithms based on
 linear and affine transformations.
