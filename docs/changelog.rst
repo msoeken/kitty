@@ -22,6 +22,9 @@ v0.7 (Not yet released)
 * Properties: ``polynomial_degree``
   `#86 <https://github.com/msoeken/kitty/pull/86>`_
 
+* Canonization: ``spectral_representative``
+  `#89 <https://github.com/msoeken/kitty/pull/89>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
