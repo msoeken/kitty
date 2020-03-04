@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <iostream>
 
+#include <kitty/esop.hpp>
 #include <kitty/print.hpp>
 #include <kitty/spectral.hpp>
 #include <kitty/static_truth_table.hpp>
@@ -217,4 +218,29 @@ TEST_F( SpectralTest, spectral_representative )
       test_one( v, repr[c] );
     }
   }
+}
+
+template<int NumVars>
+static void algebraic_normal_form_test()
+{
+  static_truth_table<NumVars> tt;
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    create_random( tt );
+    const auto anf = detail::algebraic_normal_form( tt );
+    const auto tt2 = detail::algebraic_normal_form( anf );
+    EXPECT_EQ( tt, tt2 );
+  }
+}
+
+TEST_F( SpectralTest, algebraic_normal_form )
+{
+  algebraic_normal_form_test<0>();
+  algebraic_normal_form_test<1>();
+  algebraic_normal_form_test<2>();
+  algebraic_normal_form_test<3>();
+  algebraic_normal_form_test<4>();
+  algebraic_normal_form_test<5>();
+  algebraic_normal_form_test<6>();
+  algebraic_normal_form_test<7>();
 }
