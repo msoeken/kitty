@@ -99,3 +99,30 @@ TEST_F( PrintTest, xmas_all )
                                                       ss );
   EXPECT_EQ( 7046u, ss.str().size() );
 }
+
+template<int NumVars>
+static void anf_to_expression_test()
+{
+  static_truth_table<NumVars> tt, tt_test;
+
+  for ( auto i = 0u; i < 100u; ++i )
+  {
+    create_random( tt );
+    const auto anf = detail::algebraic_normal_form( tt );
+    const auto expr = anf_to_expression( anf );
+    create_from_expression( tt_test, expr );
+    EXPECT_EQ( tt, tt_test );
+  }
+}
+
+TEST_F( PrintTest, anf_to_expression )
+{
+  anf_to_expression_test<0>();
+  anf_to_expression_test<1>();
+  anf_to_expression_test<2>();
+  anf_to_expression_test<3>();
+  anf_to_expression_test<4>();
+  anf_to_expression_test<5>();
+  anf_to_expression_test<6>();
+  anf_to_expression_test<7>();
+}
