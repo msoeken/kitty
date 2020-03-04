@@ -25,6 +25,9 @@ v0.7 (Not yet released)
 * Canonization: ``spectral_representative``
   `#89 <https://github.com/msoeken/kitty/pull/89>`_
 
+* ANF as expression: ``anf_to_expression``
+  `#91 <https://github.com/msoeken/kitty/pull/91>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
