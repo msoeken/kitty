@@ -108,6 +108,36 @@ TEST_F( BitOperationsTest, find_first_bit )
   EXPECT_EQ( find_first_one_bit( nth<8>( 7 ) ), 128 );
 }
 
+template<int NumVars>
+static void find_first_bit_consecutive_test()
+{
+  static_truth_table<NumVars> tt;
+  create_prime( tt );
+  auto ctr = 0u;
+
+  auto start = find_first_one_bit( tt );
+  while ( start != -1 )
+  {
+    EXPECT_EQ( detail::primes[ctr], start );
+    ctr++;
+    start = find_first_one_bit( tt, start + 1 );
+  }
+
+  EXPECT_EQ( count_ones( tt ), ctr );
+}
+
+TEST_F( BitOperationsTest, find_first_bit_consecutive )
+{
+  find_first_bit_consecutive_test<0>();
+  find_first_bit_consecutive_test<1>();
+  find_first_bit_consecutive_test<2>();
+  find_first_bit_consecutive_test<3>();
+  find_first_bit_consecutive_test<4>();
+  find_first_bit_consecutive_test<5>();
+  find_first_bit_consecutive_test<6>();
+  find_first_bit_consecutive_test<7>();
+}
+
 TEST_F( BitOperationsTest, find_last_bit )
 {
   EXPECT_EQ( find_last_one_bit( from_hex<3>( "00" ) ), -1 );
