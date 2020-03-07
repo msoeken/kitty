@@ -28,6 +28,9 @@ v0.7 (Not yet released)
 * ANF as expression: ``anf_to_expression``
   `#91 <https://github.com/msoeken/kitty/pull/91>`_
 
+* Constructor: ``nth_var``
+  `#95 <https://github.com/msoeken/kitty/pull/95>`_
+
 v0.6 (June 2, 2019)
 -------------------
 
