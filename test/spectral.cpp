@@ -205,8 +205,8 @@ TEST_F( SpectralTest, spectral_class )
 TEST_F( SpectralTest, spectral_representative )
 {
   const auto test_one = []( uint32_t num_vars, uint64_t word ) {
-    kitty::dynamic_truth_table func( num_vars );
-    kitty::create_from_words( func, &word, &word + 1 );
+    dynamic_truth_table func( num_vars );
+    create_from_words( func, &word, &word + 1 );
     EXPECT_EQ( spectral_representative( func ), func );
   };
 
