@@ -187,14 +187,14 @@ TEST_F( SpectralTest, distribution_test )
 TEST_F( SpectralTest, spectral_class )
 {
   const auto test_one = []( uint32_t num_vars, uint64_t word, uint32_t index ) {
-    kitty::dynamic_truth_table func( num_vars );
-    kitty::create_from_words( func, &word, &word + 1 );
+    dynamic_truth_table func( num_vars );
+    create_from_words( func, &word, &word + 1 );
     EXPECT_EQ( get_spectral_class( func ), index );
   };
 
   for ( auto v = 0u; v <= 5u; ++v )
   {
-    const auto& repr = kitty::detail::spectral_repr[v];
+    const auto& repr = detail::spectral_repr[v];
     for ( auto c = 0u; c < repr.size(); ++c )
     {
       test_one( v, repr[c], c );
@@ -212,7 +212,7 @@ TEST_F( SpectralTest, spectral_representative )
 
   for ( auto v = 0u; v <= 5u; ++v )
   {
-    const auto& repr = kitty::detail::spectral_repr[v];
+    const auto& repr = detail::spectral_repr[v];
     for ( auto c = 0u; c < repr.size(); ++c )
     {
       test_one( v, repr[c] );
@@ -243,4 +243,49 @@ TEST_F( SpectralTest, algebraic_normal_form )
   algebraic_normal_form_test<5>();
   algebraic_normal_form_test<6>();
   algebraic_normal_form_test<7>();
+}
+
+template<int NumVars>
+void hybrid_exact_spectral_canonization()
+{
+  const auto& repr = detail::spectral_repr[NumVars];
+  for ( auto word : repr ) {
+    static_truth_table<NumVars> tt1;
+    create_from_words( tt1, &word, &word + 1 );
+    const auto tt2 = exact_spectral_canonization( tt1 );
+    const auto tt3 = hybrid_exact_spectral_canonization( tt1 );
+    const auto tt4 = hybrid_exact_spectral_canonization( tt2 );
+    EXPECT_EQ( tt3, tt4 );
+  }
+}
+
+TEST_F( SpectralTest, hybrid_exact_spectral_canonization )
+{
+  hybrid_exact_spectral_canonization<3>();
+  hybrid_exact_spectral_canonization<4>();
+  //hybrid_exact_spectral_canonization<5>();
+}
+
+TEST_F( SpectralTest, hybrid_exact_spectral_canonization_with_transformation )
+{
+  static_truth_table<5> tt;
+  std::vector<detail::spectral_operation> transforms;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    const auto r = hybrid_exact_spectral_canonization( tt, [&]( const auto& _transforms ) { transforms = _transforms; } );
+
+    auto s = detail::spectrum::from_truth_table( tt );
+    std::for_each( transforms.begin(), transforms.end(), [&s]( const auto& t ) { s.apply( t ); } );
+    auto tt2 = tt.construct();
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( r, tt2 );
+
+    s = detail::spectrum::from_truth_table( tt2 );
+    std::for_each( transforms.rbegin(), transforms.rend(), [&s]( const auto& t ) { s.apply( t ); } );
+
+    s.to_truth_table( tt2 );
+    EXPECT_EQ( tt, tt2 );
+  }
 }
