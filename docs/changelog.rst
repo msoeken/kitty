@@ -31,6 +31,9 @@ v0.7 (Not yet released)
 * Constructor: ``nth_var``
   `#95 <https://github.com/msoeken/kitty/pull/95>`_
 
+* Spectral classification: ``hybrid_exact_spectral_canonization``
+  `#96 <https://github.com/msoeken/kitty/pull/96>`_
+
 v0.6 (June 2, 2019)
 -------------------
 

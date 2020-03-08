@@ -16,6 +16,7 @@ based on spectral transformations.
 .. doc_brief_table::
    exact_spectral_canonization
    exact_spectral_canonization_limit
+   hybrid_exact_spectral_canonization
    print_spectrum
    rademacher_walsh_spectrum
    autocorrelation_spectrum
