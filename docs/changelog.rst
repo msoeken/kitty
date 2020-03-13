@@ -1,8 +1,8 @@
 Change Log
 ==========
 
-v0.7 (Not yet released)
------------------------
+v0.7 (March 13, 2020)
+---------------------
 
 * Properties: ``is_normal``, ``is_trivial`` (contributed by Winston Haaswijk)
   `#75 <https://github.com/msoeken/kitty/pull/75>`_
