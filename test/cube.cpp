@@ -121,3 +121,10 @@ TEST_F( CubeTest, flip_bit_and_mask )
     }
   }
 }
+
+TEST_F( CubeTest, negate_cube )
+{
+  EXPECT_EQ( to_string( !cube( "010" ), 3 ), "101" );
+  EXPECT_EQ( to_string( !cube( "-1-" ), 3 ), "-0-" );
+  EXPECT_EQ( to_string( !cube( "*00" ), 3 ), "-11" );
+}
