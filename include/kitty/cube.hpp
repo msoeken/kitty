@@ -140,7 +140,7 @@ public:
   }
 
   /*! \brief Returns the negated cube */
-  inline cube operator!() const
+  inline cube operator~() const
   {
     return {~_bits, _mask};
   }
