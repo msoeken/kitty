@@ -35,6 +35,7 @@
 #include "dynamic_truth_table.hpp"
 #include "operations.hpp"
 #include "static_truth_table.hpp"
+#include "partial_truth_table.hpp"
 
 namespace kitty
 {
@@ -52,6 +53,12 @@ inline static_truth_table<NumVars> operator~( const static_truth_table<NumVars>&
   return unary_not( tt );
 }
 
+/*! \brief Operator for unary_not */
+inline partial_truth_table operator~( const partial_truth_table& tt )
+{
+  return unary_not( tt );
+}
+
 /*! \brief Operator for binary_and */
 inline dynamic_truth_table operator&( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -61,6 +68,12 @@ inline dynamic_truth_table operator&( const dynamic_truth_table& first, const dy
 /*! \brief Operator for binary_and */
 template<int NumVars>
 inline static_truth_table<NumVars> operator&( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return binary_and( first, second );
+}
+
+/*! \brief Operator for binary_and */
+inline partial_truth_table operator&( const partial_truth_table& first, const partial_truth_table& second )
 {
   return binary_and( first, second );
 }
@@ -78,6 +91,12 @@ inline void operator&=( static_truth_table<NumVars>& first, const static_truth_t
   first = binary_and( first, second );
 }
 
+/*! \brief Operator for binary_and and assign */
+inline void operator&=( partial_truth_table& first, const partial_truth_table& second )
+{
+  first = binary_and( first, second );
+}
+
 /*! \brief Operator for binary_or */
 inline dynamic_truth_table operator|( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -87,6 +106,12 @@ inline dynamic_truth_table operator|( const dynamic_truth_table& first, const dy
 /*! \brief Operator for binary_or */
 template<int NumVars>
 inline static_truth_table<NumVars> operator|( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return binary_or( first, second );
+}
+
+/*! \brief Operator for binary_or */
+inline partial_truth_table operator|( const partial_truth_table& first, const partial_truth_table& second )
 {
   return binary_or( first, second );
 }
@@ -104,6 +129,12 @@ inline void operator|=( static_truth_table<NumVars>& first, const static_truth_t
   first = binary_or( first, second );
 }
 
+/*! \brief Operator for binary_or and assign */
+inline void operator|=( partial_truth_table& first, const partial_truth_table& second )
+{
+  first = binary_or( first, second );
+}
+
 /*! \brief Operator for binary_xor */
 inline dynamic_truth_table operator^( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -113,6 +144,12 @@ inline dynamic_truth_table operator^( const dynamic_truth_table& first, const dy
 /*! \brief Operator for binary_xor */
 template<int NumVars>
 inline static_truth_table<NumVars> operator^( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return binary_xor( first, second );
+}
+
+/*! \brief Operator for binary_xor */
+inline partial_truth_table operator^( const partial_truth_table& first, const partial_truth_table& second )
 {
   return binary_xor( first, second );
 }
@@ -130,6 +167,12 @@ inline void operator^=( static_truth_table<NumVars>& first, const static_truth_t
   first = binary_xor( first, second );
 }
 
+/*! \brief Operator for binary_xor and assign */
+inline void operator^=( partial_truth_table& first, const partial_truth_table& second )
+{
+  first = binary_xor( first, second );
+}
+
 /*! \brief Operator for equal */
 inline bool operator==( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -139,6 +182,12 @@ inline bool operator==( const dynamic_truth_table& first, const dynamic_truth_ta
 /*! \brief Operator for equal */
 template<int NumVars>
 inline bool operator==( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return equal( first, second );
+}
+
+/*! \brief Operator for equal */
+inline bool operator==( const partial_truth_table& first, const partial_truth_table& second )
 {
   return equal( first, second );
 }
@@ -156,6 +205,12 @@ inline bool operator!=( const static_truth_table<NumVars>& first, const static_t
   return !equal( first, second );
 }
 
+/*! \brief Operator for not equal */
+inline bool operator!=( const partial_truth_table& first, const partial_truth_table& second )
+{
+  return !equal( first, second );
+}
+
 /*! \brief Operator for less_than */
 inline bool operator<( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -165,6 +220,12 @@ inline bool operator<( const dynamic_truth_table& first, const dynamic_truth_tab
 /*! \brief Operator for less_than */
 template<int NumVars>
 inline bool operator<( const static_truth_table<NumVars>& first, const static_truth_table<NumVars>& second )
+{
+  return less_than( first, second );
+}
+
+/*! \brief Operator for less_than */
+inline bool operator<( const partial_truth_table& first, const partial_truth_table& second )
 {
   return less_than( first, second );
 }
@@ -182,6 +243,12 @@ inline static_truth_table<NumVars> operator<<( const static_truth_table<NumVars>
   return shift_left( tt, shift );
 }
 
+/*! \brief Operator for left_shift */
+inline partial_truth_table operator<<( const partial_truth_table& tt, uint64_t shift )
+{
+  return shift_left( tt, shift );
+}
+
 /*! \brief Operator for left_shift_inplace */
 inline void operator<<=( dynamic_truth_table& tt, uint64_t shift )
 {
@@ -191,6 +258,12 @@ inline void operator<<=( dynamic_truth_table& tt, uint64_t shift )
 /*! \brief Operator for left_shift_inplace */
 template<int NumVars>
 inline void operator<<=( static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  shift_left_inplace( tt, shift );
+}
+
+/*! \brief Operator for left_shift_inplace */
+inline void operator<<=( partial_truth_table& tt, uint64_t shift )
 {
   shift_left_inplace( tt, shift );
 }
@@ -208,6 +281,12 @@ inline static_truth_table<NumVars> operator>>( const static_truth_table<NumVars>
   return shift_right( tt, shift );
 }
 
+/*! \brief Operator for right_shift */
+inline partial_truth_table operator>>( const partial_truth_table& tt, uint64_t shift )
+{
+  return shift_right( tt, shift );
+}
+
 /*! \brief Operator for right_shift_inplace */
 inline void operator>>=( dynamic_truth_table& tt, uint64_t shift )
 {
@@ -217,6 +296,12 @@ inline void operator>>=( dynamic_truth_table& tt, uint64_t shift )
 /*! \brief Operator for right_shift_inplace */
 template<int NumVars>
 inline void operator>>=( static_truth_table<NumVars>& tt, uint64_t shift )
+{
+  shift_right_inplace( tt, shift );
+}
+
+/*! \brief Operator for right_shift_inplace */
+inline void operator>>=( partial_truth_table& tt, uint64_t shift )
 {
   shift_right_inplace( tt, shift );
 }

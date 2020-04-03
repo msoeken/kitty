@@ -137,7 +137,7 @@ struct dynamic_truth_table
 
     \param other Other truth table
   */
-  template<class TT, typename = std::enable_if_t<is_truth_table<TT>::value>>
+  template<class TT, typename = std::enable_if_t<is_truth_table<TT>::value && is_complete_truth_table<TT>::value>>
   dynamic_truth_table& operator=( const TT& other )
   {
     _bits.resize( other.num_blocks() );
@@ -175,4 +175,7 @@ public: /* fields */
 
 template<>
 struct is_truth_table<kitty::dynamic_truth_table> : std::true_type {};
+
+template<>
+struct is_complete_truth_table<kitty::dynamic_truth_table> : std::true_type {};
 } // namespace kitty

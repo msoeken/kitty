@@ -41,6 +41,7 @@
 #include "algorithm.hpp"
 #include "dynamic_truth_table.hpp"
 #include "static_truth_table.hpp"
+#include "partial_truth_table.hpp"
 #include "detail/shift.hpp"
 
 namespace kitty
@@ -158,6 +159,18 @@ inline bool equal( const TT& first, const TT& second )
   return binary_predicate( first, second, std::equal_to<>() );
 }
 
+/*! \cond PRIVATE */
+inline bool equal( const partial_truth_table& first, const partial_truth_table& second )
+{
+  if ( first.num_bits() != second.num_bits() )
+  {
+    return false;
+  }
+
+  return binary_predicate( first, second, std::equal_to<>() );
+}
+/*! \endcond */
+
 /*! \brief Checks if first truth table implies a second truth table
 
   \param first First truth table
@@ -214,7 +227,7 @@ inline bool is_const0( const static_truth_table<NumVars, true>& tt )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 bool has_var( const TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -289,6 +302,22 @@ inline void next_inplace( static_truth_table<NumVars, true>& tt )
 }
 /*! \endcond */
 
+/*! \cond PRIVATE */
+template<int NumVars>
+inline void next_inplace( partial_truth_table& tt )
+{
+  for ( auto i = 0u; i < tt.num_blocks(); ++i )
+  {
+    /* If incrementing the word does not lead to an overflow, we're done*/
+    if ( ++tt._bits[i] != 0 )
+    {
+      break;
+    }
+  }
+  tt.mask_bits();
+}
+/*! \endcond */
+
 /*! \brief Returns the next lexicographically larger truth table
 
   Out-of-place variant for `next_inplace`.
@@ -308,7 +337,7 @@ inline TT next( const TT& tt )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void cofactor0_inplace( TT& tt, uint8_t var_index )
 {
   if ( tt.num_vars() <= 6 || var_index < 6 )
@@ -358,7 +387,7 @@ TT cofactor0( const TT& tt, uint8_t var_index )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void cofactor1_inplace( TT& tt, uint8_t var_index )
 {
   if ( tt.num_vars() <= 6 || var_index < 6 )
@@ -411,7 +440,7 @@ TT cofactor1( const TT& tt, uint8_t var_index )
   \param tt Truth table
   \param var_index A variable
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void swap_adjacent_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() - 1 );
@@ -496,7 +525,7 @@ inline TT swap_adjacent( const TT& tt, uint8_t var_index )
   \param var_index1 First variable
   \param var_index2 Second variable
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
 {
   if ( var_index1 == var_index2 )
@@ -606,7 +635,7 @@ inline TT swap( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   \param tt Truth table
   \param var_index A variable
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void flip_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -682,7 +711,7 @@ inline TT flip( const TT& tt, uint8_t var_index )
 
   \param tt Truth table
  */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 std::vector<uint8_t> min_base_inplace( TT& tt )
 {
   std::vector<uint8_t> support;
@@ -732,7 +761,7 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   \param tt Larger truth table to create
   \param from Smaller truth table to copy from
 */
-template<typename TT, typename TTFrom>
+template<typename TT, typename TTFrom, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void extend_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() >= from.num_vars() );
@@ -801,7 +830,7 @@ inline dynamic_truth_table extend_to( const TTFrom& from, unsigned num_vars )
   \param tt Smaller truth table to create
   \param from Larger truth table to copy from
 */
-template<typename TT, typename TTFrom>
+template<typename TT, typename TTFrom, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void shrink_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() <= from.num_vars() );
@@ -910,6 +939,45 @@ inline void shift_left_inplace( static_truth_table<NumVars, true>& tt, uint64_t 
 }
 /*! \endcond */
 
+/*! \cond PRIVATE */
+inline void shift_left_inplace( partial_truth_table& tt, uint64_t shift )
+{
+  if ( shift >= tt.num_bits() )
+  {
+    clear( tt );
+    return;
+  }
+
+  if ( shift > 0 )
+  {
+    const auto last = tt.num_blocks() - 1u;
+    const auto div = shift / 64u;
+    const auto rem = shift % 64u;
+
+    if ( rem != 0 )
+    {
+      const auto rshift = 64u - rem;
+      for ( auto i = last - div; i > 0; --i )
+      {
+        tt._bits[i + div] = ( tt._bits[i] << rem ) | ( tt._bits[i - 1] >> rshift );
+      }
+      tt._bits[div] = tt._bits[0] << rem;
+    }
+    else
+    {
+      for ( auto i = last - div; i > 0; --i )
+      {
+        tt._bits[i + div] = tt._bits[i];
+      }
+      tt._bits[div] = tt._bits[0];
+    }
+
+    std::fill_n( std::begin( tt._bits ), div, 0u );
+    tt.mask_bits();
+  }
+}
+/*! \endcond */
+
 /*! \brief Left-shift truth table
 
   Out-of-place variant of `shift_left_inplace`.
@@ -986,6 +1054,45 @@ inline void shift_right_inplace( static_truth_table<NumVars, true>& tt, uint64_t
 }
 /*! \endcond */
 
+/*! \cond PRIVATE */
+inline void shift_right_inplace( partial_truth_table& tt, uint64_t shift )
+{
+  if ( shift >= tt.num_bits() )
+  {
+    clear( tt );
+    return;
+  }
+
+  if ( shift > 0 )
+  {
+    tt.mask_bits();
+
+    const auto last = tt.num_blocks() - 1u;
+    const auto div = shift / 64u;
+    const auto rem = shift % 64u;
+
+    if ( rem != 0 )
+    {
+      const auto rshift = 64u - rem;
+      for ( auto i = div; i < last; ++i )
+      {
+        tt._bits[i - div] = ( tt._bits[i] >> rem ) | ( tt._bits[i + 1] << rshift );
+      }
+      tt._bits[last - div] = tt._bits[last] >> rem;
+    }
+    else
+    {
+      for ( auto i = div; i <= last; ++i )
+      {
+        tt._bits[i - div] = tt._bits[i];
+      }
+    }
+
+    std::fill_n( std::begin( tt._bits ) + ( tt.num_blocks() - div ), div, 0u );
+  }
+}
+/*! \endcond */
+
 /*! \brief Right-shift truth table
 
   Out-of-place variant of `shift_right_inplace`.
@@ -1013,7 +1120,7 @@ inline TT shift_right( const TT& tt, uint64_t shift )
   \param vars The ordered set of input variables
   \return The composed truth table with vars.size() variables
 */
-template<class TTf, class TTv>
+template<class TTf, class TTv, typename = std::enable_if_t<!std::is_same<TTf, partial_truth_table>::value>>
 inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
 {
   assert( vars.size() == static_cast<std::size_t>( f.num_vars() ) );
@@ -1054,7 +1161,7 @@ inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
   \param tt Truth table
   \param mask Shift mask
 */
-template<class TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 inline void shift_with_mask_inplace( TT& f, uint8_t mask )
 {
   assert( f.num_vars() <= 6 );

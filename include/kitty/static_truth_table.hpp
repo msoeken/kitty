@@ -129,7 +129,7 @@ struct static_truth_table<NumVars, true>
 
     \param other Other truth table
   */
-  template<class TT, typename = std::enable_if_t<is_truth_table<TT>::value>>
+  template<class TT, typename = std::enable_if_t<is_truth_table<TT>::value && is_complete_truth_table<TT>::value>>
   static_truth_table<NumVars>& operator=( const TT& other )
   {
     if ( other.num_vars() == num_vars() )
@@ -274,5 +274,8 @@ public: /* fields */
 
 template<int NumVars>
 struct is_truth_table<kitty::static_truth_table<NumVars>> : std::true_type {};
+
+template<int NumVars>
+struct is_complete_truth_table<kitty::static_truth_table<NumVars>> : std::true_type {};
 
 } // namespace kitty

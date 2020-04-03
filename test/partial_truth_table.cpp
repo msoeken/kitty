@@ -23,24 +23,21 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file traits.hpp
-  \brief Type traits for truth tables
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <algorithm>
+#include <sstream>
 
-#pragma once
+#include <kitty/constructors.hpp>
+#include <kitty/partial_truth_table.hpp>
 
-#include <type_traits>
+using namespace kitty;
 
-namespace kitty
+TEST( PartialTruthTableTest, create_random )
 {
+  partial_truth_table tt1( 100 );
+  partial_truth_table tt2( 64 );
 
-template<class TT>
-struct is_truth_table : std::false_type {};
-
-template<class TT>
-struct is_complete_truth_table : std::false_type {};
-
+  create_random( tt1 );
+  create_random( tt2 );
 }

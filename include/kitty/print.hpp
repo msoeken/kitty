@@ -154,7 +154,15 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
 template<typename TT>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
-  const auto chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
+  uint64_t chunk_size;
+  if constexpr ( std::is_same<TT, partial_truth_table>::value )
+  {
+    chunk_size = std::min<uint64_t>( tt.num_bits() <= 4 ? 1 : ( tt.num_bits() >> 2 ), 16 );
+  }
+  else
+  {
+    chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
+  }
   for_each_block_reversed( tt, [&os, chunk_size]( auto word ) {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
@@ -230,7 +238,7 @@ inline std::string to_hex( const TT& tt )
   \param tt Truth table
   \param os Output stream
 */
-template<class TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
   detail::print_xmas_tree( os, tt.num_vars(),
@@ -275,7 +283,7 @@ void print_xmas_tree_for_functions( uint32_t num_vars,
  *
  * \param anf Truth table in ANF encoding
  */
-template<class TT>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
 std::string anf_to_expression( const TT& anf )
 {
   const auto terms = count_ones( anf );
