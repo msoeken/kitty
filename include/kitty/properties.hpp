@@ -316,7 +316,7 @@ inline uint32_t polynomial_degree( const TT& tt )
   \param tt Truth table
 */
 template<typename TT>
-inline uint64_t absolute_disinguishing_power( const TT& tt )
+inline uint64_t absolute_distinguishing_power( const TT& tt )
 {
   return count_zeros( tt ) * count_ones( tt );
 }
