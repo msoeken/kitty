@@ -43,6 +43,7 @@
 #include "static_truth_table.hpp"
 #include "partial_truth_table.hpp"
 #include "detail/shift.hpp"
+#include "traits.hpp"
 
 namespace kitty
 {
@@ -227,7 +228,7 @@ inline bool is_const0( const static_truth_table<NumVars, true>& tt )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool has_var( const TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -337,7 +338,7 @@ inline TT next( const TT& tt )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void cofactor0_inplace( TT& tt, uint8_t var_index )
 {
   if ( tt.num_vars() <= 6 || var_index < 6 )
@@ -387,7 +388,7 @@ TT cofactor0( const TT& tt, uint8_t var_index )
   \param tt Truth table
   \param var_index Variable index
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void cofactor1_inplace( TT& tt, uint8_t var_index )
 {
   if ( tt.num_vars() <= 6 || var_index < 6 )
@@ -440,7 +441,7 @@ TT cofactor1( const TT& tt, uint8_t var_index )
   \param tt Truth table
   \param var_index A variable
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void swap_adjacent_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() - 1 );
@@ -525,7 +526,7 @@ inline TT swap_adjacent( const TT& tt, uint8_t var_index )
   \param var_index1 First variable
   \param var_index2 Second variable
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
 {
   if ( var_index1 == var_index2 )
@@ -635,7 +636,7 @@ inline TT swap( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   \param tt Truth table
   \param var_index A variable
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void flip_inplace( TT& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -711,7 +712,7 @@ inline TT flip( const TT& tt, uint8_t var_index )
 
   \param tt Truth table
  */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 std::vector<uint8_t> min_base_inplace( TT& tt )
 {
   std::vector<uint8_t> support;
@@ -761,7 +762,7 @@ void expand_inplace( TT& tt, const std::vector<uint8_t>& support )
   \param tt Larger truth table to create
   \param from Smaller truth table to copy from
 */
-template<typename TT, typename TTFrom, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename TTFrom, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void extend_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() >= from.num_vars() );
@@ -830,7 +831,7 @@ inline dynamic_truth_table extend_to( const TTFrom& from, unsigned num_vars )
   \param tt Smaller truth table to create
   \param from Larger truth table to copy from
 */
-template<typename TT, typename TTFrom, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename TTFrom, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void shrink_to_inplace( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() <= from.num_vars() );
@@ -1120,7 +1121,7 @@ inline TT shift_right( const TT& tt, uint64_t shift )
   \param vars The ordered set of input variables
   \return The composed truth table with vars.size() variables
 */
-template<class TTf, class TTv, typename = std::enable_if_t<!std::is_same<TTf, partial_truth_table>::value>>
+template<class TTf, class TTv, typename = std::enable_if_t<is_complete_truth_table<TTf>::value>>
 inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
 {
   assert( vars.size() == static_cast<std::size_t>( f.num_vars() ) );
@@ -1161,7 +1162,7 @@ inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
   \param tt Truth table
   \param mask Shift mask
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 inline void shift_with_mask_inplace( TT& f, uint8_t mask )
 {
   assert( f.num_vars() <= 6 );

@@ -40,7 +40,6 @@
 
 #include "detail/constants.hpp"
 #include "traits.hpp"
-//#include "operations.hpp"
 
 namespace kitty
 {
