@@ -36,6 +36,7 @@
 #include "operators.hpp"
 #include "static_truth_table.hpp"
 #include "spectral.hpp"
+#include "traits.hpp"
 
 /*! \cond PRIVATE */
 #include "detail/linear_constants.hpp"
@@ -115,6 +116,8 @@ inline void for_each_permutation_mask( unsigned num_vars, Fn&& fn )
 template<typename TT, typename Callback = decltype( detail::exact_spectral_canonization_null_callback )>
 TT exact_linear_canonization( const TT& tt, Callback&& fn = detail::exact_spectral_canonization_null_callback )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+  
   detail::miller_spectral_canonization_impl<TT> impl( tt, false, false, false );
   return impl.run( fn ).first;
 }
@@ -123,6 +126,8 @@ TT exact_linear_canonization( const TT& tt, Callback&& fn = detail::exact_spectr
 template<typename TT>
 TT exact_linear_canonization_old( const TT& tt )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   auto min = tt;
 
   detail::for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask ) {
@@ -144,6 +149,8 @@ TT exact_linear_canonization_old( const TT& tt )
 template<typename TT>
 TT exact_linear_output_canonization( const TT& tt )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   return std::min( exact_linear_canonization_old( tt ), exact_linear_canonization_old( ~tt ) );
 }
 
@@ -158,6 +165,8 @@ TT exact_linear_output_canonization( const TT& tt )
 template<typename TT, typename Callback = decltype( detail::exact_spectral_canonization_null_callback )>
 TT exact_affine_canonization( const TT& tt, Callback&& fn = detail::exact_spectral_canonization_null_callback )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   detail::miller_spectral_canonization_impl<TT> impl( tt, true, false, false );
   return impl.run( fn ).first;
 }
@@ -166,6 +175,8 @@ TT exact_affine_canonization( const TT& tt, Callback&& fn = detail::exact_spectr
 template<typename TT>
 TT exact_affine_canonization_old( const TT& tt )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   const auto num_vars = tt.num_vars();
 
   assert( num_vars >= 2 && num_vars <= 4 );
@@ -199,6 +210,8 @@ TT exact_affine_canonization_old( const TT& tt )
 template<typename TT>
 TT exact_affine_output_canonization( const TT& tt )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   return std::min( exact_affine_canonization_old( tt ), exact_affine_canonization_old( ~tt ) );
 }
 
