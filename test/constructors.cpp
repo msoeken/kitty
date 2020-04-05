@@ -194,13 +194,13 @@ TEST( ConstructorsTest, create_threshold7 )
   } );
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 static void test_create_equals()
 {
   static_truth_table<NumVars> total;
   uint64_t total_bits{0};
 
-  for ( auto k = 0; k <= total.num_vars(); ++k )
+  for ( auto k = 0u; k <= total.num_vars(); ++k )
   {
     auto tt = total.construct();
     create_equals( tt, k );

@@ -664,7 +664,7 @@ void majority_decomposition_even( TT& f1, TT& f2 )
   auto factor1 = f1.construct();
   auto factor2 = f2.construct();
 
-  for ( auto i = 0; i < k; ++i )
+  for ( auto i = 0u; i < k; ++i )
   {
     auto v1 = f1.construct();
     create_nth_var( v1, i );

@@ -295,7 +295,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> flip_swap_npn_canonization( const
     improvement = false;
 
     /* input inversion */
-    for ( auto i = 0; i < num_vars; ++i )
+    for ( auto i = 0u; i < num_vars; ++i )
     {
       const auto flipped = flip( npn, i );
       if ( flipped < npn )
@@ -316,9 +316,9 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> flip_swap_npn_canonization( const
     }
 
     /* permute inputs */
-    for ( auto d = 1; d < num_vars - 1; ++d )
+    for ( auto d = 1u; d < num_vars - 1; ++d )
     {
-      for ( auto i = 0; i < num_vars - d; ++i )
+      for ( auto i = 0u; i < num_vars - d; ++i )
       {
         auto j = i + d;
 
@@ -479,7 +479,7 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   auto res = ( ( phase >> num_vars ) & 1 ) ? ~from : from;
 
   /* input permutations */
-  for ( auto i = 0; i < num_vars; ++i )
+  for ( auto i = 0u; i < num_vars; ++i )
   {
     if ( perm[i] == i )
     {
@@ -497,7 +497,7 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   }
 
   /* input complementations */
-  for ( auto i = 0; i < num_vars; ++i )
+  for ( auto i = 0u; i < num_vars; ++i )
   {
     if ( ( phase >> i ) & 1 )
     {

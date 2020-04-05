@@ -175,7 +175,7 @@ bool is_monotone( const TT& tt )
 {
   auto numvars = tt.num_vars();
 
-  for ( auto i = 0; i < numvars; i++ )
+  for ( auto i = 0u; i < numvars; i++ )
   {
     auto const tt1 = cofactor0( tt, i );
     auto const tt2 = cofactor1( tt, i );
@@ -204,7 +204,7 @@ bool is_selfdual( const TT& tt )
   auto numvars = tt.num_vars();
   auto tt1 = tt;
   auto tt2 = ~tt1;
-  for ( auto i = 0; i < numvars; i++ )
+  for ( auto i = 0u; i < numvars; i++ )
   {
     tt1 = flip( tt1, i );
   }
@@ -236,7 +236,7 @@ bool is_trivial( const TT& tt )
 
   /* compare to variables */
   TT tt_check = tt;
-  for ( auto i = 0; i < tt.num_vars(); ++i )
+  for ( auto i = 0u; i < tt.num_vars(); ++i )
   {
     create_nth_var( tt_check, i );
     if ( tt == tt_check || tt == ~tt_check )

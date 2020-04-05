@@ -626,7 +626,7 @@ public:
     : _anf( detail::algebraic_normal_form( tt ) ),
       _khots( tt.num_vars() + 1, tt.construct() )
   {
-    for ( auto i = 0; i <= tt.num_vars(); ++i )
+    for ( auto i = 0u; i <= tt.num_vars(); ++i )
     {
       create_equals( _khots[i], i );
     }
@@ -706,7 +706,7 @@ public:
       }
 
       repeat = false;
-      for ( auto k = 2; k < _anf.num_vars(); ++k )
+      for ( auto k = 2u; k < _anf.num_vars(); ++k )
       {
         foreach_term_of_size( k, [&]( auto term ) {
           auto mask = _anf.construct();
@@ -740,7 +740,7 @@ public:
       insert( output_negation() );
     }
 
-    for ( auto i = 0; i < _anf.num_vars(); ++i )
+    for ( auto i = 0u; i < _anf.num_vars(); ++i )
     {
       if ( get_bit( _anf, 1 << i ) )
       {
@@ -761,7 +761,7 @@ public:
     if ( disjoint )
     {
       auto dest_var = 0;
-      for ( auto k = 2; k < _anf.num_vars(); ++k )
+      for ( auto k = 2u; k < _anf.num_vars(); ++k )
       {
         foreach_term_of_size( k, [&]( auto term ) {
           while ( term != 0 )

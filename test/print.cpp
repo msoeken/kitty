@@ -100,7 +100,7 @@ TEST_F( PrintTest, xmas_all )
   EXPECT_EQ( 7046u, ss.str().size() );
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 static void anf_to_expression_test()
 {
   static_truth_table<NumVars> tt, tt_test;
