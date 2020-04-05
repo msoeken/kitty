@@ -38,7 +38,7 @@ namespace testing
 class Test : public ::testing::Test
 {
 protected:
-  template<int NumVars>
+  template<uint32_t NumVars>
   inline static_truth_table<NumVars> nth( uint64_t var_index ) const
   {
     static_truth_table<NumVars> tt;
@@ -53,7 +53,7 @@ protected:
     return tt;
   }
 
-  template<int NumVars>
+  template<uint32_t NumVars>
   inline static_truth_table<NumVars> from_hex( const std::string& hex ) const
   {
     static_truth_table<NumVars> tt;

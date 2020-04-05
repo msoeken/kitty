@@ -279,7 +279,7 @@ TT select_one_cube( const TT& q )
   auto minterms = kitty::get_minterms( q );
   const uint64_t min = minterms[0];
   set_bit( m, min );
-  for ( auto i = 0; i < q.num_vars(); i++ )
+  for ( auto i = 0u; i < q.num_vars(); i++ )
   {
     std::vector<int> h( 1, i );
     auto m_p = exist_set( m, h );
@@ -712,7 +712,7 @@ std::tuple<TT, bi_decomposition, std::vector<TT>> is_bi_decomposable( const TT& 
   }
 
   std::vector<int> support;
-  for ( auto x = 0; x < tt.num_vars(); x++ )
+  for ( auto x = 0u; x < tt.num_vars(); x++ )
   {
     if ( has_var( binary_and( tt, dc ), x ) )
     {

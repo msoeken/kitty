@@ -57,8 +57,8 @@ struct dynamic_truth_table
 
     \param num_vars Number of variables
   */
-  explicit dynamic_truth_table( int num_vars )
-      : _bits( ( num_vars <= 6 ) ? 1 : ( 1 << ( num_vars - 6 ) ) ),
+  explicit dynamic_truth_table( uint32_t num_vars )
+      : _bits( ( num_vars <= 6 ) ? 1u : ( 1u << ( num_vars - 6 ) ) ),
         _num_vars( num_vars )
   {
   }
@@ -169,7 +169,7 @@ struct dynamic_truth_table
   /*! \cond PRIVATE */
 public: /* fields */
   std::vector<uint64_t> _bits;
-  int _num_vars;
+  uint32_t _num_vars;
   /*! \endcond */
 };
 

@@ -108,7 +108,7 @@ TEST_F( BitOperationsTest, find_first_bit )
   EXPECT_EQ( find_first_one_bit( nth<8>( 7 ) ), 128 );
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 static void find_first_bit_consecutive_test()
 {
   static_truth_table<NumVars> tt;

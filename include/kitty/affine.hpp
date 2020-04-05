@@ -56,7 +56,7 @@ inline void delta_swap_inplace_opt( TT& tt, uint64_t delta, uint64_t omega )
   tt._bits[0] = tt._bits[0] ^ y ^ ( y << delta );
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 inline void delta_swap_inplace_opt( static_truth_table<NumVars, true>& tt, uint64_t delta, uint64_t omega )
 {
   assert ( NumVars <= 6 );
@@ -67,7 +67,7 @@ inline void delta_swap_inplace_opt( static_truth_table<NumVars, true>& tt, uint6
 template<typename TT>
 void permute_with_masks_inplace_opt( TT& tt, uint64_t const* masks )
 {
-  for ( auto k = 0; k < tt.num_vars(); ++k )
+  for ( auto k = 0u; k < tt.num_vars(); ++k )
   {
     delta_swap_inplace_opt( tt, uint64_t( 1 ) << k, masks[k] );
   }

@@ -109,7 +109,7 @@ void create_from_spp( TT& tt, const std::vector<cube>& cubes, const std::vector<
     auto bits = cube._bits;
     auto mask = cube._mask;
 
-    for ( auto i = 0; i < tt.num_vars(); ++i )
+    for ( auto i = 0u; i < tt.num_vars(); ++i )
     {
       if ( mask & 1 )
       {
@@ -126,7 +126,7 @@ void create_from_spp( TT& tt, const std::vector<cube>& cubes, const std::vector<
       if ( mask & 1 )
       {
         auto ssum = tt.construct();
-        for ( auto j = 0; j < tt.num_vars(); ++j )
+        for ( auto j = 0u; j < tt.num_vars(); ++j )
         {
           if ( ( sums[i] >> j ) & 1 )
           {
