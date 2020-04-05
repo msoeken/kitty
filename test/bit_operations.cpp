@@ -43,7 +43,7 @@ class BitOperationsTestT : public ::testing::Test
 };
 
 typedef ::testing::Types<static_truth_table<5>, static_truth_table<7>, static_truth_table<9>> truth_table_types;
-TYPED_TEST_CASE( BitOperationsTestT, truth_table_types );
+TYPED_TEST_SUITE( BitOperationsTestT, truth_table_types );
 
 TYPED_TEST( BitOperationsTestT, all_initially_zero )
 {
