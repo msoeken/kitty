@@ -44,7 +44,7 @@ using class_func_t = std::function<TT(const TT&)>;
 class AffineTest : public kitty::testing::Test
 {
 protected:
-  template<int NumVars>
+  template<uint32_t NumVars>
   uint64_t canonization( const class_func_t<static_truth_table<NumVars>>& class_func ) const
   {
     std::unordered_set<static_truth_table<NumVars>, hash<static_truth_table<NumVars>>> funcs;

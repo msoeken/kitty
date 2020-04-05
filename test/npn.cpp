@@ -40,7 +40,7 @@ using namespace kitty;
 class NPNTest : public kitty::testing::Test
 {
 protected:
-  template<int NumVars>
+  template<uint32_t NumVars>
   void check_npn( const std::string& hex_func, const std::string& hex_expect ) const
   {
     const auto tt = from_hex<NumVars>( hex_func );

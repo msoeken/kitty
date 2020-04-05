@@ -197,7 +197,7 @@ inline bool less_than( const TT& first, const TT& second )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline bool less_than( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second )
 {
   return first._bits < second._bits;
@@ -215,7 +215,7 @@ inline bool is_const0( const TT& tt )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline bool is_const0( const static_truth_table<NumVars, true>& tt )
 {
   return tt._bits == 0;
@@ -254,7 +254,7 @@ bool has_var( const TT& tt, uint8_t var_index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 bool has_var( const static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -294,7 +294,7 @@ void next_inplace( TT& tt )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline void next_inplace( static_truth_table<NumVars, true>& tt )
 {
   tt._bits++;
@@ -361,7 +361,7 @@ void cofactor0_inplace( TT& tt, uint8_t var_index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void cofactor0_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   tt._bits = ( ( tt._bits & detail::projections_neg[var_index] ) << ( 1 << var_index ) ) |
@@ -411,7 +411,7 @@ void cofactor1_inplace( TT& tt, uint8_t var_index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void cofactor1_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   tt._bits = ( tt._bits & detail::projections[var_index] ) | ( ( tt._bits & detail::projections[var_index] ) >> ( 1 << var_index ) );
@@ -486,7 +486,7 @@ void swap_adjacent_inplace( TT& tt, uint8_t var_index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void swap_adjacent_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -590,7 +590,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline void swap_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index1, uint8_t var_index2 )
 {
   if ( var_index1 == var_index2 )
@@ -669,7 +669,7 @@ void flip_inplace( TT& tt, uint8_t var_index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline void flip_inplace( static_truth_table<NumVars, true>& tt, uint8_t var_index )
 {
   assert( var_index < tt.num_vars() );
@@ -716,8 +716,8 @@ std::vector<uint8_t> min_base_inplace( TT& tt )
 {
   std::vector<uint8_t> support;
 
-  auto k = 0;
-  for ( auto i = 0; i < tt.num_vars(); ++i )
+  auto k = 0u;
+  for ( auto i = 0u; i < tt.num_vars(); ++i )
   {
     if ( !has_var( tt, i ) )
     {
@@ -796,7 +796,7 @@ void extend_to_inplace( TT& tt, const TTFrom& from )
 
   \param from Smaller truth table to copy from
 */
-template<int NumVars, typename TTFrom>
+template<uint32_t NumVars, typename TTFrom>
 inline static_truth_table<NumVars> extend_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
@@ -852,7 +852,7 @@ void shrink_to_inplace( TT& tt, const TTFrom& from )
 
   \param from Smaller truth table to copy from
 */
-template<int NumVars, typename TTFrom>
+template<uint32_t NumVars, typename TTFrom>
 inline static_truth_table<NumVars> shrink_to( const TTFrom& from )
 {
   static_truth_table<NumVars> tt;
@@ -931,7 +931,7 @@ void shift_left_inplace( TT& tt, uint64_t shift )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline void shift_left_inplace( static_truth_table<NumVars, true>& tt, uint64_t shift )
 {
   tt._bits <<= shift;
@@ -1047,7 +1047,7 @@ void shift_right_inplace( TT& tt, uint64_t shift )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline void shift_right_inplace( static_truth_table<NumVars, true>& tt, uint64_t shift )
 {
   tt._bits >>= shift;

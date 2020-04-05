@@ -122,7 +122,7 @@ void create_nth_var( TT& tt, uint8_t var_index, bool complement = false )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void create_nth_var( static_truth_table<NumVars, true>& tt, uint8_t var_index, bool complement = false )
 {
   /* assign from precomputed table */
@@ -200,7 +200,7 @@ void create_from_hex_string( TT& tt, const std::string& hex )
     {
       set_bit( tt, 0 );
     }
-    if ( tt.num_vars() == 1 && ( i & 2 ) )
+    if ( tt.num_vars() == 1u && ( i & 2 ) )
     {
       set_bit( tt, 1 );
     }
@@ -325,7 +325,7 @@ void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = fals
     auto bits = cube._bits;
     auto mask = cube._mask;
 
-    for ( auto i = 0; i < tt.num_vars(); ++i )
+    for ( auto i = 0u; i < tt.num_vars(); ++i )
     {
       if ( mask & 1 )
       {
@@ -377,7 +377,7 @@ void create_from_clauses( TT& tt, const std::vector<cube>& clauses, bool esop = 
     auto bits = clause._bits;
     auto mask = clause._mask;
 
-    for ( auto i = 0; i < tt.num_vars(); ++i )
+    for ( auto i = 0u; i < tt.num_vars(); ++i )
     {
       if ( mask & 1 )
       {
@@ -530,7 +530,7 @@ bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::str
 
   /* initialize variable steps */
   steps.clear();
-  for ( auto i = 0; i < tt.num_vars(); ++i )
+  for ( auto i = 0u; i < tt.num_vars(); ++i )
   {
     auto var = tt.construct();
     create_nth_var( var, i );
@@ -558,7 +558,7 @@ bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::str
     }
 
     /* next step id */
-    const auto step = std::stoi( line.substr( 1, eq - 1 ) );
+    const auto step = static_cast<uint32_t>( std::stoul( line.substr( 1, eq - 1 ) ) );
     if ( step != next_step )
     {
       return fail_with( line, "steps are not in order" );
@@ -578,7 +578,7 @@ bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::str
     }
 
     std::size_t op_pos = 0;
-    const auto op1 = std::stoi( line.substr( 1 ), &op_pos );
+    const auto op1 = static_cast<uint32_t>( std::stoul( line.substr( 1 ), &op_pos ) );
 
     if ( op1 < 1 || op1 >= step )
     {
@@ -614,7 +614,7 @@ bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::str
       return fail_with( line, "variables must be prefixed with x" );
     }
 
-    const auto op2 = std::stoi( line.substr( 1 ) );
+    const auto op2 = static_cast<uint32_t>( std::stoul( line.substr( 1 ) ) );
 
     if ( op2 < 1 || op2 >= step )
     {

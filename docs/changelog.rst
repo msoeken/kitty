@@ -16,7 +16,7 @@ v0.7 (March 13, 2020)
 * Bit operation: ``count_zeros``
   `#84 <https://github.com/msoeken/kitty/pull/84>`_
 
-* Properties: ``absolute_disinguishing_power``, ``relative_distinguishing_power``
+* Properties: ``absolute_distinguishing_power``, ``relative_distinguishing_power``
   `#84 <https://github.com/msoeken/kitty/pull/84>`_
 
 * Properties: ``polynomial_degree``

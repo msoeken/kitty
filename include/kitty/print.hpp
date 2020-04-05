@@ -306,7 +306,7 @@ std::string anf_to_expression( const TT& anf )
     {
       expr += "(";
     }
-    for ( auto i = 0; i < anf.num_vars(); ++i )
+    for ( auto i = 0u; i < anf.num_vars(); ++i )
     {
       if ( ( bit >> i ) & 1 )
       {

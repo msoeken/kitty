@@ -54,7 +54,7 @@ void set_bit( TT& tt, uint64_t index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void set_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits |= uint64_t( 1 ) << index;
@@ -75,7 +75,7 @@ auto get_bit( const TT& tt, uint64_t index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   return ( tt._bits >> index ) & 0x1;
@@ -96,7 +96,7 @@ void clear_bit( TT& tt, uint64_t index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void clear_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits &= ~( uint64_t( 1 ) << index );
@@ -115,7 +115,7 @@ void flip_bit( TT& tt, uint64_t index )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits ^= uint64_t( 1 ) << index;
@@ -132,7 +132,7 @@ void clear( TT& tt )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 void clear( static_truth_table<NumVars, true>& tt )
 {
   tt._bits = 0;
@@ -153,7 +153,7 @@ inline uint64_t count_ones( const TT& tt )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars>
+template<uint32_t NumVars>
 inline uint64_t count_ones( const static_truth_table<NumVars, true>& tt )
 {
   return __builtin_popcount( tt._bits & 0xffffffff ) + __builtin_popcount( tt._bits >> 32 );

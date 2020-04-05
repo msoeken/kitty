@@ -43,7 +43,7 @@ class BitOperationsTestT : public ::testing::Test
 };
 
 typedef ::testing::Types<static_truth_table<5>, static_truth_table<7>, static_truth_table<9>> truth_table_types;
-TYPED_TEST_CASE( BitOperationsTestT, truth_table_types );
+TYPED_TEST_SUITE( BitOperationsTestT, truth_table_types );
 
 TYPED_TEST( BitOperationsTestT, all_initially_zero )
 {
@@ -108,7 +108,7 @@ TEST_F( BitOperationsTest, find_first_bit )
   EXPECT_EQ( find_first_one_bit( nth<8>( 7 ) ), 128 );
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 static void find_first_bit_consecutive_test()
 {
   static_truth_table<NumVars> tt;

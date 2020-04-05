@@ -220,7 +220,7 @@ TEST_F( SpectralTest, spectral_representative )
   }
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 static void algebraic_normal_form_test()
 {
   static_truth_table<NumVars> tt;
@@ -245,7 +245,7 @@ TEST_F( SpectralTest, algebraic_normal_form )
   algebraic_normal_form_test<7>();
 }
 
-template<int NumVars>
+template<uint32_t NumVars>
 void hybrid_exact_spectral_canonization()
 {
   const auto& repr = detail::spectral_repr[NumVars];

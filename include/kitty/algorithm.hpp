@@ -60,7 +60,7 @@ auto unary_operation( const TT& tt, Fn&& op )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 auto unary_operation( const static_truth_table<NumVars, true>& tt, Fn&& op )
 {
   auto result = tt.construct();
@@ -107,7 +107,7 @@ auto binary_operation( const TT& first, const TT& second, Fn&& op )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 auto binary_operation( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second, Fn&& op )
 {
   auto result = first.construct();
@@ -180,7 +180,7 @@ auto ternary_operation( const TT& first, const TT& second, const TT& third, Fn&&
 }
 
 /*! \cond PRIVATE */
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 auto ternary_operation( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second, const static_truth_table<NumVars, true>& third, Fn&& op )
 {
   auto result = first.construct();
@@ -234,7 +234,7 @@ bool binary_predicate( const TT& first, const TT& second, Fn&& op )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 bool binary_predicate( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second, Fn&& op )
 {
   return op( first._bits, second._bits );
@@ -267,7 +267,7 @@ void assign_operation( TT& tt, Fn&& op )
 }
 
 /*! \cond PRIVATE */
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 void assign_operation( static_truth_table<NumVars, true>& tt, Fn&& op )
 {
   tt._bits = op();
@@ -343,7 +343,7 @@ void for_each_one_bit_jump( const TT& tt, Fn&& op )
   }
 }
 
-template<int NumVars, typename Fn>
+template<uint32_t NumVars, typename Fn>
 void for_each_one_bit_jump( const static_truth_table<NumVars, true>& tt, Fn&& op )
 {
   uint64_t block = tt._bits;
