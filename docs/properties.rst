@@ -19,3 +19,4 @@ properties.
    polynomial_degree
    absolute_disinguishing_power
    relative_distinguishing_power
+   is_covered_with_divisors

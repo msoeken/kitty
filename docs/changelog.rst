@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Next release
+------------
+
+* Properties: ``is_covered_with_divisors`` (contributed by Heinz Riener)
+  `#106 <https://github.com/msoeken/kitty/pull/106>`_
+
 v0.7 (March 13, 2020)
 ---------------------
 
@@ -13,10 +19,10 @@ v0.7 (March 13, 2020)
 * Compute simple SPP from ESOP form
   `#83 <https://github.com/msoeken/kitty/pull/83>`_
 
-* Bit operation: ``count_zeros``
+* Bit operation: ``count_zeros`` (contributed by Heinz Riener)
   `#84 <https://github.com/msoeken/kitty/pull/84>`_
 
-* Properties: ``absolute_distinguishing_power``, ``relative_distinguishing_power``
+* Properties: ``absolute_distinguishing_power``, ``relative_distinguishing_power`` (contributed by Heinz Riener)
   `#84 <https://github.com/msoeken/kitty/pull/84>`_
 
 * Properties: ``polynomial_degree``
