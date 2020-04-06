@@ -175,7 +175,9 @@ struct partial_truth_table
   inline void add_bits( std::vector<bool>& bits ) noexcept
   {
     for ( unsigned i = 0; i < bits.size(); ++i )
+    {
       add_bit( bits.at( i ) );
+    }
   }
 
   /* \param num_bits Number of bits in `bits` to be added (count from LSB) */
