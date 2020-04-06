@@ -200,7 +200,7 @@ struct partial_truth_table
   /*! \cond PRIVATE */
 public: /* fields */
   std::vector<uint64_t> _bits;
-  uint64_t _num_bits;
+  uint32_t _num_bits;
   /*! \endcond */
 };
 
