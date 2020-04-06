@@ -1072,7 +1072,7 @@ inline void shift_right_inplace( partial_truth_table& tt, uint64_t shift )
     const auto div = shift / 64u;
     const auto rem = shift % 64u;
 
-    if ( rem != 0 )
+    if ( rem != 0u )
     {
       const auto rshift = 64u - rem;
       for ( auto i = div; i < last; ++i )
