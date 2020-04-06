@@ -312,7 +312,7 @@ inline uint32_t polynomial_degree( const TT& tt )
 
 /*! \brief Returns the absolute distinguishing power of a function
   The absolute distinguishing power of a function f is the number of
-  distinguishing pair {i,j} of bits, where f(i) != f(j).
+  distinguishing bit pair {i,j} such that f(i) != f(j).
   \param tt Truth table
 */
 template<typename TT>
@@ -321,9 +321,9 @@ inline uint64_t absolute_distinguishing_power( const TT& tt )
   return count_zeros( tt ) * count_ones( tt );
 }
 
-/*! brief Returns the relative distinguishing power of a function wrt. to target function
-  Quantifies the number of distinguishing pairs in the target function
-  that can be distinguished by the function.
+/*! \brief Returns the relative distinguishing power of a function wrt. to a target function
+  Quantifies the number of distinguishing bit pairs in the target function
+  that can be distinguished by another function.
   \param tt Truth table of function
   \param target_tt Truth table of target function
 */
