@@ -310,7 +310,7 @@ inline void next_inplace( partial_truth_table& tt )
   for ( auto i = 0u; i < tt.num_blocks(); ++i )
   {
     /* If incrementing the word does not lead to an overflow, we're done*/
-    if ( ++tt._bits[i] != 0 )
+    if ( ++tt._bits[i] != 0u )
     {
       break;
     }
