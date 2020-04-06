@@ -52,7 +52,7 @@ struct partial_truth_table
     \param num_bits Number of bits in use initially
   */
   explicit partial_truth_table( int num_bits )
-      : _bits( num_bits ? ( (( num_bits - 1 ) >> 6) + 1 ) : 0 ),
+      : _bits( num_bits ? ( ( ( num_bits - 1 ) >> 6 ) + 1 ) : 0 ),
         _num_bits( num_bits )
   {
   }
@@ -146,7 +146,7 @@ struct partial_truth_table
   {
     if ( _num_bits % 64 )
     {
-      _bits.back() &= 0xFFFFFFFFFFFFFFFF >> ( 64 - (_num_bits % 64) );
+      _bits.back() &= 0xFFFFFFFFFFFFFFFF >> ( 64 - ( _num_bits % 64 ) );
     }
   }
 
@@ -154,7 +154,7 @@ struct partial_truth_table
   {
     _num_bits = num_bits;
 
-    unsigned needed_blocks = num_bits ? ( (( num_bits - 1 ) >> 6) + 1 ) : 0;
+    unsigned needed_blocks = num_bits ? ( ( ( num_bits - 1 ) >> 6 ) + 1 ) : 0;
     if ( needed_blocks > _bits.size() )
     {
       _bits.resize( needed_blocks, 0u );
@@ -175,14 +175,14 @@ struct partial_truth_table
   inline void add_bits( std::vector<bool>& bits ) noexcept
   {
     for ( unsigned i = 0; i < bits.size(); ++i )
-      add_bit( bits.at(i) );
+      add_bit( bits.at( i ) );
   }
 
   /* \param num_bits Number of bits in `bits` to be added (count from LSB) */
   inline void add_bits( uint64_t bits, int num_bits = 64 ) noexcept
   {
     assert( num_bits <= 64 );
-    
+
     if ( ( _num_bits % 64 ) + num_bits <= 64 ) /* no need for a new block */
     {
       _bits.back() |= bits << ( _num_bits % 64 );

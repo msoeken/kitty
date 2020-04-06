@@ -60,7 +60,7 @@ inline void delta_swap_inplace_opt( TT& tt, uint64_t delta, uint64_t omega )
 template<uint32_t NumVars>
 inline void delta_swap_inplace_opt( static_truth_table<NumVars, true>& tt, uint64_t delta, uint64_t omega )
 {
-  assert ( NumVars <= 6 );
+  assert( NumVars <= 6 );
   const uint64_t y = ( tt._bits ^ ( tt._bits >> delta ) ) & omega;
   tt._bits = tt._bits ^ y ^ ( y << delta );
 }
@@ -117,7 +117,7 @@ template<typename TT, typename Callback = decltype( detail::exact_spectral_canon
 TT exact_linear_canonization( const TT& tt, Callback&& fn = detail::exact_spectral_canonization_null_callback )
 {
   static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
-  
+
   detail::miller_spectral_canonization_impl<TT> impl( tt, false, false, false );
   return impl.run( fn ).first;
 }
@@ -132,7 +132,7 @@ TT exact_linear_canonization_old( const TT& tt )
 
   detail::for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask ) {
     min = std::min( min, detail::permute_with_masks_opt( tt, mask ) );
-  });
+  } );
 
   return min;
 }
@@ -184,7 +184,7 @@ TT exact_affine_canonization_old( const TT& tt )
   auto copy = tt;
 
   const auto& flips = detail::flips[num_vars - 2u];
-  
+
   auto min = exact_linear_canonization_old( copy );
 
   for ( int j = flips.size() - 1; j >= 0; --j )

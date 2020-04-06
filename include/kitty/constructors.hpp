@@ -91,7 +91,7 @@ void create_nth_var( TT& tt, uint8_t var_index, bool complement = false )
 {
   if constexpr ( std::is_same<TT, partial_truth_table>::value )
   {
-    assert ( tt.num_bits() >= ( 1 << var_index ) );
+    assert( tt.num_bits() >= ( 1 << var_index ) );
     if ( tt.num_bits() <= 64 )
     {
       /* assign from precomputed table */
@@ -114,7 +114,7 @@ void create_nth_var( TT& tt, uint8_t var_index, bool complement = false )
       return;
     }
   }
-  
+
   if ( var_index < 6 )
   {
     std::fill( std::begin( tt._bits ), std::end( tt._bits ), complement ? ~detail::projections[var_index] : detail::projections[var_index] );

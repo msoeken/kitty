@@ -78,7 +78,7 @@ template<typename TT, typename Callback = decltype( detail::exact_npn_canonizati
 std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& tt, Callback&& fn = detail::exact_npn_canonization_null_callback<TT> )
 {
   static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
-  
+
   const auto num_vars = tt.num_vars();
 
   /* Special case for n = 0 */

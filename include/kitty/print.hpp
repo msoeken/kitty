@@ -130,7 +130,7 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
   for_each_block_reversed( tt, [&tt, &os, chunk_size]( auto word ) {
-    bool first = ( word == *(tt.crbegin()) );
+    bool first = ( word == *( tt.crbegin() ) );
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -180,7 +180,7 @@ void print_hex( const TT& tt, std::ostream& os = std::cout )
     chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
   }
   for_each_block_reversed( tt, [&tt, &os, chunk_size]( auto word ) {
-    bool first = ( word == *(tt.crbegin()) );
+    bool first = ( word == *( tt.crbegin() ) );
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -199,9 +199,9 @@ void print_hex( const TT& tt, std::ostream& os = std::cout )
     }
     if constexpr ( std::is_same<TT, partial_truth_table>::value )
     {
-      if ( first && ( (tt.num_bits() >> 2) % 16 ) )
+      if ( first && ( ( tt.num_bits() >> 2 ) % 16 ) )
       {
-        os << chunk.substr( ( tt.num_bits() % 4 ) ? ( 15 - ( (tt.num_bits() >> 2) % 16 ) ) : ( 16 - ( (tt.num_bits() >> 2) % 16 ) ) );
+        os << chunk.substr( ( tt.num_bits() % 4 ) ? ( 15 - ( ( tt.num_bits() >> 2 ) % 16 ) ) : ( 16 - ( ( tt.num_bits() >> 2 ) % 16 ) ) );
       }
       else
       {
@@ -308,7 +308,6 @@ void print_xmas_tree_for_functions( uint32_t num_vars,
                                                                 p.second ); } );
   detail::print_xmas_tree( os, 1 << num_vars, _preds );
 }
-
 
 /*! \brief Creates an expression for an ANF form
  *
