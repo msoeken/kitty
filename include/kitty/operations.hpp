@@ -1064,7 +1064,7 @@ inline void shift_right_inplace( partial_truth_table& tt, uint64_t shift )
     return;
   }
 
-  if ( shift > 0 )
+  if ( shift > 0u )
   {
     tt.mask_bits();
 
