@@ -949,7 +949,7 @@ inline void shift_left_inplace( partial_truth_table& tt, uint64_t shift )
     return;
   }
 
-  if ( shift > 0 )
+  if ( shift > 0u )
   {
     const auto last = tt.num_blocks() - 1u;
     const auto div = shift / 64u;
