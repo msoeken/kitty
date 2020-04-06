@@ -333,4 +333,41 @@ inline uint64_t relative_distinguishing_power( const TT& tt, const TT& target_tt
   return count_ones( ~tt & ~target_tt ) * count_ones( tt & target_tt ) + count_ones( ~tt & target_tt ) * count_ones( tt & ~target_tt ); 
 }
 
+/*! \brief Return true iff each distinguishing bit pair of the target
+  function is also distinguishable by the divisor functions
+  \param target Truth table of the target functions
+  \param divisors Truth tables of the divisor functions
+*/
+template<typename TT>
+bool is_covered_with_divisors( TT const& target, std::vector<TT> const& divisors )
+{
+  /* iterate over all bit pairs of the target function */
+  for ( uint32_t j = 1u; j < target.num_bits(); ++j )
+  {
+    for ( uint32_t i = 0u; i < j; ++i )
+    {
+      /* check if the bit pair is distinguished by the target function */
+      if ( get_bit( target, i ) != get_bit( target, j ) )
+      {
+        /* check if this bit pair is also distinguished by a divisor function */
+        bool found = false;
+        for ( const auto& d : divisors )
+        {
+          if ( get_bit( d, i ) != get_bit( d, j ) )
+          {
+            found = true;
+            break;
+          }
+        }
+
+        if ( !found )
+        {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 } // namespace kitty
