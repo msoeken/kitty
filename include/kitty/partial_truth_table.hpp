@@ -51,7 +51,7 @@ struct partial_truth_table
   /*! Standard constructor.
     \param num_bits Number of bits in use initially
   */
-  explicit partial_truth_table( int num_bits )
+  explicit partial_truth_table( uint32_t num_bits )
       : _bits( num_bits ? ( ( ( num_bits - 1 ) >> 6 ) + 1 ) : 0 ),
         _num_bits( num_bits )
   {
