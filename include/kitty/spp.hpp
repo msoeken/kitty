@@ -37,6 +37,7 @@
 #include <vector>
 
 #include "cube.hpp"
+#include "traits.hpp"
 
 namespace kitty
 {
@@ -100,6 +101,8 @@ std::pair<std::vector<cube>, std::vector<uint64_t>> simple_spp( const std::vecto
 template<typename TT>
 void create_from_spp( TT& tt, const std::vector<cube>& cubes, const std::vector<uint64_t>& sums )
 {
+  static_assert( is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
   clear( tt );
 
   for ( auto cube : cubes )

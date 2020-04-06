@@ -38,6 +38,7 @@
 #include "bit_operations.hpp"
 #include "detail/constants.hpp"
 #include "static_truth_table.hpp"
+#include "partial_truth_table.hpp"
 
 namespace kitty
 {
@@ -66,6 +67,19 @@ auto unary_operation( const static_truth_table<NumVars, true>& tt, Fn&& op )
   result._bits = op( tt._bits );
   result.mask_bits();
   return result;
+}
+/*! \endcond */
+
+/*! \cond PRIVATE */
+/*! 
+    \param num_blocks_offset Number of blocks that don't need to be computed 
+    (the first `num_blocks_offset` blocks of `result` will remain the same before computation)
+ */
+template<typename Fn>
+void unary_operation( partial_truth_table& result, const partial_truth_table& tt, Fn&& op, int const& num_blocks_offset = 0 )
+{
+  result.resize( tt.num_bits() );
+  std::transform( tt.cbegin() + num_blocks_offset, tt.cend(), result.begin() + num_blocks_offset, op );
 }
 /*! \endcond */
 
@@ -100,6 +114,34 @@ auto binary_operation( const static_truth_table<NumVars, true>& first, const sta
   result._bits = op( first._bits, second._bits );
   result.mask_bits();
   return result;
+}
+/*! \endcond */
+
+/*! \cond PRIVATE */
+template<typename Fn>
+auto binary_operation( const partial_truth_table& first, const partial_truth_table& second, Fn&& op )
+{
+  assert( first.num_bits() == second.num_bits() );
+
+  auto result = first.construct();
+  std::transform( first.cbegin(), first.cend(), second.cbegin(), result.begin(), op );
+  result.mask_bits();
+  return result;
+}
+/*! \endcond */
+
+/*! \cond PRIVATE */
+/*! 
+    \param num_blocks_offset Number of blocks that don't need to be computed 
+    (the first `num_blocks_offset` blocks of `result` will remain the same before computation)
+ */
+template<typename Fn>
+void binary_operation( partial_truth_table& result, const partial_truth_table& first, const partial_truth_table& second, Fn&& op, int const& num_blocks_offset = 0 )
+{
+  assert( first.num_bits() == second.num_bits() );
+
+  result.resize( first.num_bits() );
+  std::transform( first.cbegin() + num_blocks_offset, first.cend(), second.cbegin() + num_blocks_offset, result.begin() + num_blocks_offset, op );
 }
 /*! \endcond */
 
@@ -148,6 +190,29 @@ auto ternary_operation( const static_truth_table<NumVars, true>& first, const st
 }
 /*! \endcond */
 
+/*! \cond PRIVATE */
+template<typename Fn>
+auto ternary_operation( const partial_truth_table& first, const partial_truth_table& second, const partial_truth_table& third, Fn&& op )
+{
+  assert( first.num_bits() == second.num_bits() && second.num_bits() == third.num_bits() );
+
+  auto result = first.construct();
+  auto it1 = first.cbegin();
+  const auto it1_e = first.cend();
+  auto it2 = second.cbegin();
+  auto it3 = third.cbegin();
+  auto it = result.begin();
+
+  while ( it1 != it1_e )
+  {
+    *it++ = op( *it1++, *it2++, *it3++ );
+  }
+
+  result.mask_bits();
+  return result;
+}
+/*! \endcond */
+
 /*! \brief Computes a predicate based on two truth tables
 
   The dimensions of `first` and `second` must match.  This is ensured
@@ -173,6 +238,16 @@ template<uint32_t NumVars, typename Fn>
 bool binary_predicate( const static_truth_table<NumVars, true>& first, const static_truth_table<NumVars, true>& second, Fn&& op )
 {
   return op( first._bits, second._bits );
+}
+/*! \endcond */
+
+/*! \cond PRIVATE */
+template<typename Fn>
+bool binary_predicate( const partial_truth_table& first, const partial_truth_table& second, Fn&& op )
+{
+  assert( first.num_bits() == second.num_bits() );
+
+  return std::equal( first.begin(), first.end(), second.begin(), op );
 }
 /*! \endcond */
 

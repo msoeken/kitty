@@ -47,6 +47,7 @@
 #include "operations.hpp"
 #include "operators.hpp"
 #include "static_truth_table.hpp"
+#include "partial_truth_table.hpp"
 
 namespace kitty
 {
@@ -67,7 +68,7 @@ inline TT create( unsigned num_vars )
 {
   (void)num_vars;
   TT tt;
-  assert( tt.num_vars() == static_cast<int>( num_vars ) );
+  assert( tt.num_vars() == num_vars );
   return tt;
 }
 
@@ -88,15 +89,33 @@ inline dynamic_truth_table create<dynamic_truth_table>( unsigned num_vars )
 template<typename TT>
 void create_nth_var( TT& tt, uint8_t var_index, bool complement = false )
 {
-  if ( tt.num_vars() <= 6 )
+  if constexpr ( std::is_same<TT, partial_truth_table>::value )
   {
-    /* assign from precomputed table */
-    tt._bits[0] = complement ? ~detail::projections[var_index] : detail::projections[var_index];
+    assert( tt.num_bits() >= ( 1 << var_index ) );
+    if ( tt.num_bits() <= 64 )
+    {
+      /* assign from precomputed table */
+      tt._bits[0] = complement ? ~detail::projections[var_index] : detail::projections[var_index];
 
-    /* mask if truth table does not require all bits */
-    tt.mask_bits();
+      /* mask if truth table does not require all bits */
+      tt.mask_bits();
+      return;
+    }
   }
-  else if ( var_index < 6 )
+  else
+  {
+    if ( tt.num_vars() <= 6 )
+    {
+      /* assign from precomputed table */
+      tt._bits[0] = complement ? ~detail::projections[var_index] : detail::projections[var_index];
+
+      /* mask if truth table does not require all bits */
+      tt.mask_bits();
+      return;
+    }
+  }
+
+  if ( var_index < 6 )
   {
     std::fill( std::begin( tt._bits ), std::end( tt._bits ), complement ? ~detail::projections[var_index] : detail::projections[var_index] );
   }
@@ -234,6 +253,65 @@ void create_from_hex_string( TT& tt, const std::string& hex )
   }
 }
 
+/*! \cond PRIVATE */
+template<typename = std::void_t<>>
+void create_from_hex_string( partial_truth_table& tt, const std::string& hex )
+{
+  clear( tt );
+
+  const auto len = hex.size() << 2;
+  assert( len >= tt.num_bits() && "truth table length too long" );
+  assert( ( len - 4 ) < tt.num_bits() && "truth table length too short" );
+
+  auto j = tt.num_bits() - 1;
+
+  /* the first char; may not use all 4 bits */
+  auto i = detail::hex_to_int[static_cast<unsigned char>( hex[0] )];
+
+  int s = len - tt.num_bits(); /* number of leading bits not used. 0 <= s < 4 */
+
+  if ( ( s <= 0 ) && ( i & 8 ) )
+  {
+    set_bit( tt, j );
+  }
+  if ( ( s <= 1 ) && ( i & 4 ) )
+  {
+    set_bit( tt, j + s - 1 );
+  }
+  if ( ( s <= 2 ) && ( i & 2 ) )
+  {
+    set_bit( tt, j + s - 2 );
+  }
+  if ( ( s <= 3 ) && ( i & 1 ) )
+  {
+    set_bit( tt, j + s - 3 );
+  }
+  j -= 4 - s;
+
+  for ( auto c = 1u; c < hex.size(); ++c )
+  {
+    i = detail::hex_to_int[static_cast<unsigned char>( hex[c] )];
+    if ( i & 8 )
+    {
+      set_bit( tt, j );
+    }
+    if ( i & 4 )
+    {
+      set_bit( tt, j - 1 );
+    }
+    if ( i & 2 )
+    {
+      set_bit( tt, j - 2 );
+    }
+    if ( i & 1 )
+    {
+      set_bit( tt, j - 3 );
+    }
+    j -= 4;
+  }
+}
+/*! \endcond */
+
 /*! \brief Creates string from raw character data
 
   Can create a truth table from the data that is produced by
@@ -312,7 +390,7 @@ void create_from_words( TT& tt, InputIt begin, InputIt end )
   \param cubes Vector of cubes
   \param esop Use ESOP instead of SOP
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = false )
 {
   /* we collect product terms for an (E)SOP, start with const0 */
@@ -363,7 +441,7 @@ void create_from_cubes( TT& tt, const std::vector<cube>& cubes, bool esop = fals
   \param clauses Vector of clauses
   \param esop Use product of exclusive sums instead of POS
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_from_clauses( TT& tt, const std::vector<cube>& clauses, bool esop = false )
 {
   /* we collect product terms for an (E)SOP, start with const0 */
@@ -407,7 +485,7 @@ void create_from_clauses( TT& tt, const std::vector<cube>& clauses, bool esop = 
 
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 inline void create_majority( TT& tt )
 {
   create_threshold( tt, tt.num_vars() >> 1 );
@@ -443,7 +521,7 @@ void create_threshold( TT& tt, uint8_t threshold )
   \param tt Truth table
   \param bitcount equals-k value
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_equals( TT& tt, uint8_t bitcount )
 {
   clear( tt );
@@ -495,7 +573,7 @@ void create_symmetric( TT& tt, uint64_t counts )
 
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_parity( TT& tt )
 {
   clear( tt );
@@ -516,7 +594,7 @@ void create_parity( TT& tt )
 }
 
 /*! \cond PRIVATE */
-template<typename TT, typename Fn>
+template<typename TT, typename Fn, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::string* error )
 {
   /* in case of error (makes code more readable) */
@@ -741,7 +819,7 @@ bool create_from_chain( TT& tt, Fn&& next_line, std::vector<TT>& steps, std::str
 
   \return True on success
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::string* error = nullptr )
 {
   std::vector<TT> vec_steps;
@@ -769,7 +847,7 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
 
   \return True on success
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, const std::vector<std::string>& steps, std::string* error = nullptr )
 {
   auto tt = create<TT>( num_vars );
@@ -799,7 +877,7 @@ bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, const 
 
   \return True on success
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
 {
   std::vector<TT> vec_steps;
@@ -839,7 +917,7 @@ bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
 
   \return True on success
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, std::istream& in, std::string* error = nullptr )
 {
   auto tt = create<TT>( num_vars );
@@ -878,7 +956,7 @@ bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, std::i
   \param tt Truth table for characteristic function
   \param from Input truth table
 */
-template<typename TT, typename TTFrom>
+template<typename TT, typename TTFrom, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 inline void create_characteristic( TT& tt, const TTFrom& from )
 {
   assert( tt.num_vars() == from.num_vars() + 1 );
@@ -906,7 +984,7 @@ inline void create_characteristic( TT& tt, const TTFrom& from )
   \param tt Truth table
   \param from Expression as string
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool create_from_expression( TT& tt, const std::string& expression )
 {
   enum stack_symbols
@@ -1075,7 +1153,7 @@ bool create_from_expression( TT& tt, const std::string& expression )
 
   \param tt Truth table
 */
-template<class TT>
+template<class TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_prime( TT& tt )
 {
   if ( tt.num_vars() > 10 ) return;

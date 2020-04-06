@@ -40,6 +40,7 @@
 #include "esop.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
+#include "traits.hpp"
 
 namespace kitty
 {
@@ -51,7 +52,7 @@ namespace kitty
   function returns \f$(3, (2,2))\f$.
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 std::pair<uint32_t, std::vector<uint32_t>> chow_parameters( const TT& tt )
 {
   assert( tt.num_vars() <= 32 );
@@ -77,7 +78,7 @@ std::pair<uint32_t, std::vector<uint32_t>> chow_parameters( const TT& tt )
 /*! \brief Checks whether a function is canalizing
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool is_canalizing( const TT& tt )
 {
   uint32_t f1or{}, f0or{};
@@ -170,7 +171,7 @@ bool is_symmetric_in( const TT& tt, uint8_t var_index1, uint8_t var_index2 )
   A function is monotone if f(x) ≤ f(y) whenever x ⊆ y
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool is_monotone( const TT& tt )
 {
   auto numvars = tt.num_vars();
@@ -198,7 +199,7 @@ bool is_monotone( const TT& tt )
   A function is selfdual if !f(x, y, ..., z) = f(!x, !y, ..., !z)
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool is_selfdual( const TT& tt )
 {
   auto numvars = tt.num_vars();
@@ -227,7 +228,7 @@ bool is_normal( const TT& tt )
   variable or constant zero.
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 bool is_trivial( const TT& tt )
 {
   /* compare to constants */

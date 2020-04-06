@@ -36,6 +36,7 @@
 #include <numeric>
 
 #include "static_truth_table.hpp"
+#include "partial_truth_table.hpp"
 #include "detail/mscfix.hpp"
 
 namespace kitty
@@ -313,7 +314,14 @@ int64_t find_last_one_bit( const TT& tt )
 template<typename TT>
 int64_t find_first_bit_difference( const TT& first, const TT& second )
 {
-  assert( first.num_vars() == second.num_vars() );
+  if constexpr ( std::is_same<TT, partial_truth_table>::value )
+  {
+    assert( first.num_bits() == second.num_bits() );
+  }
+  else
+  {
+    assert( first.num_vars() == second.num_vars() );
+  }
 
   auto it = first.cbegin();
   auto it2 = second.cbegin();
@@ -342,7 +350,14 @@ int64_t find_first_bit_difference( const TT& first, const TT& second )
 template<typename TT>
 int64_t find_last_bit_difference( const TT& first, const TT& second )
 {
-  assert( first.num_vars() == second.num_vars() );
+  if constexpr ( std::is_same<TT, partial_truth_table>::value )
+  {
+    assert( first.num_bits() == second.num_bits() );
+  }
+  else
+  {
+    assert( first.num_vars() == second.num_vars() );
+  }
 
   auto it = first.crbegin();
   auto it2 = second.crbegin();
