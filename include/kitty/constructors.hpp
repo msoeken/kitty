@@ -286,7 +286,7 @@ void create_from_hex_string( partial_truth_table& tt, const std::string& hex )
   {
     set_bit( tt, j + s - 3 );
   }
-  j -= s;
+  j -= 4 - s;
 
   for ( auto c = 1u; c < hex.size(); ++c )
   {

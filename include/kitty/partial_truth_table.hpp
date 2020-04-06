@@ -167,7 +167,9 @@ struct partial_truth_table
   {
     resize( _num_bits + 1 );
     if ( bit )
-      _bits.back() |= 1 << ( _num_bits % 64 - 1 );
+    {
+      _bits.back() |= (uint64_t)1 << ( _num_bits % 64 - 1 );
+    }
   }
 
   inline void add_bits( std::vector<bool>& bits ) noexcept
@@ -184,46 +186,15 @@ struct partial_truth_table
     if ( ( _num_bits % 64 ) + num_bits <= 64 ) /* no need for a new block */
     {
       _bits.back() |= bits << ( _num_bits % 64 );
-      _num_bits += num_bits;
     }
     else
     {
       auto first_half_len = 64 - ( _num_bits % 64 );
       _bits.back() |= bits << ( _num_bits % 64 );
-      //resize( _num_bits + num_bits );
       _bits.emplace_back( 0u );
       _bits.back() |= ( bits & ( 0xFFFFFFFFFFFFFFFF >> ( 64 - num_bits ) ) ) >> first_half_len;
     }
-  }
-
-  /*! Print the partial truth table
-      The order of the blocks is different from the print_hex() and print_binary() functions defined in print.hpp
-    \param type 0 = hex; 1 = binary
-  */
-  inline void print( int type = 0 ) const noexcept
-  {
-    if ( _num_bits == 0 )
-    {
-      std::cout << "empty truth table" << std::endl;
-      return;
-    }
-
-    std::ios oldState(nullptr);
-    oldState.copyfmt(std::cout);
-    switch ( type )
-    {
-      case 0:
-        for ( auto i = 0u; i < num_blocks() - 1; ++i )
-          std::cout << std::setw( 16 ) << std::setfill( '0' ) << std::hex << _bits.at( i ) << "_";
-        std::cout << std::setw( 16 ) << std::setfill( '0' ) << std::hex << _bits.back() << std::endl;
-        break;
-
-      case 1:
-        for ( auto i = 0u; i < num_blocks() - 1; ++i )
-          std::cout << std::bitset<64>( _bits.at( i ) ) << "_";
-        std::cout << std::bitset<64>( _bits.back() ) << std::endl;
-    }
-    std::cout.copyfmt(oldState);
+    _num_bits += num_bits;
   }
 
   /*! \cond PRIVATE */
