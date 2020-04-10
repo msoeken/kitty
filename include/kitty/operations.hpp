@@ -304,7 +304,6 @@ inline void next_inplace( static_truth_table<NumVars, true>& tt )
 /*! \endcond */
 
 /*! \cond PRIVATE */
-template<int NumVars>
 inline void next_inplace( partial_truth_table& tt )
 {
   for ( auto i = 0u; i < tt.num_blocks(); ++i )
