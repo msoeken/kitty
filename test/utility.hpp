@@ -39,14 +39,14 @@ class Test : public ::testing::Test
 {
 protected:
   template<uint32_t NumVars>
-  inline static_truth_table<NumVars> nth( uint64_t var_index ) const
+  inline static_truth_table<NumVars> nth( uint8_t var_index ) const
   {
     static_truth_table<NumVars> tt;
     create_nth_var( tt, var_index );
     return tt;
   }
 
-  inline dynamic_truth_table nth( uint64_t num_vars, uint64_t var_index ) const
+  inline dynamic_truth_table nth( uint32_t num_vars, uint8_t var_index ) const
   {
     dynamic_truth_table tt( num_vars );
     create_nth_var( tt, var_index );
@@ -61,7 +61,7 @@ protected:
     return tt;
   }
 
-  inline dynamic_truth_table from_hex( uint64_t num_vars, const std::string& hex ) const
+  inline dynamic_truth_table from_hex( uint32_t num_vars, const std::string& hex ) const
   {
     dynamic_truth_table tt( num_vars );
     create_from_hex_string( tt, hex );

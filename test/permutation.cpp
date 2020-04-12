@@ -68,7 +68,7 @@ TEST( PermutationTest, random_permutation_masks )
   std::vector<uint32_t> perm( 1 << n );
   std::iota( perm.begin(), perm.end(), 0u );
 
-  std::default_random_engine gen( std::chrono::system_clock::now().time_since_epoch().count() );
+  std::default_random_engine gen( static_cast<std::default_random_engine::result_type>( std::chrono::system_clock::now().time_since_epoch().count() ) );
   std::uniform_int_distribution<std::size_t> dist( 0u, perm.size() - 1 );
 
   for ( auto i = 0u; i < perm.size(); ++i )

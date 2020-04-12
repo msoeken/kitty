@@ -49,7 +49,7 @@ TYPED_TEST( BitOperationsTestT, all_initially_zero )
 {
   TypeParam tt_s;
 
-  for ( auto i = 0u; i < tt_s.num_bits(); ++i )
+  for ( auto i = 0u; i < static_cast<uint32_t>( tt_s.num_bits() ); ++i )
   {
     EXPECT_EQ( get_bit( tt_s, i ), 0u );
   }
@@ -66,7 +66,7 @@ TYPED_TEST( BitOperationsTestT, set_get_clear )
 {
   TypeParam tt_s;
 
-  for ( auto i = 0u; i < tt_s.num_bits(); ++i )
+  for ( auto i = 0u; i < static_cast<uint32_t>( tt_s.num_bits() ); ++i )
   {
     set_bit( tt_s, i );
     EXPECT_EQ( get_bit( tt_s, i ), 1u );
@@ -185,8 +185,8 @@ TEST_F( BitOperationsTest, count_ones_small )
   {
     create_random( tt );
 
-    auto ctr = 0u;
-    for ( uint64_t i = 0u; i < tt.num_bits(); ++i )
+    uint64_t ctr = 0u;
+    for ( uint32_t i = 0u; i < static_cast<uint32_t>( tt.num_bits() ); ++i )
     {
       ctr += get_bit( tt, i );
     }
@@ -203,8 +203,8 @@ TEST_F( BitOperationsTest, count_ones_large )
   {
     create_random( tt );
 
-    auto ctr = 0u;
-    for ( uint64_t i = 0u; i < tt.num_bits(); ++i )
+    uint64_t ctr = 0u;
+    for ( uint32_t i = 0u; i < static_cast<uint32_t>( tt.num_bits() ); ++i )
     {
       ctr += get_bit( tt, i );
     }
