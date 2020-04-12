@@ -190,7 +190,7 @@ TEST( ConstructorsTest, create_threshold7 )
   EXPECT_EQ( count_ones( t3 ), uint64_t( 126 ) );
 
   for_each_one_bit( t3, []( auto index ) {
-    EXPECT_EQ( __builtin_popcount( index ), 5 );
+    EXPECT_EQ( __builtin_popcount( static_cast<uint32_t>( index ) ), 5 );
   } );
 }
 

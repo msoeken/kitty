@@ -196,11 +196,11 @@ void print_hex( const TT& tt, std::ostream& os = std::cout )
       auto hex = word & 0xf;
       if ( hex < 10 )
       {
-        *it = '0' + hex;
+        *it = '0' + static_cast<char>( hex );
       }
       else
       {
-        *it = 'a' + ( hex - 10 );
+        *it = 'a' + static_cast<char>( hex - 10 );
       }
       ++it;
       word >>= 4;
@@ -221,11 +221,11 @@ inline void print_hex( const partial_truth_table& tt, std::ostream& os )
       auto hex = word & 0xf;
       if ( hex < 10 )
       {
-        *it = '0' + hex;
+        *it = '0' + static_cast<char>( hex );
       }
       else
       {
-        *it = 'a' + ( hex - 10 );
+        *it = 'a' + static_cast<char>( hex - 10 );
       }
       ++it;
       word >>= 4;
@@ -360,7 +360,7 @@ std::string anf_to_expression( const TT& anf )
       expr += "1";
       return;
     }
-    auto weight = __builtin_popcount( bit );
+    auto weight = __builtin_popcount( static_cast<uint32_t>( bit ) );
     if ( weight != 1 )
     {
       expr += "(";
