@@ -187,7 +187,7 @@ struct partial_truth_table
 
     if ( ( _num_bits % 64 ) + num_bits <= 64 ) /* no need for a new block */
     {
-      if ( _bits.size() == 0 )
+      if ( _bits.size() == 0u )
       {
         _bits.emplace_back( 0u );
       }
