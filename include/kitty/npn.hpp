@@ -529,7 +529,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_p_canonization( const TT&
   std::iota( perm.begin(), perm.end(), 0u );
   uint32_t phase{0u};
 
-  if ( num_vars < 2 )
+  if ( num_vars < 2u )
   {
     return std::make_tuple( tt, phase, perm );
   }
