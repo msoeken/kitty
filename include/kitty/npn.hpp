@@ -26,6 +26,7 @@
 /*!
   \file npn.hpp
   \brief Implements NPN canonization algorithms
+
   \author Mathias Soeken
 */
 
@@ -53,17 +54,22 @@ void exact_npn_canonization_null_callback( const TT& tt )
 /*! \endcond */
 
 /*! \brief Exact P canonization
+
   Given a truth table, this function finds the lexicographically smallest truth
   table in its P class, called P representative. Two functions are in the
   same P class, if one can obtain one from the other by input permutation.
+
   The function can accept a callback as second parameter which is called for
   every visited function when trying out all combinations.  This allows to
   exhaustively visit the whole P class.
+
   The function returns a NPN configuration which contains the necessary
   transformations to obtain the representative.  It is a tuple of
+
   - the P representative
   - input negations and output negation, which is 0 in this case
   - input permutation to apply
+
   \param tt The truth table
   \param fn Callback for each visited truth table in the class (default does nothing)
   \return NPN configuration
@@ -125,19 +131,24 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& t
 }
 
 /*! \brief Exact NPN canonization
+
   Given a truth table, this function finds the lexicographically smallest truth
   table in its NPN class, called NPN representative. Two functions are in the
   same NPN class, if one can obtain one from the other by input negation, input
   permutation, and output negation.
+
   The function can accept a callback as second parameter which is called for
   every visited function when trying out all combinations.  This allows to
   exhaustively visit the whole NPN class.
+
   The function returns a NPN configuration which contains the necessary
   transformations to obtain the representative.  It is a tuple of
+
   - the NPN representative
   - input negations and output negation, output negation is stored as bit *n*,
     where *n* is the number of variables in `tt`
   - input permutation to apply
+
   \param tt The truth table (with at most 6 variables)
   \param fn Callback for each visited truth table in the class (default does nothing)
   \return NPN configuration
@@ -252,17 +263,21 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
 }
 
 /*! \brief Flip-swap NPN heuristic
+
   This algorithm will iteratively try to reduce the numeric value of the truth
   table by first inverting each input, then inverting the output, and then
   swapping each pair of inputs.  Every improvement is accepted, the algorithm
   stops, if no more improvement can be achieved.
+
   The function returns a NPN configuration which contains the
   necessary transformations to obtain the representative.  It is a
   tuple of
+
   - the NPN representative
   - input negations and output negation, output negation is stored as
     bit *n*, where *n* is the number of variables in `tt`
   - input permutation to apply
+
   \param tt Truth table
   \return NPN configuration
 */
@@ -428,16 +443,20 @@ void sifting_p_canonization_loop( TT& p, uint32_t& phase, std::vector<uint8_t>& 
 /*! \endcond */
 
 /*! \brief Sifting NPN heuristic
+
   The algorithm will always consider two adjacent variables and try all possible
   transformations on these two.  It will try once in forward direction and once
   in backward direction.  It will try for the regular function and inverted
   function.
+
   The function returns a NPN configuration which contains the necessary
   transformations to obtain the representative.  It is a tuple of
+
   - the NPN representative
   - input negations and output negation, output negation is stored as bit *n*,
     where *n* is the number of variables in `tt`
   - input permutation to apply
+
   \param tt Truth table
   \return NPN configuration
 */
@@ -523,9 +542,11 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_p_canonization( const TT&
 }
 
 /*! \brief Obtain truth table from NPN configuration
+
   Given an NPN configuration, which contains a representative
   function, input/output negations, and input permutations this
   function computes the original truth table.
+
   \param config NPN configuration
 */
 template<typename TT>
