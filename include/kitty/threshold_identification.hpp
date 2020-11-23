@@ -41,11 +41,13 @@ namespace kitty
 
 /*! \brief Threshold logic function identification
 
-  Given a truth table, this function finds the lexicographically smallest truth
-  table in its NPN class, called NPN representative. Two functions are in the
-  same NPN class, if one can obtain one from the other by input negation, input
-  permutation, and output negation.
+  Given a truth table, this function determines whether it is a threshold logic function (TF)
+  and finds a linear form if it is. A Boolean function is a TF if it can be expressed as
 
+  f(x_1, ..., x_n) = \sum_{i=1}^n w_i x_i >= T
+
+  where w_i are the weight values and T is the threshold value.
+  The linear form of a TF is the vector [w_1, ..., w_n; T].
 
   \param tt The truth table
   \param plf Pointer to a vector that will hold a linear form of `tt` if it is a TF.
@@ -58,6 +60,12 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
 {
   std::vector<int64_t> linear_form;
 
+  /* TODO */
+  /* if tt is non-TF: */
+  return false;
+
+  /* if tt is TF: */
+  /* push the weight and threshold values into `linear_form` */
   if ( plf )
   {
     *plf = linear_form;
