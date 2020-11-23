@@ -194,6 +194,23 @@ TEST( ConstructorsTest, create_threshold7 )
   } );
 }
 
+TEST( ConstructorsTest, create_threshold_from_linear_form_simple )
+{
+  static_truth_table<2> tt;
+  std::vector<int64_t> lf = {-1, 1, 0}; // ~x0 | x1
+  create_threshold( tt, lf );
+  EXPECT_EQ( tt._bits, 0xd );
+}
+
+TEST( ConstructorsTest, create_threshold_from_linear_form_maj7 )
+{
+  static_truth_table<7> tt, tt_maj;
+  std::vector<int64_t> lf = {1, 1, 1, 1, 1, 1, 1, 4};
+  create_threshold( tt, lf );
+  create_majority( tt_maj );
+  EXPECT_EQ( tt, tt_maj );
+}
+
 template<uint32_t NumVars>
 static void test_create_equals()
 {

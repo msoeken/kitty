@@ -513,6 +513,39 @@ void create_threshold( TT& tt, uint8_t threshold )
   }
 }
 
+/*! \brief Constructs threshold function from a linear form
+
+  The resulting function is true, if \sum w_i x_i >= T.
+
+  \param tt Truth table (of `n` variables)
+  \param linear_form The linear form, with the first `n` elements being the
+         weight values w_i and the last element being the threshold value T.
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void create_threshold( TT& tt, std::vector<int64_t> const linear_form )
+{
+  assert( tt.num_vars() + 1 == linear_form.size() );
+  clear( tt );
+
+  int64_t const& threshold = linear_form.back();
+
+  for ( uint64_t x = 0; x < tt.num_bits(); ++x )
+  {
+    int64_t sum = 0;
+    for ( auto i = 0u; i < tt.num_vars(); ++i )
+    {
+      if ( ( x >> i ) & 0x1 )
+      {
+        sum += linear_form.at( i );
+      }
+    }
+    if ( sum >= threshold )
+    {
+      set_bit( tt, x );
+    }
+  }
+}
+
 /*! \brief Constructs equals-k function
 
   The resulting function is true, if exactly `bitcount` bits are 1.  The number
