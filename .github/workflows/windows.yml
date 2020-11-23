@@ -23,4 +23,4 @@ jobs:
     - name: Run tests
       run: |
         cd build
-        .\test\Debug\run_tests
+        .\test\Debug\run_tests --gtest_filter=-TFI_test*
