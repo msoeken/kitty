@@ -1,12 +1,6 @@
 name: DTIS project CI tests
 
-on:
-  push:
-    branches:
-    - master
-  pull_request:
-    branches:
-    - master
+on: [push, pull_request]
 
 jobs:
   build-linux:
