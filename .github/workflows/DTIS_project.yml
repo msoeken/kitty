@@ -1,0 +1,68 @@
+name: DTIS project CI tests
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Build kitty
+      run: |
+        mkdir build
+        cd build
+        cmake -DKITTY_TEST=ON ..
+        make run_tests
+    - name: Run tests
+      run: |
+        cd build
+        ./test/run_tests --gtest_filter=TFI_test*
+       
+  build-macos:
+     runs-on: macOS-latest
+
+     steps:
+     - uses: actions/checkout@v1
+       with:
+         submodules: true
+     - name: Build kitty
+       run: |
+         mkdir build
+         cd build
+         cmake -DKITTY_TEST=ON ..
+         make run_tests
+     - name: Run tests
+       run: |
+         cd build
+         ./test/run_tests --gtest_filter=-TFI_test*
+         
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: true
+    - name: Create build directory
+      run: mkdir build
+    - name: Run CMake
+      run: cmake -G "Visual Studio 16 2019" -DKITTY_TEST=ON ..
+      working-directory: ./build
+    - name: Build kitty
+      run: |
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin\MSBuild.exe" kitty.sln /t:run_tests
+      working-directory: ./build
+      shell: cmd
+    - name: Run tests
+      run: |
+        cd build
+        .\test\Debug\run_tests --gtest_filter=-TFI_test*
