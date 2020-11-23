@@ -19,4 +19,4 @@ jobs:
     - name: Run tests
       run: |
         cd build
-        ./test/run_tests
+        ./test/run_tests --gtest_filter=-TFI_test*
