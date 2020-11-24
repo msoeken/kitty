@@ -23,6 +23,7 @@ else()
 endif()
 
 add_subdirectory(include)
+add_subdirectory(lib)
 
 if(KITTY_EXAMPLES)
   add_subdirectory(examples)
