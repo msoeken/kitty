@@ -92,7 +92,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
   bool pos = false;
   bool posandneg = false;
 // Check if a truth table is positive or negative or binate and return false if it is binate 
-  for (auto i = 0 ; i < tt.num_vars() ; i++){
+  for (unsigned int i = 0 ; i < tt.num_vars() ; i++){
     neg = false;
     pos = false;
     posandneg = false;
