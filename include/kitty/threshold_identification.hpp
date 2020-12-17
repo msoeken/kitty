@@ -115,7 +115,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
       }
      
     }
-    if( pos == neg && pos == posandneg){
+    if( pos && neg && posandneg){
       return false ;
 
     }
@@ -141,7 +141,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
             return false;
         }
         /* let us name our variables. Not required, but can be useful for debugging */
-        for(auto i = 1 ; i != tt.num_vars()-1; i++){
+        for(unsigned int i = 1 ; i != tt.num_vars()-1; i++){
           set_col_name(lp, i, "x");
         }
 
@@ -159,7 +159,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
 
           // We just check that all the weights wi and the treshold value are positives 
 
-          for(int j = 0; j <= tt.num_vars(); j++){
+          for(unsigned int j = 0; j <= tt.num_vars(); j++){
             colno[0] = j+1;
             row[j] = 1;
             add_constraintex(lp, 1, row, colno, GE, 0); // w1 + w2 ... + T > 0 
@@ -167,8 +167,8 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
         }
         if (ret == 0) {
             // We compute the onset minterms inequalities
-            for (auto k = 0; k <= onset_cube.size()-1; k++) { // We compute for all the minterms
-                for (auto i = 0; i < tt.num_vars(); i++) {
+            for (long unsigned int k = 0; k <= onset_cube.size()-1; k++) { // We compute for all the minterms
+                for (unsigned int i = 0; i < tt.num_vars(); i++) {
                     if (onset_cube.at(k).get_mask(i) == true) {
                         colno[i] =i+1;
                         row[i] = 1;
@@ -189,8 +189,8 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
         }
             if (ret == 0) {
                 //We compute the offset minterms inequalities 
-                for (auto k = 0; k <= offset_cube.size()-1; k++) { // We compute for all the minterms
-                    for (auto i = 0; i < tt.num_vars(); i++) {
+                for (long unsigned int k = 0; k <= offset_cube.size()-1; k++) { // We compute for all the minterms
+                    for (unsigned int i = 0; i < tt.num_vars(); i++) {
                         if (offset_cube.at(k).get_mask(i)==false) {
                             colno[i] =i+1;
                             row[i] = 1;
@@ -232,7 +232,7 @@ bool is_threshold( const TT& tt, std::vector<int64_t>* plf = nullptr )
                    if (ret == 0){
                     get_variables(lp, row);
 
-                    for (int j = 0; j <= tt.num_vars(); j++) {
+                    for (unsigned int j = 0; j <= tt.num_vars(); j++) {
                         linear_form.push_back(row[j]); // We put all the results in linear form vector 
                     }
                    // All the variables that were negative and were changed into positives are again set negatives
