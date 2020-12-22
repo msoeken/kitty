@@ -3,6 +3,8 @@ Change Log
 
 Next release
 ------------
+* Data structure: ``partial_truth_table`` (contributed by Siang-Yun Lee)
+  `#102 <https://github.com/msoeken/kitty/pull/102>`_
 
 * Properties: ``is_covered_with_divisors`` (contributed by Heinz Riener)
   `#106 <https://github.com/msoeken/kitty/pull/106>`_

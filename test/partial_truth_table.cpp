@@ -138,20 +138,20 @@ TEST( PartialTruthTableTest, erase_bit )
   create_random( tt );
   auto str = to_binary( tt );
 
-  tt.erase_bit( 3 );
+  tt.erase_bit_shift( 3 );
   str.erase( tt.num_bits() - 3, 1 );
   EXPECT_EQ( to_binary( tt ), str );
   
-  tt.erase_bit_fast( 10 );
+  tt.erase_bit_swap( 10 );
   std::swap( str[0], str[tt.num_bits() - 10] );
   str.erase( 0, 1 );
   EXPECT_EQ( to_binary( tt ), str );
 
-  tt.erase_bit( 95 );
+  tt.erase_bit_shift( 95 );
   str.erase( tt.num_bits() - 95, 1 );
   EXPECT_EQ( to_binary( tt ), str );
   
-  tt.erase_bit_fast( 88 );
+  tt.erase_bit_swap( 88 );
   std::swap( str[0], str[tt.num_bits() - 88] );
   str.erase( 0, 1 );
   EXPECT_EQ( to_binary( tt ), str );
