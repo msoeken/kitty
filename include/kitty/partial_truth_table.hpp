@@ -201,6 +201,43 @@ struct partial_truth_table
     _num_bits += num_bits;
   }
 
+  inline void copy_bit( uint32_t from, uint32_t to )
+  {
+    if ( ( _bits[from >> 6] >> ( from & 0x3f ) ) & 0x1 )
+    {
+      /* set_bit( to ) */
+      _bits[to >> 6] |= uint64_t( 1 ) << ( to & 0x3f );
+    }
+    else
+    {
+      /* clear_bit( to ) */
+      _bits[to >> 6] &= ~( uint64_t( 1 ) << ( to & 0x3f ) );
+    }
+  }
+
+  inline void erase_bit_fast( uint32_t position )
+  {
+    assert( position < _num_bits );
+    /* move the last bit (`_num_bits - 1`) to `position` */
+    copy_bit( _num_bits - 1, position );
+    resize( _num_bits - 1 );
+  }
+
+  inline void erase_bit( uint32_t position )
+  {
+    assert( position < _num_bits );
+    uint64_t mask = 0xFFFFFFFFFFFFFFFF << ( position & 0x3f );
+    _bits[position >> 6] = ( _bits[position >> 6] & ~mask ) | ( _bits[position >> 6] >> 1 & mask );
+    uint32_t hole = position | 0x3f;
+    while ( hole < _num_bits - 1 )
+    {
+      copy_bit( hole + 1, hole );
+      hole += 64;
+      _bits[hole >> 6] >>= 1;
+    }
+    resize( _num_bits - 1 );
+  }
+
   /*! \cond PRIVATE */
 public: /* fields */
   std::vector<uint64_t> _bits;

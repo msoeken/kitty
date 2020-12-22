@@ -52,7 +52,6 @@ TEST( PartialTruthTableTest, add_bit )
 {
   partial_truth_table tt1( 100 );
   create_random( tt1 );
-  //print_hex( tt1 );
   EXPECT_EQ( tt1.num_bits(), 100 );
   EXPECT_EQ( tt1.num_blocks(), 2 );
 
@@ -131,4 +130,29 @@ TEST( PartialTruthTableTest, operations )
   EXPECT_EQ( tt3_p._bits, tt3_d._bits );
   EXPECT_EQ( tt4_p._bits, tt4_d._bits );
   EXPECT_TRUE( tt1_p == ~(~tt1_p) );
+}
+
+TEST( PartialTruthTableTest, erase_bit )
+{
+  partial_truth_table tt( 100 );
+  create_random( tt );
+  auto str = to_binary( tt );
+
+  tt.erase_bit( 3 );
+  str.erase( tt.num_bits() - 3, 1 );
+  EXPECT_EQ( to_binary( tt ), str );
+  
+  tt.erase_bit_fast( 10 );
+  std::swap( str[0], str[tt.num_bits() - 10] );
+  str.erase( 0, 1 );
+  EXPECT_EQ( to_binary( tt ), str );
+
+  tt.erase_bit( 95 );
+  str.erase( tt.num_bits() - 95, 1 );
+  EXPECT_EQ( to_binary( tt ), str );
+  
+  tt.erase_bit_fast( 88 );
+  std::swap( str[0], str[tt.num_bits() - 88] );
+  str.erase( 0, 1 );
+  EXPECT_EQ( to_binary( tt ), str );
 }
