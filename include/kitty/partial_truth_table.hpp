@@ -145,9 +145,9 @@ struct partial_truth_table
   */
   inline void mask_bits() noexcept
   {
-    if ( _num_bits % 64 )
+    if ( _num_bits & 0x3f )
     {
-      _bits.back() &= 0xFFFFFFFFFFFFFFFF >> ( 64 - ( _num_bits % 64 ) );
+      _bits.back() &= 0xFFFFFFFFFFFFFFFF >> ( 64 - ( _num_bits & 0x3f ) );
     }
   }
 
@@ -166,7 +166,7 @@ struct partial_truth_table
     resize( _num_bits + 1 );
     if ( bit )
     {
-      _bits.back() |= (uint64_t)1 << ( _num_bits % 64 - 1 );
+      _bits.back() |= (uint64_t)1 << ( ( _num_bits & 0x3f ) - 1 );
     }
   }
 
@@ -183,18 +183,18 @@ struct partial_truth_table
   {
     assert( num_bits <= 64 );
 
-    if ( ( _num_bits % 64 ) + num_bits <= 64 ) /* no need for a new block */
+    if ( ( _num_bits & 0x3f ) + num_bits <= 64 ) /* no need for a new block */
     {
       if ( _bits.size() == 0u )
       {
         _bits.emplace_back( 0u );
       }
-      _bits.back() |= bits << ( _num_bits % 64 );
+      _bits.back() |= bits << ( _num_bits & 0x3f );
     }
     else
     {
-      auto first_half_len = 64 - ( _num_bits % 64 );
-      _bits.back() |= bits << ( _num_bits % 64 );
+      auto first_half_len = 64 - ( _num_bits & 0x3f );
+      _bits.back() |= bits << ( _num_bits & 0x3f );
       _bits.emplace_back( 0u );
       _bits.back() |= ( bits & ( 0xFFFFFFFFFFFFFFFF >> ( 64 - num_bits ) ) ) >> first_half_len;
     }
