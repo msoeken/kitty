@@ -48,6 +48,7 @@
 #include "implicant.hpp"
 #include "isop.hpp"
 #include "npn.hpp"
+#include "sd.hpp"
 #include "operations.hpp"
 #include "operators.hpp"
 #include "permutation.hpp"
