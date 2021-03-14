@@ -32,12 +32,7 @@
 
 #pragma once
 
-/*#include <iostream>
-#include <unordered_set>
-
-#include <kitty/kitty.hpp>
-*/
-
+#include "npn.hpp"
 #include "operators.hpp"
 
 namespace kitty {
