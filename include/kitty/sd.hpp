@@ -23,13 +23,6 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-	\file sd.hpp
-	\brief Implements SD  canonization algorithms
-
-	\author Pulkit Agrawal and Shubham Rai
- */
-
 #pragma once
 
 #include "npn.hpp"
