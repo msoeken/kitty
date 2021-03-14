@@ -1191,4 +1191,39 @@ inline TT shift_with_mask( const TT& f, uint8_t mask )
   return copy;
 }
 
+/*! \brief Calculates the dual function of the passed truth table.
+
+  \param tt Truth table
+  \return dual of given truth table
+*/
+template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
+kitty::dynamic_truth_table dual_of( const TT& tt ){
+	auto numvars = tt.num_vars();
+	auto tt1 = tt;
+	auto tt2 = ~tt1;
+	for ( auto i = 0u; i < numvars; i++ ){
+		tt1 = flip( tt1, i );
+	}
+	return ~tt1;
+}
+
+/*! \brief Extends a given truth table with 'n' variables to 
+	'n+1' variables. To extend, it appends the given truth table
+	in the end of the given truth table. 
+
+  \param tt Truth table
+  \return extended Truth Table
+*/
+template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
+kitty::dynamic_truth_table extend_tt (const TT& tt){
+	int num_vars = (int)tt.num_vars();
+	kitty::dynamic_truth_table extended_tt(num_vars+1);
+	for (int i=0; i<(int)extended_tt.num_bits(); i++){
+		if (kitty::get_bit(tt, i%(tt.num_bits())) == 1){
+			kitty::set_bit(extended_tt, i);
+		}
+	}
+	return extended_tt;
+}
+
 } // namespace kitty

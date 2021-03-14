@@ -689,8 +689,6 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   This function returns an unordered set of all the NPN represtatives for 
   a given number of variables. 
 
-  - the unordered set of NPN representative
-
   \param num_vars Number of variables in the truth tables of the NPN reprentative class. 
   \return NPN reprentative class
 */

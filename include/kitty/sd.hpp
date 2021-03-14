@@ -32,39 +32,25 @@
 
 #pragma once
 
-#include <iostream>
+/*#include <iostream>
 #include <unordered_set>
 
 #include <kitty/kitty.hpp>
+*/
+
+#include "operators.hpp"
 
 namespace kitty {
 
+/*! \brief SD Represtatives Class
 
+  This function returns an unordered set of all the SD represtatives for 
+  a given number of variables. 
 
-template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
-kitty::dynamic_truth_table dual_of( const TT& tt ){
-	auto numvars = tt.num_vars();
-	auto tt1 = tt;
-	auto tt2 = ~tt1;
-	for ( auto i = 0u; i < numvars; i++ ){
-		tt1 = flip( tt1, i );
-	}
-	return ~tt1;
-}
-
-template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
-kitty::dynamic_truth_table extend_tt (const TT& tt){
-	int num_vars = (int)tt.num_vars();
-	kitty::dynamic_truth_table extended_tt(num_vars+1);
-	for (int i=0; i<(int)extended_tt.num_bits(); i++){
-		if (kitty::get_bit(tt, i%(tt.num_bits())) == 1){
-			kitty::set_bit(extended_tt, i);
-		}
-	}
-	return extended_tt;
-}
-
-std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_sd_class(uint8_t num_vars){
+  \param num_vars Number of variables in the truth tables of the SD reprentative class. 
+  \return unordered set of SD reprentative
+*/
+std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_sd_represtative_class(uint8_t num_vars){
 	/* compute SD classes */
 	auto npn_class = calculate_npn_represtative_class(num_vars);
 
@@ -102,6 +88,18 @@ std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_
 	return classes;
 }
 
+/*! \brief Exact SD Represtative 
+
+  Given a truth table, this function finds the lexicographically smallest truth
+  table in its SD class, called SD representative. Two functions are in the
+  same SD class, if the dual of the given function is equal to the given function, 
+  also known as Self-Dual Functions.
+
+  The function returns a SD representative (truth table).
+
+  \param tt The truth table (with at most 6 variables)
+  \return SD representative 
+*/
 template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
 kitty::dynamic_truth_table exact_sd_canonization (const TT& tt){
 
