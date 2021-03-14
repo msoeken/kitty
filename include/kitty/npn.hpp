@@ -262,6 +262,97 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   return std::make_tuple( tmin, phase, perm );
 }
 
+/*! \brief Exact NPN Represtative 
+
+  Given a truth table, this function finds the lexicographically smallest truth
+  table in its NPN class, called NPN representative. Two functions are in the
+  same NPN class, if one can obtain one from the other by input negation, input
+  permutation, and output negation.
+
+  The function can accept a callback as second parameter which is called for
+  every visited function when trying out all combinations.  This allows to
+  exhaustively visit the whole NPN class.
+
+  The function returns a NPN representative (truth table).
+
+  \param tt The truth table (with at most 6 variables)
+  \param fn Callback for each visited truth table in the class (default does nothing)
+  \return NPN representative 
+*/
+template<typename TT, typename Callback = decltype( kitty::detail::exact_npn_canonization_null_callback<TT> )>
+TT exact_npn_representative( const TT& tt, Callback&& fn = kitty::detail::exact_npn_canonization_null_callback<TT> ) {
+	
+	static_assert( kitty::is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
+	const auto num_vars = tt.num_vars();
+
+	/* Special case for n = 0 */
+	if ( num_vars == 0 ){
+		const auto bit = get_bit( tt, 0 );
+		return kitty::unary_not_if( tt, bit );
+	}
+
+	/* Special case for n = 1 */
+	if ( num_vars == 1 ){
+		const auto bit1 = get_bit( tt, 1 );
+		return kitty::unary_not_if( tt, bit1 );
+	}
+
+	assert( num_vars >= 2 && num_vars <= 6 );
+
+	auto t1 = tt, t2 = ~tt;
+	auto tmin = std::min( t1, t2 );
+
+	fn( t1 );
+	fn( t2 );
+
+	const auto& swaps = kitty::detail::swaps[num_vars - 2u];
+	const auto& flips = kitty::detail::flips[num_vars - 2u];
+
+	for ( std::size_t i = 0; i < swaps.size(); ++i ){
+		const auto pos = swaps[i];
+		kitty::swap_adjacent_inplace( t1, pos );
+		kitty::swap_adjacent_inplace( t2, pos );
+
+		fn( t1 );
+		fn( t2 );
+
+		if ( t1 < tmin || t2 < tmin ){
+			tmin = std::min( t1, t2 );
+		}
+	}
+
+	for ( std::size_t j = 0; j < flips.size(); ++j ){
+		const auto pos = flips[j];
+		kitty::swap_adjacent_inplace( t1, 0 );
+		kitty::flip_inplace( t1, pos );
+		kitty::swap_adjacent_inplace( t2, 0 );
+		kitty::flip_inplace( t2, pos );
+
+		fn( t1 );
+		fn( t2 );
+
+		if ( t1 < tmin || t2 < tmin ){
+			tmin = std::min( t1, t2 );
+		}
+
+		for ( std::size_t i = 0; i < swaps.size(); ++i ){
+			const auto pos = swaps[i];
+			kitty::swap_adjacent_inplace( t1, pos );
+			kitty::swap_adjacent_inplace( t2, pos );
+
+			fn( t1 );
+			fn( t2 );
+
+			if ( t1 < tmin || t2 < tmin ){
+				tmin = std::min( t1, t2 );
+			}
+		}
+	}
+
+	return tmin;
+}
+
 /*! \brief Flip-swap NPN heuristic
 
   This algorithm will iteratively try to reduce the numeric value of the truth
@@ -591,6 +682,34 @@ TT create_from_npn_config( const std::tuple<TT, uint32_t, std::vector<uint8_t>>&
   }
 
   return res;
+}
+
+/*! \brief NPN Represtatives Class
+
+  This function returns an unordered set of all the NPN represtatives for 
+  a given number of variables. 
+
+  - the unordered set of NPN representative
+
+  \param num_vars Number of variables in the truth tables of the NPN reprentative class. 
+  \return NPN reprentative class
+*/
+std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_npn_represtative_class(uint8_t num_vars){
+	/* compute NPN classe */
+	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> classes;
+	kitty::dynamic_truth_table tt( num_vars );
+	do{
+		/* apply NPN canonization and add resulting representative to set */
+		classes.insert(exact_npn_representative(tt));
+
+		/* increment truth table */
+		kitty::next_inplace( tt );
+	} while ( !kitty::is_const0( tt ) );
+
+	std::cout << "[i] enumerated "
+		<< ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
+		<< classes.size() << " classes." << std::endl;
+	return classes;
 }
 
 } /* namespace kitty */
