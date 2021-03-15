@@ -73,9 +73,9 @@ std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_
 	} while (itr != npn_class.end());
 
 	/* Print the size of the class. */
-	std::cout << "[i] enumerated "
+	/*std::cout << "[i] enumerated "
 		<< ( 1 << ( 1 << num_vars ) ) << " functions into "
-		<< classes.size() << " classes." << std::endl;
+		<< classes.size() << " classes." << std::endl;*/
 	return classes;
 }
 
