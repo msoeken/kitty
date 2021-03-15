@@ -48,8 +48,6 @@ protected:
 
 TEST_F( SDTest, random_functions_exact )
 {
-  using pair_vec_t = std::vector<std::pair<std::string, std::string>>;
-
   check_sd<3>( 3u, 7 );
   check_sd<4>( 4u, 83 );
 }

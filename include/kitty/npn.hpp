@@ -34,11 +34,11 @@
 
 #include <numeric>
 #include <unordered_set>
-#include <iostream>
 
 #include "detail/constants.hpp"
 #include "operators.hpp"
 #include "traits.hpp"
+#include "hash.hpp"
 
 namespace kitty
 {

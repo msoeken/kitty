@@ -29,6 +29,7 @@
 
 #include "npn.hpp"
 #include "operations.hpp"
+#include "constructors.hpp"
 
 namespace kitty {
 
