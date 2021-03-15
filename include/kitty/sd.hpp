@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "npn.hpp"
 #include "operators.hpp"
 

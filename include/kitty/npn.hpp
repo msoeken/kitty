@@ -33,6 +33,7 @@
 #pragma once
 
 #include <numeric>
+#include <unordered_set>
 
 #include "detail/constants.hpp"
 #include "operators.hpp"
