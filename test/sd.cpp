@@ -41,13 +41,19 @@ protected:
   template<uint32_t NumVars>
   void check_sd( const uint32_t num_vars, const int number_of_classes ) const
   {
-    const auto res = calculate_sd_represtative_class( num_vars ).size();
-    EXPECT_EQ( res, number_of_classes );
+    const auto res = calculate_sd_represtative_class( num_vars );
+    ASSERT_EQ( res.size(), number_of_classes );
     }
 };
 
-TEST_F( SDTest, random_functions_exact )
+
+TEST_F( SDTest, class_4u_size )
+{
+  check_sd<4>( 4u, 83 );
+}
+
+TEST_F( SDTest, class_3u_size )
 {
   check_sd<3>( 3u, 7 );
-  check_sd<4>( 4u, 83 );
+  //check_sd<4>( 4u, 83 );
 }
