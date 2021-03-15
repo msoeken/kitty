@@ -23,6 +23,13 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/*!
+  \file sd.hpp
+  \brief Implements SD canonization algorithms
+
+  \author Pulkit Agrawal and Shubham Rai
+*/
+
 #pragma once
 
 #include <unordered_set>
@@ -30,6 +37,7 @@
 #include "npn.hpp"
 #include "operations.hpp"
 #include "constructors.hpp"
+#include "hash.hpp"
 
 namespace kitty {
 	
@@ -53,9 +61,6 @@ std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_
 		kitty::next_inplace( tt );
 	} while ( !kitty::is_const0( tt ) );
 
-	/*std::cout << "[i] enumerated "
-		<< ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
-		<< classes.size() << " classes." << std::endl;*/
 	return classes;
 }
 
@@ -98,10 +103,6 @@ std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_
 		itr++;
 	} while (itr != npn_class.end());
 
-	/* Print the size of the class. */
-	/*std::cout << "[i] enumerated "
-		<< ( 1 << ( 1 << num_vars ) ) << " functions into "
-		<< classes.size() << " classes." << std::endl;*/
 	return classes;
 }
 

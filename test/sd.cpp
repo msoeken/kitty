@@ -55,5 +55,4 @@ TEST_F( SDTest, class_4u_size )
 TEST_F( SDTest, class_3u_size )
 {
   check_sd<3>( 3u, 7 );
-  //check_sd<4>( 4u, 83 );
 }
