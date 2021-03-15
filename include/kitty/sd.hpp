@@ -28,7 +28,7 @@
 #include <unordered_set>
 
 #include "npn.hpp"
-#include "operators.hpp"
+#include "operations.hpp"
 
 namespace kitty {
 

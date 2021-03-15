@@ -34,6 +34,7 @@
 
 #include <numeric>
 #include <unordered_set>
+#include <iostream>
 
 #include "detail/constants.hpp"
 #include "operators.hpp"
