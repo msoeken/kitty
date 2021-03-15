@@ -32,6 +32,32 @@
 #include "constructors.hpp"
 
 namespace kitty {
+	
+/*! \brief NPN Represtatives Class
+
+  This function returns an unordered set of all the NPN represtatives for 
+  a given number of variables. 
+
+  \param num_vars Number of variables in the truth tables of the NPN reprentative class. 
+  \return NPN reprentative class
+*/
+std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_npn_represtative_class(uint8_t num_vars){
+	/* compute NPN classe */
+	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> classes;
+	kitty::dynamic_truth_table tt( num_vars );
+	do{
+		/* apply NPN canonization and add resulting representative to set */
+		classes.insert(exact_npn_representative(tt));
+
+		/* increment truth table */
+		kitty::next_inplace( tt );
+	} while ( !kitty::is_const0( tt ) );
+
+	/*std::cout << "[i] enumerated "
+		<< ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
+		<< classes.size() << " classes." << std::endl;*/
+	return classes;
+}
 
 /*! \brief SD Represtatives Class
 
@@ -123,33 +149,6 @@ kitty::dynamic_truth_table exact_sd_canonization (const TT& tt){
 	/* apply NPN canonization and add resulting representative to set */
 	return exact_npn_representative(sd_tt);
 	}
-	
-/*! \brief NPN Represtatives Class
-
-  This function returns an unordered set of all the NPN represtatives for 
-  a given number of variables. 
-
-  \param num_vars Number of variables in the truth tables of the NPN reprentative class. 
-  \return NPN reprentative class
-*/
-std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_npn_represtative_class(uint8_t num_vars){
-	/* compute NPN classe */
-	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> classes;
-	kitty::dynamic_truth_table tt( num_vars );
-	do{
-		/* apply NPN canonization and add resulting representative to set */
-		classes.insert(exact_npn_representative(tt));
-
-		/* increment truth table */
-		kitty::next_inplace( tt );
-	} while ( !kitty::is_const0( tt ) );
-
-	/*std::cout << "[i] enumerated "
-		<< ( 1 << ( 1 << tt.num_vars() ) ) << " functions into "
-		<< classes.size() << " classes." << std::endl;*/
-	return classes;
-}
-
 
 }
 
