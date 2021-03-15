@@ -64,47 +64,6 @@ std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_
 	return classes;
 }
 
-/*! \brief SD Represtatives Class
-
-  This function returns an unordered set of all the SD represtatives for 
-  a given number of variables. 
-
-  \param num_vars Number of variables in the truth tables of the SD reprentative class. 
-  \return unordered set of SD reprentative
-*/
-std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_sd_represtative_class(uint8_t num_vars){
-	/* compute SD classes */
-	auto npn_class = calculate_npn_represtative_class(num_vars);
-
-	/* classes is the class which is returned containing all the tt in SD classification. */
-	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> classes;
-	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> :: iterator itr;
-
-	/* initializing  the iterator */ 
-	itr = npn_class.begin();
-
-	kitty::dynamic_truth_table sd_tt(num_vars+1), a(num_vars+1);
-	create_nth_var(a, num_vars);
-
-	/* extending the tt from 'num_vars' to 'num_vars+1' */ 
-	kitty::dynamic_truth_table extended_tt(num_vars+1);
-
-	do {
-
-		extended_tt = extend_tt((*itr));
-
-
-		sd_tt = kitty::binary_or(kitty::binary_and(extended_tt, a), kitty::binary_and(~a, dual_of(extended_tt)));
-
-		/* apply NPN canonization and add resulting representative to set */
-		classes.insert(exact_npn_representative(sd_tt));
-
-		/* increment to next tt in the class. */
-		itr++;
-	} while (itr != npn_class.end());
-
-	return classes;
-}
 
 /*! \brief Exact SD Represtative 
 
@@ -150,6 +109,48 @@ kitty::dynamic_truth_table exact_sd_canonization (const TT& tt){
 	/* apply NPN canonization and add resulting representative to set */
 	return exact_npn_representative(sd_tt);
 	}
+
+
+/*! \brief SD Represtatives Class
+
+  This function returns an unordered set of all the SD represtatives for 
+  a given number of variables. 
+
+  \param num_vars Number of variables in the truth tables of the SD reprentative class. 
+  \return unordered set of SD reprentative
+*/
+std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> calculate_sd_represtative_class(uint8_t num_vars){
+	/* compute SD classes */
+	auto npn_class = calculate_npn_represtative_class(num_vars);
+
+	/* classes is the class which is returned containing all the tt in SD classification. */
+	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> classes;
+	std::unordered_set<kitty::dynamic_truth_table, kitty::hash<kitty::dynamic_truth_table>> :: iterator itr;
+
+	/* initializing  the iterator */ 
+	itr = npn_class.begin();
+
+	kitty::dynamic_truth_table sd_tt(num_vars+1), a(num_vars+1);
+	create_nth_var(a, num_vars);
+
+	/* extending the tt from 'num_vars' to 'num_vars+1' */ 
+	kitty::dynamic_truth_table extended_tt(num_vars+1);
+
+	do {
+		
+		extended_tt = extend_tt((*itr));
+
+		sd_tt = kitty::binary_or(kitty::binary_and(extended_tt, a), kitty::binary_and(~a, dual_of(extended_tt)));
+
+		/* apply NPN canonization and add resulting representative to set */
+		classes.insert(kitty::exact_npn_representative(sd_tt));
+
+		/* increment to next tt in the class. */
+		itr++;
+	} while (itr != npn_class.end());
+
+	return classes;
+}
 
 }
 
