@@ -28,10 +28,13 @@ int main () {
 	int distribution[83];
 	int j=0;
 	i=0;
+	for (i=0; i<83; i++){
+		distribution[i]=0;
+	}
+	i=0;
 	for (i=0; i<222; i++){
 		auto temp = kitty::exact_sd_canonization(array_npn[i]);
 		for (j=0; j<83; j++){
-			distribution[j] = 0;
 			if (kitty::equal(temp, array_sd[j])){
 				distribution[j]+=1;
 				break;
@@ -41,7 +44,7 @@ int main () {
 	
 	i=0;
 	for (i=0; i<83; i++){
-		std::cout<<i<<std::endl;
+		std::cout<<distribution[i]<<std::endl;
 	}
 	return 0;
 }
