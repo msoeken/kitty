@@ -44,7 +44,8 @@ int main () {
 	
 	i=0;
 	for (i=0; i<83; i++){
-		std::cout<<distribution[i]<<std::endl;
+		kitty::print_binary(array_sd[i]);
+		std::cout<<"  "<<distribution[i]<<std::endl;
 	}
 	return 0;
 }
