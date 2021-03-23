@@ -27,6 +27,7 @@ int main () {
 		}
 		if (class_sd.find(temp)!=class_sd.end()){
 			std::cout<<"Oh Yeah";
+		}
 	}
 	return 0;
 }
