@@ -45,7 +45,22 @@ int main () {
 	std::cout << "[i] enumerated "
 		<< ( 1 << ( 1 << num_vars ) ) << " functions into "
 		<< classes_4u.size() << " classes." << std::endl;
+	
+	num_vars = 5u;
+	const auto classes_5u = kitty::calculate_sd_represtative_class(num_vars);
+	
+	/* Print the size of the class.*/ 
+	std::cout << "[i] enumerated "
+		<< ( 1 << ( 1 << num_vars ) ) << " functions into "
+		<< classes_5u.size() << " classes." << std::endl;
 		
+	num_vars = 2u;
+	const auto classes_2u = kitty::calculate_sd_represtative_class(num_vars);
+	
+	/* Print the size of the class. */
+	std::cout << "[i] enumerated "
+		<< ( 1 << ( 1 << num_vars ) ) << " functions into "
+		<< classes_2u.size() << " classes." << std::endl;
 	return 0;
 }
 
