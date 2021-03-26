@@ -525,7 +525,8 @@ template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::v
 void create_equals( TT& tt, uint8_t bitcount )
 {
   clear( tt );
-  if ( bitcount > tt.num_vars() ) return;
+  if ( bitcount > tt.num_vars() )
+    return;
 
   if ( tt.num_vars() <= 6 )
   {
@@ -824,10 +825,11 @@ bool create_from_chain( TT& tt, const std::vector<std::string>& steps, std::stri
 {
   std::vector<TT> vec_steps;
   auto it = steps.begin();
-  if ( !create_from_chain( tt, [&it, &steps]() {
-         return ( it != steps.end() ) ? *it++ : std::string();
-       },
-                           vec_steps, error ) )
+  if ( !create_from_chain(
+           tt, [&it, &steps]() {
+             return ( it != steps.end() ) ? *it++ : std::string();
+           },
+           vec_steps, error ) )
   {
     return false;
   }
@@ -853,10 +855,11 @@ bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, const 
   auto tt = create<TT>( num_vars );
   tts.clear();
   auto it = steps.begin();
-  if ( !create_from_chain( tt, [&it, &steps]() {
-         return ( it != steps.end() ) ? *it++ : std::string();
-       },
-                           tts, error ) )
+  if ( !create_from_chain(
+           tt, [&it, &steps]() {
+             return ( it != steps.end() ) ? *it++ : std::string();
+           },
+           tts, error ) )
   {
     return false;
   }
@@ -881,7 +884,8 @@ template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::v
 bool create_from_chain( TT& tt, std::istream& in, std::string* error = nullptr )
 {
   std::vector<TT> vec_steps;
-  if ( !create_from_chain( tt, [&in]() {
+  if ( !create_from_chain(
+           tt, [&in]() {
     std::string line;
     while ( true )
     {
@@ -922,7 +926,8 @@ bool create_multiple_from_chain( unsigned num_vars, std::vector<TT>& tts, std::i
 {
   auto tt = create<TT>( num_vars );
   tts.clear();
-  if ( !create_from_chain( tt, [&in]() {
+  if ( !create_from_chain(
+           tt, [&in]() {
     std::string line;
     while ( true )
     {
@@ -1182,7 +1187,8 @@ bool create_from_expression( TT& tt, const std::string& expression )
 template<class TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
 void create_prime( TT& tt )
 {
-  if ( tt.num_vars() > 10 ) return;
+  if ( tt.num_vars() > 10 )
+    return;
 
   clear( tt );
   auto p = detail::primes;

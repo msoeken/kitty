@@ -68,5 +68,5 @@ protected:
     return tt;
   }
 };
-}
-}
+} // namespace testing
+} // namespace kitty

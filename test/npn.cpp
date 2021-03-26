@@ -54,17 +54,17 @@ TEST_F( NPNTest, random_functions_exact )
 {
   using pair_vec_t = std::vector<std::pair<std::string, std::string>>;
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "0" } } )
   {
     check_npn<0>( p.first, p.second );
   }
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "1"}, {"2", "1"}, {"3", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "1" }, { "2", "1" }, { "3", "0" } } )
   {
     check_npn<1>( p.first, p.second );
   }
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "1"}, {"2", "1"}, {"3", "3"}, {"4", "1"}, {"5", "3"}, {"6", "6"}, {"7", "1"}, {"8", "1"}, {"9", "6"}, {"a", "3"}, {"b", "1"}, {"c", "3"}, {"d", "1"}, {"e", "1"}, {"f", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "1" }, { "2", "1" }, { "3", "3" }, { "4", "1" }, { "5", "3" }, { "6", "6" }, { "7", "1" }, { "8", "1" }, { "9", "6" }, { "a", "3" }, { "b", "1" }, { "c", "3" }, { "d", "1" }, { "e", "1" }, { "f", "0" } } )
   {
     check_npn<2>( p.first, p.second );
   }

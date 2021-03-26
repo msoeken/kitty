@@ -34,10 +34,9 @@ using namespace kitty;
 TEST( TraitsTest, supports_traits )
 {
 
-EXPECT_TRUE( is_truth_table<dynamic_truth_table>::value );
-EXPECT_TRUE( is_truth_table<static_truth_table<4>>::value );
-EXPECT_TRUE( is_truth_table<static_truth_table<5>>::value );
-EXPECT_TRUE( is_truth_table<static_truth_table<6>>::value );
-EXPECT_FALSE( is_truth_table<uint64_t>::value );
-
+  EXPECT_TRUE( is_truth_table<dynamic_truth_table>::value );
+  EXPECT_TRUE( is_truth_table<static_truth_table<4>>::value );
+  EXPECT_TRUE( is_truth_table<static_truth_table<5>>::value );
+  EXPECT_TRUE( is_truth_table<static_truth_table<6>>::value );
+  EXPECT_FALSE( is_truth_table<uint64_t>::value );
 }

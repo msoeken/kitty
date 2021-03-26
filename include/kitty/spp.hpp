@@ -91,7 +91,7 @@ std::pair<std::vector<cube>, std::vector<uint64_t>> simple_spp( const std::vecto
   }
 
   copy.resize( e );
-  return {copy, sums};
+  return { copy, sums };
 }
 
 /*! \brief Creates truth table from SPP

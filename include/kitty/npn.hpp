@@ -90,7 +90,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& t
   /* Special case for n = 1 */
   if ( num_vars == 1 )
   {
-    return std::make_tuple( tt, 0u, std::vector<uint8_t>{0} );
+    return std::make_tuple( tt, 0u, std::vector<uint8_t>{ 0 } );
   }
 
   assert( num_vars >= 2 && num_vars <= 7 );
@@ -171,7 +171,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   if ( num_vars == 1 )
   {
     const auto bit1 = get_bit( tt, 1 );
-    return std::make_tuple( unary_not_if( tt, bit1 ), static_cast<uint32_t>( bit1 << 1 ), std::vector<uint8_t>{0} );
+    return std::make_tuple( unary_not_if( tt, bit1 ), static_cast<uint32_t>( bit1 << 1 ), std::vector<uint8_t>{ 0 } );
   }
 
   assert( num_vars >= 2 && num_vars <= 6 );
@@ -280,77 +280,86 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   \return NPN representative 
 */
 template<typename TT, typename Callback = decltype( kitty::detail::exact_npn_canonization_null_callback<TT> )>
-TT exact_npn_representative( const TT& tt, Callback&& fn = kitty::detail::exact_npn_canonization_null_callback<TT> ) {
-	
-	static_assert( kitty::is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+TT exact_npn_representative( const TT& tt, Callback&& fn = kitty::detail::exact_npn_canonization_null_callback<TT> )
+{
 
-	const auto num_vars = tt.num_vars();
+  static_assert( kitty::is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
 
-	/* Special case for n = 0 */
-	if ( num_vars == 0 ){
-		const auto bit = get_bit( tt, 0 );
-		return kitty::unary_not_if( tt, bit );
-	}
+  const auto num_vars = tt.num_vars();
 
-	/* Special case for n = 1 */
-	if ( num_vars == 1 ){
-		const auto bit1 = get_bit( tt, 1 );
-		return kitty::unary_not_if( tt, bit1 );
-	}
+  /* Special case for n = 0 */
+  if ( num_vars == 0 )
+  {
+    const auto bit = get_bit( tt, 0 );
+    return kitty::unary_not_if( tt, bit );
+  }
 
-	assert( num_vars >= 2 && num_vars <= 6 );
+  /* Special case for n = 1 */
+  if ( num_vars == 1 )
+  {
+    const auto bit1 = get_bit( tt, 1 );
+    return kitty::unary_not_if( tt, bit1 );
+  }
 
-	auto t1 = tt, t2 = ~tt;
-	auto tmin = std::min( t1, t2 );
+  assert( num_vars >= 2 && num_vars <= 6 );
 
-	fn( t1 );
-	fn( t2 );
+  auto t1 = tt, t2 = ~tt;
+  auto tmin = std::min( t1, t2 );
 
-	const auto& swaps = kitty::detail::swaps[num_vars - 2u];
-	const auto& flips = kitty::detail::flips[num_vars - 2u];
+  fn( t1 );
+  fn( t2 );
 
-	for ( std::size_t i = 0; i < swaps.size(); ++i ){
-		const auto pos = swaps[i];
-		kitty::swap_adjacent_inplace( t1, pos );
-		kitty::swap_adjacent_inplace( t2, pos );
+  const auto& swaps = kitty::detail::swaps[num_vars - 2u];
+  const auto& flips = kitty::detail::flips[num_vars - 2u];
 
-		fn( t1 );
-		fn( t2 );
+  for ( std::size_t i = 0; i < swaps.size(); ++i )
+  {
+    const auto pos = swaps[i];
+    kitty::swap_adjacent_inplace( t1, pos );
+    kitty::swap_adjacent_inplace( t2, pos );
 
-		if ( t1 < tmin || t2 < tmin ){
-			tmin = std::min( t1, t2 );
-		}
-	}
+    fn( t1 );
+    fn( t2 );
 
-	for ( std::size_t j = 0; j < flips.size(); ++j ){
-		const auto pos = flips[j];
-		kitty::swap_adjacent_inplace( t1, 0 );
-		kitty::flip_inplace( t1, pos );
-		kitty::swap_adjacent_inplace( t2, 0 );
-		kitty::flip_inplace( t2, pos );
+    if ( t1 < tmin || t2 < tmin )
+    {
+      tmin = std::min( t1, t2 );
+    }
+  }
 
-		fn( t1 );
-		fn( t2 );
+  for ( std::size_t j = 0; j < flips.size(); ++j )
+  {
+    const auto pos = flips[j];
+    kitty::swap_adjacent_inplace( t1, 0 );
+    kitty::flip_inplace( t1, pos );
+    kitty::swap_adjacent_inplace( t2, 0 );
+    kitty::flip_inplace( t2, pos );
 
-		if ( t1 < tmin || t2 < tmin ){
-			tmin = std::min( t1, t2 );
-		}
+    fn( t1 );
+    fn( t2 );
 
-		for ( std::size_t i = 0; i < swaps.size(); ++i ){
-			const auto pos = swaps[i];
-			kitty::swap_adjacent_inplace( t1, pos );
-			kitty::swap_adjacent_inplace( t2, pos );
+    if ( t1 < tmin || t2 < tmin )
+    {
+      tmin = std::min( t1, t2 );
+    }
 
-			fn( t1 );
-			fn( t2 );
+    for ( std::size_t i = 0; i < swaps.size(); ++i )
+    {
+      const auto pos = swaps[i];
+      kitty::swap_adjacent_inplace( t1, pos );
+      kitty::swap_adjacent_inplace( t2, pos );
 
-			if ( t1 < tmin || t2 < tmin ){
-				tmin = std::min( t1, t2 );
-			}
-		}
-	}
+      fn( t1 );
+      fn( t2 );
 
-	return tmin;
+      if ( t1 < tmin || t2 < tmin )
+      {
+        tmin = std::min( t1, t2 );
+      }
+    }
+  }
+
+  return tmin;
 }
 
 /*! \brief Flip-swap NPN heuristic
@@ -383,7 +392,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> flip_swap_npn_canonization( const
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
 
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   auto npn = tt;
   auto improvement = true;
@@ -529,7 +538,6 @@ void sifting_p_canonization_loop( TT& p, uint32_t& phase, std::vector<uint8_t>& 
     }
     forward = !forward;
   }
-
 }
 } /* namespace detail */
 /*! \endcond */
@@ -562,7 +570,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_npn_canonization( const T
   /* initialize permutation and phase */
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   if ( num_vars < 2 )
   {
@@ -619,7 +627,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_p_canonization( const TT&
   /* initialize permutation and phase */
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   if ( num_vars < 2u )
   {

@@ -136,7 +136,7 @@ inline std::vector<cube> get_prime_implicants_morreale( const std::vector<uint32
   const auto m = minterms.size();
 
   std::vector<uint32_t> tags( 2 * m + n, 0 );
-  std::vector<uint32_t> stack( 2 * m + n , 0 );
+  std::vector<uint32_t> stack( 2 * m + n, 0 );
 
   uint32_t mask = ( 1 << n ) - 1;
   uint32_t A{};

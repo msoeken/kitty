@@ -317,7 +317,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, c
   auto qb = tt.construct();
   auto rb = tt.construct();
 
-  std::vector<TT> q_and_rs{qa, ra, qb, rb};
+  std::vector<TT> q_and_rs{ qa, ra, qb, rb };
   while ( !is_const0( q ) )
   {
     auto cube = select_one_cube( q );
@@ -328,7 +328,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, c
       rb = exist_set( binary_or( binary_and( q, qa ), binary_and( r, ra ) ), i );
       if ( !is_const0( binary_and( qb, rb ) ) )
       {
-        return {false, q_and_rs};
+        return { false, q_and_rs };
       }
       q = binary_and( q, ~binary_or( qa, ra ) );
       r = binary_and( r, ~binary_or( qa, ra ) );
@@ -340,7 +340,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, c
       ra = exist_set( binary_or( binary_and( q, qb ), binary_and( r, rb ) ), j );
       if ( !is_const0( binary_and( qa, ra ) ) )
       {
-        return {false, q_and_rs};
+        return { false, q_and_rs };
       }
       q = binary_and( q, ~binary_or( qb, rb ) );
       r = binary_and( r, ~binary_or( qb, rb ) );
@@ -354,7 +354,7 @@ std::pair<bool, std::vector<TT>> check_xor_decomp( const TT& tt, const TT& dc, c
     q_and_rs[1] = binary_or( q_and_rs[1], exist_set( r, j ) );
     q_and_rs[3] = binary_or( q_and_rs[3], exist_set( r, i ) );
   }
-  return {true, q_and_rs};
+  return { true, q_and_rs };
 }
 
 template<class TT>
@@ -382,11 +382,11 @@ std::pair<std::vector<int>, std::vector<int>> find_initial_or( const TT& tt, con
       {
         var_a_vect.push_back( i );
         var_b_vect.push_back( j );
-        return {var_a_vect, var_b_vect};
+        return { var_a_vect, var_b_vect };
       }
     }
   }
-  return {var_a_vect, var_b_vect};
+  return { var_a_vect, var_b_vect };
 }
 
 template<class TT>
@@ -430,10 +430,10 @@ std::pair<std::vector<int>, std::vector<int>> find_initial_weak_or( const TT& tt
     {
       var_a_vect.push_back( i );
       var_b_vect.push_back( i );
-      return {var_a_vect, var_b_vect};
+      return { var_a_vect, var_b_vect };
     }
   }
-  return {var_a_vect, var_b_vect};
+  return { var_a_vect, var_b_vect };
 }
 
 template<class TT>
@@ -491,7 +491,7 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_or( const TT& tt, 
       }
     }
   }
-  return {xa, xb};
+  return { xa, xb };
 }
 
 template<class TT>
@@ -519,7 +519,7 @@ std::pair<std::vector<int>, std::vector<int>> group_variables_weak_or( const TT&
       xa.push_back( h );
     }
   }
-  return {xa, xb};
+  return { xa, xb };
 }
 
 template<class TT>

@@ -174,8 +174,12 @@ public: /* fields */
 };
 
 template<>
-struct is_truth_table<kitty::dynamic_truth_table> : std::true_type {};
+struct is_truth_table<kitty::dynamic_truth_table> : std::true_type
+{
+};
 
 template<>
-struct is_complete_truth_table<kitty::dynamic_truth_table> : std::true_type {};
+struct is_complete_truth_table<kitty::dynamic_truth_table> : std::true_type
+{
+};
 } // namespace kitty

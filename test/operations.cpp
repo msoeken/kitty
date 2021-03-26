@@ -308,7 +308,7 @@ TEST_F( OperationsTest, cofactors )
 
 TEST_F( OperationsTest, swap_adjacent_inplace_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "bce8" }, { 1u, "e6e8" }, { 2u, "dea8" } } )
   {
     auto tt_s = from_hex<4>( "dae8" );
     swap_adjacent_inplace( tt_s, p.first );
@@ -322,7 +322,7 @@ TEST_F( OperationsTest, swap_adjacent_inplace_small )
 
 TEST_F( OperationsTest, swap_adjacent_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "bce8" }, { 1u, "e6e8" }, { 2u, "dea8" } } )
   {
     EXPECT_EQ( swap_adjacent( from_hex<4>( "dae8" ), p.first ), from_hex<4>( p.second ) );
     EXPECT_EQ( swap_adjacent( from_hex( 4, "dae8" ), p.first ), from_hex( 4, p.second ) );
@@ -376,7 +376,7 @@ INSTANTIATE_TEST_SUITE_P( OperationsTestSwapInst,
 
 TEST_F( OperationsTest, flip_inplace_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "0b34" }, { 1u, "0dc2" }, { 2u, "7083" }, { 3u, "3807" } } )
   {
     auto tt_s = from_hex<4>( "0738" );
     flip_inplace( tt_s, p.first );
@@ -390,7 +390,7 @@ TEST_F( OperationsTest, flip_inplace_small )
 
 TEST_F( OperationsTest, flip_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "0b34" }, { 1u, "0dc2" }, { 2u, "7083" }, { 3u, "3807" } } )
   {
     EXPECT_EQ( flip( from_hex<4>( "0738" ), p.first ), from_hex<4>( p.second ) );
     EXPECT_EQ( flip( from_hex( 4, "0738" ), p.first ), from_hex( 4, p.second ) );
@@ -448,7 +448,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<3>( "a0" ); /* (ac) */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {0, 2} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 0, 2 } ) );
     EXPECT_EQ( tt, from_hex<3>( "88" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<3>( "a0" ) );
@@ -457,7 +457,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<4>( "3c3c" ); /* [bc] */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {1, 2} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 1, 2 } ) );
     EXPECT_EQ( tt, from_hex<4>( "6666" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<4>( "3c3c" ) );
@@ -466,7 +466,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<7>( "ff55ff55ff55ff555555555555555555" ); /* {!a(dg)} */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {0, 3, 6} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 0, 3, 6 } ) );
     EXPECT_EQ( tt, from_hex<7>( "d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<7>( "ff55ff55ff55ff555555555555555555" ) );
@@ -482,8 +482,8 @@ TEST_F( OperationsTest, expand )
   auto f_and_e = extend_to( f_and, 4 );
   auto f_or_e = extend_to( f_or, 4 );
 
-  expand_inplace( f_and_e, std::vector<uint8_t>{0, 2} );
-  expand_inplace( f_or_e, std::vector<uint8_t>{1, 3} );
+  expand_inplace( f_and_e, std::vector<uint8_t>{ 0, 2 } );
+  expand_inplace( f_or_e, std::vector<uint8_t>{ 1, 3 } );
 
   EXPECT_EQ( f_and_e ^ f_or_e, from_hex( 4, "5f6c" ) );
 }
