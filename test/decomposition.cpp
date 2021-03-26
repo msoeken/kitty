@@ -228,7 +228,7 @@ TEST_F( DecompositionTest, ashenhurst )
   create_nth_var( x5, 4 );
 
   tt = x1 | x2 | ( x3 & x4 & x5 );
-  std::vector<uint32_t> ys_idx{ 2, 3, 4 };
+  std::vector<uint32_t> ys_idx{2, 3, 4};
 
   std::vector<std::pair<TTg, TTg>> decomposition;
   const auto count = kitty::ashenhurst_decomposition( tt, ys_idx, decomposition );

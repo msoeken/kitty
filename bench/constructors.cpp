@@ -64,7 +64,7 @@ static void ARGS_create_nth_var_dynamic( benchmark::internal::Benchmark* b )
   {
     for ( auto var_index = 0; var_index < num_vars; var_index += 2 )
     {
-      b->Args( { num_vars, var_index } );
+      b->Args( {num_vars, var_index} );
     }
   }
 }

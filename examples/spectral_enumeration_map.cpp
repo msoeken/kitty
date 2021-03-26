@@ -84,7 +84,7 @@ int main()
 
     if ( it == classes.end() )
     {
-      classes[spectral] = { 1u, func_count };
+      classes[spectral] = {1u, func_count};
     }
     else
     {

@@ -72,7 +72,7 @@ std::pair<uint32_t, std::vector<uint32_t>> chow_parameters( const TT& tt )
     }
   } );
 
-  return { nf, sf };
+  return {nf, sf};
 }
 
 /*! \brief Checks whether a function is canalizing
@@ -259,7 +259,7 @@ template<typename TT, typename Fn>
 void foreach_runlength( const TT& tt, Fn&& fn )
 {
   bool current = get_bit( tt, 0 );
-  uint32_t length{ 1u };
+  uint32_t length{1u};
 
   for ( auto i = 1ull; i < tt.num_bits(); ++i )
   {
@@ -331,7 +331,7 @@ inline uint64_t absolute_distinguishing_power( const TT& tt )
 template<typename TT>
 inline uint64_t relative_distinguishing_power( const TT& tt, const TT& target_tt )
 {
-  return count_ones( ~tt & ~target_tt ) * count_ones( tt & target_tt ) + count_ones( ~tt & target_tt ) * count_ones( tt & ~target_tt );
+  return count_ones( ~tt & ~target_tt ) * count_ones( tt & target_tt ) + count_ones( ~tt & target_tt ) * count_ones( tt & ~target_tt ); 
 }
 
 /*! \brief Return true iff each distinguishing bit pair of the target

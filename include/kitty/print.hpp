@@ -74,7 +74,7 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
                              const std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>>& style_predicates = {} )
 {
   /* create rows */
-  std::vector<std::vector<uint16_t>> current( 1, { 0 } ), next;
+  std::vector<std::vector<uint16_t>> current( 1, {0} ), next;
 
   for ( auto i = 0u; i < num_vars; ++i )
   {
@@ -302,8 +302,8 @@ template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_trut
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
   detail::print_xmas_tree( os, tt.num_vars(),
-                           { { [&]( auto v ) { return get_bit( tt, v ); }, { 32 } },
-                             { [&]( auto v ) { return !get_bit( tt, v ); }, { 31 } } } );
+                           {{[&]( auto v ) { return get_bit( tt, v ); }, {32}},
+                            {[&]( auto v ) { return !get_bit( tt, v ); }, {31}}} );
 }
 
 /*! \brief Prints all Boolean functions of n variables in christmas tree pattern

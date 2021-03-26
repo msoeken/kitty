@@ -138,8 +138,8 @@ TEST( ConstructorsTest, create_random )
 
 TEST( ConstructorsTest, create_from_words )
 {
-  std::vector<uint64_t> words_vec{ UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 ) };
-  constexpr uint64_t words_arr[]{ UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 ) };
+  std::vector<uint64_t> words_vec{UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 )};
+  constexpr uint64_t words_arr[]{UINT64_C( 0xfee8e880e8808000 ), UINT64_C( 0xfffefee8fee8e880 )};
 
   static_truth_table<7> tt_v, tt_a, tt_s;
 
@@ -198,7 +198,7 @@ template<uint32_t NumVars>
 static void test_create_equals()
 {
   static_truth_table<NumVars> total;
-  uint64_t total_bits{ 0 };
+  uint64_t total_bits{0};
 
   for ( auto k = 0u; k <= total.num_vars(); ++k )
   {
@@ -291,9 +291,9 @@ TEST( ConstructorsTest, create_from_chain_success )
 
   create_majority( maj );
 
-  EXPECT_TRUE( create_from_chain( maj_v1, { "x4 = x1 & x2", "x5 = x1 & x3", "x6 = x2 & x3", "x7 = x4 | x5", "x8 = x6 | x7" } ) );
-  EXPECT_TRUE( create_from_chain( maj_v2, { "x4=x1&x2", "x5=x1&x3", "x6=x2&x3", "x7=x4|x5", "x8=x6|x7" } ) );
-  EXPECT_TRUE( create_from_chain( maj_v3, { "x4=  x1 & x2", "x5=  x1 &   x3", "x6= x2   &  x3", "x7   = x4 |   x5", "  x8 = x6 | x7  " } ) );
+  EXPECT_TRUE( create_from_chain( maj_v1, {"x4 = x1 & x2", "x5 = x1 & x3", "x6 = x2 & x3", "x7 = x4 | x5", "x8 = x6 | x7"} ) );
+  EXPECT_TRUE( create_from_chain( maj_v2, {"x4=x1&x2", "x5=x1&x3", "x6=x2&x3", "x7=x4|x5", "x8=x6|x7"} ) );
+  EXPECT_TRUE( create_from_chain( maj_v3, {"x4=  x1 & x2", "x5=  x1 &   x3", "x6= x2   &  x3", "x7   = x4 |   x5", "  x8 = x6 | x7  "} ) );
 
   std::string prog = "x4 = x1 & x2\nx5 = x1 & x3\n\nx6 = x2 & x3\nx7 = x4 | x5\nx8 = x6 | x7";
   std::istringstream in( prog );
@@ -307,9 +307,9 @@ TEST( ConstructorsTest, create_from_chain_success )
   static_truth_table<2> xor_o, xor_v1, xor_v2, xor_v3;
 
   create_from_binary_string( xor_o, "0110" );
-  EXPECT_TRUE( create_from_chain( xor_v1, { "x3 = x1 ^ x2" } ) );
-  EXPECT_TRUE( create_from_chain( xor_v2, { "x3 = x1 !& x2", "x4 = x1 !& x3", "x5 = x2 !& x3", "x6 = x4 !& x5" } ) );
-  EXPECT_TRUE( create_from_chain( xor_v3, { "x3 = x1 < x2", "x4 = x1 > x2", "x5 = x3 | x4" } ) );
+  EXPECT_TRUE( create_from_chain( xor_v1, {"x3 = x1 ^ x2"} ) );
+  EXPECT_TRUE( create_from_chain( xor_v2, {"x3 = x1 !& x2", "x4 = x1 !& x3", "x5 = x2 !& x3", "x6 = x4 !& x5"} ) );
+  EXPECT_TRUE( create_from_chain( xor_v3, {"x3 = x1 < x2", "x4 = x1 > x2", "x5 = x3 | x4"} ) );
 
   EXPECT_EQ( xor_o, xor_v1 );
   EXPECT_EQ( xor_o, xor_v2 );
@@ -348,7 +348,7 @@ TEST( ConstructorsTest, create_multiple_from_chain )
       "x9 = x5 | x7",
       "x10 = x3 & x8",
       "x11 = x9 ^ x10",
-      "x12 = x6 ^ x9" };
+      "x12 = x6 ^ x9"};
 
   static_truth_table<4> f1, f2;
   std::vector<static_truth_table<4>> fs;

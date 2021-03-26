@@ -107,7 +107,7 @@ TEST_F( AlgorithmTest, for_each_one_bit_static_small )
 
   std::vector<uint64_t> bits;
   for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
-  EXPECT_EQ( bits, std::vector<uint64_t>( { 3, 5, 6, 7 } ) );
+  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
 }
 
 TEST_F( AlgorithmTest, for_each_one_bit_dynamic_small )
@@ -117,7 +117,7 @@ TEST_F( AlgorithmTest, for_each_one_bit_dynamic_small )
 
   std::vector<uint64_t> bits;
   for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
-  EXPECT_EQ( bits, std::vector<uint64_t>( { 3, 5, 6, 7 } ) );
+  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
 }
 
 TEST_F( AlgorithmTest, for_each_one_bit_static_large )
@@ -139,3 +139,4 @@ TEST_F( AlgorithmTest, for_each_one_bit_dynamic_large )
 
   EXPECT_EQ( tt, tt2 );
 }
+

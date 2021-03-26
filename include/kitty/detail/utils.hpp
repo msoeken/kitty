@@ -54,7 +54,8 @@ inline void rtrim( std::string& s )
 {
   s.erase( std::find_if( s.rbegin(), s.rend(), []( int ch ) {
              return std::isspace( ch ) == 0;
-           } ).base(),
+           } )
+               .base(),
            s.end() );
 }
 
@@ -83,4 +84,4 @@ inline std::string trim_copy( std::string s )
 }
 } /* namespace detail */
 } /* namespace kitty */
-  /*! \endcond */
+/*! \endcond */

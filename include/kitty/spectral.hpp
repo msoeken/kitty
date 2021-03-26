@@ -69,9 +69,9 @@ struct spectral_operation
   spectral_operation() = default;
   explicit spectral_operation( kind _kind, uint16_t _var1 = 0, uint16_t _var2 = 0 ) : _kind( _kind ), _var1( _var1 ), _var2( _var2 ) {}
 
-  kind _kind{ kind::none };
-  uint16_t _var1{ 0 };
-  uint16_t _var2{ 0 };
+  kind _kind{kind::none};
+  uint16_t _var1{0};
+  uint16_t _var2{0};
 };
 
 inline void fast_hadamard_transform( std::vector<int32_t>& s, bool reverse = false )
@@ -338,7 +338,7 @@ public:
 
     TT tt = func.construct();
     spec.to_truth_table<TT>( tt );
-    return { tt, exact };
+    return {tt, exact};
   }
 
   void set_limit( unsigned limit )
@@ -506,7 +506,7 @@ private:
 
     for ( auto v = 1u; v <= num_vars_exp; v <<= 1 )
     {
-      specs.insert( { v, spec } );
+      specs.insert( {v, spec} );
     }
 
     update_best( spec );
@@ -560,14 +560,14 @@ private:
   std::vector<uint32_t> order;
   std::vector<spectral_operation> transforms;
   std::vector<spectral_operation> best_transforms;
-  unsigned transform_index{ 0u };
+  unsigned transform_index{0u};
 
-  unsigned step_counter{ 0u };
-  unsigned step_limit{ 0u };
+  unsigned step_counter{0u};
+  unsigned step_limit{0u};
 
-  bool hasInputNegation{ true };
-  bool hasOutputNegation{ true };
-  bool hasDisjointTranslation{ true };
+  bool hasInputNegation{true};
+  bool hasOutputNegation{true};
+  bool hasDisjointTranslation{true};
 };
 
 inline void exact_spectral_canonization_null_callback( const std::vector<spectral_operation>& operations )
@@ -628,8 +628,8 @@ struct anf_spectrum
 {
 public:
   explicit anf_spectrum( const TT& tt )
-      : _anf( detail::algebraic_normal_form( tt ) ),
-        _khots( tt.num_vars() + 1, tt.construct() )
+    : _anf( detail::algebraic_normal_form( tt ) ),
+      _khots( tt.num_vars() + 1, tt.construct() )
   {
     for ( auto i = 0u; i <= tt.num_vars(); ++i )
     {
@@ -715,7 +715,7 @@ public:
       {
         foreach_term_of_size( k, [&]( auto term ) {
           auto mask = _anf.construct();
-          create_from_cubes( mask, { cube( static_cast<uint32_t>( term ), static_cast<uint32_t>( term ) ) } );
+          create_from_cubes( mask, {cube( static_cast<uint32_t>( term ), static_cast<uint32_t>( term ) )} );
 
           const auto i = find_first_one_bit( _anf & _khots[k + 1] & mask );
           if ( i != -1 )
@@ -725,18 +725,16 @@ public:
           }
           else
           {
-            foreach_term_of_size(
-                k, [&]( auto term2 ) {
-                  if ( __builtin_popcount( static_cast<uint32_t>( term ^ term2 ) ) == 2 )
-                  {
-                    const auto vari = detail::log2[term & ~term2];
-                    const auto varj = detail::log2[term2 & ~term];
+            foreach_term_of_size( k, [&]( auto term2 ) {
+              if ( __builtin_popcount( static_cast<uint32_t>( term ^ term2 ) ) == 2 )
+              {
+                const auto vari = detail::log2[term & ~term2];
+                const auto varj = detail::log2[term2 & ~term];
 
-                    insert( spectral_translation( vari, varj ) );
-                    repeat = true;
-                  }
-                },
-                term + 1 );
+                insert( spectral_translation( vari, varj ) );
+                repeat = true;
+              }
+            }, term + 1 );
           }
         } );
       }
@@ -758,15 +756,12 @@ public:
     auto mask = 0u;
     bool disjoint = true;
     for_each_one_bit( _anf, [&]( auto word ) {
-      if ( word & mask )
-      {
+      if ( word & mask ) {
         disjoint = false;
-      }
-      else
-      {
+      } else {
         mask |= word;
       }
-    } );
+    });
 
     if ( disjoint )
     {
@@ -818,7 +813,7 @@ private:
   std::vector<spectral_operation> _transforms;
 };
 
-} // namespace detail
+}
 
 /*! \brief Exact spectral canonization (with Reed-Muller preprocessor)
 
@@ -916,7 +911,7 @@ inline std::vector<int32_t> autocorrelation_spectrum( const TT& tt )
 
   for ( uint64_t i = 1; i < tt.num_bits(); ++i )
   {
-    int32_t sum{ 0 };
+    int32_t sum{0};
     for ( uint64_t j = 0; j < tt.num_bits(); ++j )
     {
       sum += ( get_bit( tt, j ) ? -1 : 1 ) * ( get_bit( tt, i ^ j ) ? -1 : 1 );
@@ -1174,12 +1169,12 @@ inline uint32_t get_spectral_class( const TT& tt )
 namespace detail
 {
 static std::vector<uint64_t> spectral_repr[] = {
-    { 0x0 },
-    { 0x0 },
-    { 0x0, 0x8 },
-    { 0x00, 0x80, 0x88 },
-    { 0x0000, 0x8000, 0x8080, 0x0888, 0x8888, 0x2a80, 0xf888, 0x7888 },
-    { 0x00000000, 0x80000000, 0x80008000, 0x00808080, 0x80808080, 0x08888000, 0xaa2a2a80, 0x88080808, 0x2888a000, 0xf7788000, 0xa8202020, 0x08880888, 0xbd686868, 0xaa808080, 0x7e686868, 0x2208a208, 0x08888888, 0x88888888, 0xea404040, 0x2a802a80, 0x73d28c88, 0xea808080, 0xa28280a0, 0x13284c88, 0xa2220888, 0xaae6da80, 0x58d87888, 0x8c88ac28, 0x8880f880, 0x9ee8e888, 0x4268c268, 0x16704c80, 0x78888888, 0x4966bac0, 0x372840a0, 0x5208d288, 0x7ca00428, 0xf8880888, 0x2ec0ae40, 0xf888f888, 0x58362ec0, 0x0eb8f6c0, 0x567cea40, 0xf8887888, 0x78887888, 0xe72890a0, 0x268cea40, 0x6248eac0 } };
+    {0x0},
+    {0x0},
+    {0x0, 0x8},
+    {0x00, 0x80, 0x88},
+    {0x0000, 0x8000, 0x8080, 0x0888, 0x8888, 0x2a80, 0xf888, 0x7888},
+    {0x00000000, 0x80000000, 0x80008000, 0x00808080, 0x80808080, 0x08888000, 0xaa2a2a80, 0x88080808, 0x2888a000, 0xf7788000, 0xa8202020, 0x08880888, 0xbd686868, 0xaa808080, 0x7e686868, 0x2208a208, 0x08888888, 0x88888888, 0xea404040, 0x2a802a80, 0x73d28c88, 0xea808080, 0xa28280a0, 0x13284c88, 0xa2220888, 0xaae6da80, 0x58d87888, 0x8c88ac28, 0x8880f880, 0x9ee8e888, 0x4268c268, 0x16704c80, 0x78888888, 0x4966bac0, 0x372840a0, 0x5208d288, 0x7ca00428, 0xf8880888, 0x2ec0ae40, 0xf888f888, 0x58362ec0, 0x0eb8f6c0, 0x567cea40, 0xf8887888, 0x78887888, 0xe72890a0, 0x268cea40, 0x6248eac0}};
 }
 
 /*! \brief Returns spectral representative using lookup

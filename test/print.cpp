@@ -93,9 +93,9 @@ TEST_F( PrintTest, xmas_all )
 {
   std::stringstream ss;
   print_xmas_tree_for_functions<dynamic_truth_table>( 3,
-                                                      { { is_krom<dynamic_truth_table>, { 31 } },
-                                                        { is_horn<dynamic_truth_table>, { 32 } },
-                                                        { []( const dynamic_truth_table& f ) { return is_horn( f ) && is_krom( f ); }, { 33 } } },
+                                                      {{is_krom<dynamic_truth_table>, {31}},
+                                                       {is_horn<dynamic_truth_table>, {32}},
+                                                       {[]( const dynamic_truth_table& f ) { return is_horn( f ) && is_krom( f ); }, {33}}},
                                                       ss );
   EXPECT_EQ( 7046u, ss.str().size() );
 }

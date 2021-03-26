@@ -39,14 +39,14 @@ int main()
       "x11 = x5 & x7", "x12 = x1 & x4", "x13 = x8 & x12",
       "x14 = x8 ^ x13", "x15 = x2 & x3", "x16 = x5 & x15",
       "x17 = x5 ^ x16", "x18 = x6 ^ x17", "x19 = x4 ^ x11",
-      "x20 = x6 ^ x14", "x21 = x2 ^ x10" };
+      "x20 = x6 ^ x14", "x21 = x2 ^ x10"};
 
   /* create truth tables */
   std::vector<kitty::static_truth_table<4>> steps;
   kitty::create_multiple_from_chain( 4, steps, chain );
 
   /* output functions are in the last four steps */
-  std::vector<kitty::static_truth_table<4>> y{ steps[17], steps[18], steps[19], steps[20] };
+  std::vector<kitty::static_truth_table<4>> y{steps[17], steps[18], steps[19], steps[20]};
 
   /* for each output ... */
   for ( auto i = 0; i < 4; ++i )

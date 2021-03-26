@@ -34,7 +34,7 @@ using namespace kitty;
 
 TEST( SppTest, simple_example )
 {
-  std::vector<cube> esop{ cube( "111-" ), cube( "11-1" ) };
+  std::vector<cube> esop{cube( "111-" ), cube( "11-1" )};
 
   auto p = simple_spp( esop, 4u );
   auto cubes = p.first;

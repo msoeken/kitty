@@ -33,7 +33,7 @@
 /* compile time constant for the number of variables */
 auto constexpr num_vars = 4;
 
-int main( int argc, char** argv )
+int main( int argc, char ** argv )
 {
   (void)argc;
 

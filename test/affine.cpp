@@ -39,7 +39,7 @@
 using namespace kitty;
 
 template<typename TT>
-using class_func_t = std::function<TT( const TT& )>;
+using class_func_t = std::function<TT(const TT&)>;
 
 class AffineTest : public kitty::testing::Test
 {

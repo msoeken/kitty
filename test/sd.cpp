@@ -43,8 +43,9 @@ protected:
   {
     const auto res = calculate_sd_represtative_class( num_vars );
     ASSERT_EQ( res.size(), number_of_classes );
-  }
+    }
 };
+
 
 TEST_F( SDTest, class_4u_size )
 {
