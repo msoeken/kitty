@@ -55,13 +55,14 @@ int main()
             << ( 1 << ( 1 << num_vars ) ) << " functions into "
             << classes_4u.size() << " classes." << std::endl;
 
-  num_vars = 5u;
+  /*Disabling this example as it takes a long time to evaluate NPN (dependent) class for 6 variables.*/
+  /*num_vars = 5u;
   const auto classes_5u = kitty::calculate_sd_represtative_class( num_vars );
 
-  /* Print the size of the class.*/
+  // Print the size of the class.
   std::cout << "[i] enumerated "
             << ( 1 << ( 1 << num_vars ) ) << " functions into "
             << classes_5u.size() << " classes." << std::endl;
-
+*/
   return 0;
 }
