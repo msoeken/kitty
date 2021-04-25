@@ -9,6 +9,9 @@ Next release
 * Properties: ``is_covered_with_divisors`` (contributed by Heinz Riener)
   `#106 <https://github.com/msoeken/kitty/pull/106>`_
 
+* Algorithm: ``ternary_predicate`` (contributed by Siang-Yun Lee)
+  `#120 <https://github.com/msoeken/kitty/pull/120>`_
+
 v0.7 (March 13, 2020)
 ---------------------
 

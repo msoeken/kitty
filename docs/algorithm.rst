@@ -8,6 +8,7 @@ The header ``<kitty/algorithm.hpp>`` implements several generic algorithms on tr
    binary_operation
    ternary_operation
    binary_predicate
+   ternary_predicate
    assign_operation
    for_each_block
    for_each_block_reversed
