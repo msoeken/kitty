@@ -187,7 +187,7 @@ inline bool equal( const partial_truth_table& first, const partial_truth_table& 
 template<typename TT>
 inline bool implies( const TT& first, const TT& second )
 {
-  return is_const0( binary_operation( first, second, []( auto a, auto b ) { return ~( ~a | b ); } ) );
+  return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & ~b ) == 0u; } );
 }
 
 /*! \brief Checks whether a truth table is lexicographically smaller than another
@@ -229,6 +229,17 @@ inline bool is_const0( const static_truth_table<NumVars, true>& tt )
   return tt._bits == 0;
 }
 /*! \endcond */
+
+/*! \brief Checks whether the intersection of two truth tables is empty
+
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool intersection_is_empty( const TT& first, const TT& second )
+{
+  return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & b ) == 0u; } );
+}
 
 /*! \brief Checks whether truth table depends on given variable index
 
