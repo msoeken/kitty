@@ -241,6 +241,18 @@ inline bool intersection_is_empty( const TT& first, const TT& second )
   return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & b ) == 0u; } );
 }
 
+/*! \brief Checks whether the intersection of three truth tables is empty
+
+  \param first First truth table
+  \param second Second truth table
+  \param third Third truth table
+*/
+template<typename TT>
+inline bool intersection_is_empty( const TT& first, const TT& second, const TT& third )
+{
+  return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & c ) == 0u; } );
+}
+
 /*! \brief Checks whether truth table depends on given variable index
 
   \param tt Truth table
