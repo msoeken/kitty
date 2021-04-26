@@ -234,11 +234,20 @@ inline bool is_const0( const static_truth_table<NumVars, true>& tt )
 
   \param first First truth table
   \param second Second truth table
+  \param polarity1 Polarity of the first truth table
+  \param polarity2 Polarity of the second truth table
 */
-template<typename TT>
-inline bool intersection_is_empty( const TT& first, const TT& second )
+template<typename TT, bool polarity1 = true, bool polarity2 = true>
+bool intersection_is_empty( const TT& first, const TT& second )
 {
-  return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & b ) == 0u; } );
+  if constexpr ( polarity1 && polarity2 )
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & b ) == 0u; } );
+  else if constexpr ( !polarity1 && polarity2 )
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( ~a & b ) == 0u; } );
+  else if constexpr ( polarity1 && !polarity2 )
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & ~b ) == 0u; } );
+  else // !polarity1 && !polarity2
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( ~a & ~b ) == 0u; } );
 }
 
 /*! \brief Checks whether the intersection of three truth tables is empty
@@ -246,11 +255,29 @@ inline bool intersection_is_empty( const TT& first, const TT& second )
   \param first First truth table
   \param second Second truth table
   \param third Third truth table
+  \param polarity1 Polarity of the first truth table
+  \param polarity2 Polarity of the second truth table
+  \param polarity3 Polarity of the first truth table
 */
-template<typename TT>
-inline bool intersection_is_empty( const TT& first, const TT& second, const TT& third )
+template<typename TT, bool polarity1 = true, bool polarity2 = true, bool polarity3 = true>
+bool intersection_is_empty( const TT& first, const TT& second, const TT& third )
 {
-  return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & c ) == 0u; } );
+  if constexpr ( polarity1 && polarity2 && polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & c ) == 0u; } );
+  else if constexpr ( !polarity1 && polarity2 && polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & b & c ) == 0u; } );
+  else if constexpr ( polarity1 && !polarity2 && polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & ~b & c ) == 0u; } );
+  else if constexpr ( polarity1 && polarity2 && !polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & ~c ) == 0u; } );
+  else if constexpr ( !polarity1 && !polarity2 && polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & ~b & c ) == 0u; } );
+  else if constexpr ( polarity1 && !polarity2 && !polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & ~b & ~c ) == 0u; } );
+  else if constexpr ( !polarity1 && polarity2 && !polarity3 )
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & b & ~c ) == 0u; } );
+  else // !polarity1 && !polarity2 && !polarity3
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & ~b & ~c ) == 0u; } );
 }
 
 /*! \brief Checks whether truth table depends on given variable index

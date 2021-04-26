@@ -830,4 +830,7 @@ TEST_F( OperationsTest, intersection_is_empty )
   EXPECT_TRUE( intersection_is_empty( from_hex( 3, "a2" ), from_hex( 3, "5c" ), from_hex( 3, "01" ) ) );
   EXPECT_TRUE( !intersection_is_empty( from_hex<3>( "f0" ), from_hex<3>( "cc" ), from_hex<3>( "83" ) ) );
   EXPECT_TRUE( !intersection_is_empty( from_hex( 3, "f0" ), from_hex( 3, "cc" ), from_hex( 3, "83" ) ) );
+
+  bool res = intersection_is_empty<static_truth_table<3>, true, false>( from_hex<3>( "a2" ), from_hex<3>( "ff" ) );
+  EXPECT_TRUE( res );
 }
