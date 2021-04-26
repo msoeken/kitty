@@ -818,3 +818,19 @@ TEST_F( OperationsTest, shift_with_mask )
   EXPECT_EQ( shift_with_mask( from_hex<6>( "e8e8e8e8e8e8e8e8" ), 0b111000 ), from_hex<6>( "ffffff00ff000000" ) );
   EXPECT_EQ( shift_with_mask( from_hex<6>( "7778777877787778" ), 0b101101 ), from_hex<6>( "5f5f5f5f5fa05fa0" ) );
 }
+
+TEST_F( OperationsTest, intersection_is_empty )
+{
+  EXPECT_TRUE( intersection_is_empty( from_hex<3>( "a2" ), from_hex<3>( "5c" ) ) );
+  EXPECT_TRUE( intersection_is_empty( from_hex( 3, "a2" ), from_hex( 3, "5c" ) ) );
+  EXPECT_TRUE( !intersection_is_empty( from_hex<3>( "f0" ), from_hex<3>( "5c" ) ) );
+  EXPECT_TRUE( !intersection_is_empty( from_hex( 3, "f0" ), from_hex( 3, "5c" ) ) );
+
+  EXPECT_TRUE( intersection_is_empty( from_hex<3>( "a2" ), from_hex<3>( "5c" ), from_hex<3>( "01" ) ) );
+  EXPECT_TRUE( intersection_is_empty( from_hex( 3, "a2" ), from_hex( 3, "5c" ), from_hex( 3, "01" ) ) );
+  EXPECT_TRUE( !intersection_is_empty( from_hex<3>( "f0" ), from_hex<3>( "cc" ), from_hex<3>( "83" ) ) );
+  EXPECT_TRUE( !intersection_is_empty( from_hex( 3, "f0" ), from_hex( 3, "cc" ), from_hex( 3, "83" ) ) );
+
+  bool res = intersection_is_empty<static_truth_table<3>, true, false>( from_hex<3>( "a2" ), from_hex<3>( "ff" ) );
+  EXPECT_TRUE( res );
+}

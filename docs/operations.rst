@@ -12,6 +12,7 @@ Predicates
    has_var
    is_const0
    implies
+   intersection_is_empty
 
 Combination and manipulation
 ----------------------------
