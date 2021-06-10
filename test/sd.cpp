@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2021  EPFL
+ * Copyright (C) 2017-2021 EPFL
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -23,46 +23,35 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/*!
-  \file kitty.hpp
-  \brief Main header for kitty
+#include <gtest/gtest.h>
 
-  \author Mathias Soeken
-*/
+#include <iostream>
+#include <string>
+#include <vector>
 
-#pragma once
+#include <kitty/sd.hpp>
 
-#include "static_truth_table.hpp"
-#include "dynamic_truth_table.hpp"
-#include "partial_truth_table.hpp"
+#include "utility.hpp"
 
-#include "affine.hpp"
-#include "algorithm.hpp"
-#include "bit_operations.hpp"
-#include "cnf.hpp"
-#include "constructors.hpp"
-#include "cube.hpp"
-#include "decomposition.hpp"
-#include "enumeration.hpp"
-#include "hash.hpp"
-#include "implicant.hpp"
-#include "isop.hpp"
-#include "npn.hpp"
-#include "sd.hpp"
-#include "operations.hpp"
-#include "operators.hpp"
-#include "permutation.hpp"
-#include "print.hpp"
-#include "properties.hpp"
-#include "spectral.hpp"
-#include "traits.hpp"
+using namespace kitty;
 
-/*
-         /\___/\
-        (  o o  )
-        /   *   \
-        \__\_/__/
-          /   \
-         / ___ \
-         \/___\/
-*/
+class SDTest : public kitty::testing::Test
+{
+protected:
+  template<uint32_t NumVars>
+  void check_sd( const uint32_t num_vars, const int number_of_classes ) const
+  {
+    const auto res = calculate_sd_represtative_class( num_vars );
+    ASSERT_EQ( res.size(), number_of_classes );
+  }
+};
+
+TEST_F( SDTest, class_4u_size )
+{
+  check_sd<4>( 4u, 83 );
+}
+
+TEST_F( SDTest, class_3u_size )
+{
+  check_sd<3>( 3u, 7 );
+}

@@ -90,7 +90,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_p_canonization( const TT& t
   /* Special case for n = 1 */
   if ( num_vars == 1 )
   {
-    return std::make_tuple( tt, 0u, std::vector<uint8_t>{0} );
+    return std::make_tuple( tt, 0u, std::vector<uint8_t>{ 0 } );
   }
 
   assert( num_vars >= 2 && num_vars <= 7 );
@@ -171,7 +171,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   if ( num_vars == 1 )
   {
     const auto bit1 = get_bit( tt, 1 );
-    return std::make_tuple( unary_not_if( tt, bit1 ), static_cast<uint32_t>( bit1 << 1 ), std::vector<uint8_t>{0} );
+    return std::make_tuple( unary_not_if( tt, bit1 ), static_cast<uint32_t>( bit1 << 1 ), std::vector<uint8_t>{ 0 } );
   }
 
   assert( num_vars >= 2 && num_vars <= 6 );
@@ -262,6 +262,106 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> exact_npn_canonization( const TT&
   return std::make_tuple( tmin, phase, perm );
 }
 
+/*! \brief Exact NPN Represtative 
+
+  Given a truth table, this function finds the lexicographically smallest truth
+  table in its NPN class, called NPN representative. Two functions are in the
+  same NPN class, if one can obtain one from the other by input negation, input
+  permutation, and output negation.
+
+  The function can accept a callback as second parameter which is called for
+  every visited function when trying out all combinations.  This allows to
+  exhaustively visit the whole NPN class.
+
+  The function returns a NPN representative (truth table).
+
+  \param tt The truth table (with at most 6 variables)
+  \param fn Callback for each visited truth table in the class (default does nothing)
+  \return NPN representative 
+*/
+template<typename TT, typename Callback = decltype( kitty::detail::exact_npn_canonization_null_callback<TT> )>
+TT exact_npn_representative( const TT& tt, Callback&& fn = kitty::detail::exact_npn_canonization_null_callback<TT> )
+{
+
+  static_assert( kitty::is_complete_truth_table<TT>::value, "Can only be applied on complete truth tables." );
+
+  const auto num_vars = tt.num_vars();
+
+  /* Special case for n = 0 */
+  if ( num_vars == 0 )
+  {
+    const auto bit = get_bit( tt, 0 );
+    return kitty::unary_not_if( tt, bit );
+  }
+
+  /* Special case for n = 1 */
+  if ( num_vars == 1 )
+  {
+    const auto bit1 = get_bit( tt, 1 );
+    return kitty::unary_not_if( tt, bit1 );
+  }
+
+  assert( num_vars >= 2 && num_vars <= 6 );
+
+  auto t1 = tt, t2 = ~tt;
+  auto tmin = std::min( t1, t2 );
+
+  fn( t1 );
+  fn( t2 );
+
+  const auto& swaps = kitty::detail::swaps[num_vars - 2u];
+  const auto& flips = kitty::detail::flips[num_vars - 2u];
+
+  for ( std::size_t i = 0; i < swaps.size(); ++i )
+  {
+    const auto pos = swaps[i];
+    kitty::swap_adjacent_inplace( t1, pos );
+    kitty::swap_adjacent_inplace( t2, pos );
+
+    fn( t1 );
+    fn( t2 );
+
+    if ( t1 < tmin || t2 < tmin )
+    {
+      tmin = std::min( t1, t2 );
+    }
+  }
+
+  for ( std::size_t j = 0; j < flips.size(); ++j )
+  {
+    const auto pos = flips[j];
+    kitty::swap_adjacent_inplace( t1, 0 );
+    kitty::flip_inplace( t1, pos );
+    kitty::swap_adjacent_inplace( t2, 0 );
+    kitty::flip_inplace( t2, pos );
+
+    fn( t1 );
+    fn( t2 );
+
+    if ( t1 < tmin || t2 < tmin )
+    {
+      tmin = std::min( t1, t2 );
+    }
+
+    for ( std::size_t i = 0; i < swaps.size(); ++i )
+    {
+      const auto pos = swaps[i];
+      kitty::swap_adjacent_inplace( t1, pos );
+      kitty::swap_adjacent_inplace( t2, pos );
+
+      fn( t1 );
+      fn( t2 );
+
+      if ( t1 < tmin || t2 < tmin )
+      {
+        tmin = std::min( t1, t2 );
+      }
+    }
+  }
+
+  return tmin;
+}
+
 /*! \brief Flip-swap NPN heuristic
 
   This algorithm will iteratively try to reduce the numeric value of the truth
@@ -292,7 +392,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> flip_swap_npn_canonization( const
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
 
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   auto npn = tt;
   auto improvement = true;
@@ -438,7 +538,6 @@ void sifting_p_canonization_loop( TT& p, uint32_t& phase, std::vector<uint8_t>& 
     }
     forward = !forward;
   }
-
 }
 } /* namespace detail */
 /*! \endcond */
@@ -471,7 +570,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_npn_canonization( const T
   /* initialize permutation and phase */
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   if ( num_vars < 2 )
   {
@@ -528,7 +627,7 @@ std::tuple<TT, uint32_t, std::vector<uint8_t>> sifting_p_canonization( const TT&
   /* initialize permutation and phase */
   std::vector<uint8_t> perm( num_vars );
   std::iota( perm.begin(), perm.end(), 0u );
-  uint32_t phase{0u};
+  uint32_t phase{ 0u };
 
   if ( num_vars < 2u )
   {

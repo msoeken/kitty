@@ -69,12 +69,12 @@ template<typename TT>
 inline TT unary_not_if( const TT& tt, bool cond )
 {
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4146)
+#pragma warning( push )
+#pragma warning( disable : 4146 )
 #endif
   const auto mask = -static_cast<uint64_t>( cond );
 #ifdef _MSC_VER
-#pragma warning(pop)
+#pragma warning( pop )
 #endif
   return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
 }
@@ -142,10 +142,9 @@ inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
     auto res = then_.construct();
 
     std::transform( then_.begin(), then_.end(), else_.begin(), res.begin(),
-      [&]( auto a, auto b ) {
-        return ( j++ % ( 2 * step ) ) < step ? b : a;
-      }
-    );
+                    [&]( auto a, auto b ) {
+                      return ( j++ % ( 2 * step ) ) < step ? b : a;
+                    } );
 
     return res;
   }
@@ -533,7 +532,7 @@ void swap_adjacent_inplace( TT& tt, uint8_t var_index )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         std::swap( *( it + i + step ), *( it + i + 2 * step ) );
       }
@@ -617,7 +616,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         const auto low_to_high = ( *( it + i ) & detail::projections[var_index1] ) >> shift;
         const auto high_to_low = ( *( it + i + step ) << shift ) & detail::projections[var_index1];
@@ -716,7 +715,7 @@ void flip_inplace( TT& tt, uint8_t var_index )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         std::swap( *( it + i ), *( it + i + step ) );
       }
@@ -1239,6 +1238,46 @@ inline TT shift_with_mask( const TT& f, uint8_t mask )
   auto copy = f;
   shift_with_mask_inplace( copy, mask );
   return copy;
+}
+
+/*! \brief Calculates the dual function of the passed truth table.
+
+  \param tt Truth table
+  \return dual of given truth table
+*/
+template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
+kitty::dynamic_truth_table dual_of( const TT& tt )
+{
+  auto numvars = tt.num_vars();
+  auto tt1 = tt;
+  auto tt2 = ~tt1;
+  for ( auto i = 0u; i < numvars; i++ )
+  {
+    tt1 = flip( tt1, i );
+  }
+  return ~tt1;
+}
+
+/*! \brief Extends a given truth table with 'n' variables to 
+	'n+1' variables. To extend, it appends the given truth table
+	in the end of the given truth table. 
+
+  \param tt Truth table
+  \return extended Truth Table
+*/
+template<typename TT, typename = std::enable_if_t<kitty::is_complete_truth_table<TT>::value>>
+kitty::dynamic_truth_table extend_tt( const TT& tt )
+{
+  int num_vars = (int)tt.num_vars();
+  kitty::dynamic_truth_table extended_tt( num_vars + 1 );
+  for ( int i = 0; i < (int)extended_tt.num_bits(); i++ )
+  {
+    if ( kitty::get_bit( tt, i % ( tt.num_bits() ) ) == 1 )
+    {
+      kitty::set_bit( extended_tt, i );
+    }
+  }
+  return extended_tt;
 }
 
 } // namespace kitty
