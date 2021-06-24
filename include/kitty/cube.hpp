@@ -256,8 +256,13 @@ public:
   union {
     struct
     {
+#if KITTY_ENDIAN == KITTY_BIGENDIAN
+      uint32_t _mask;
+      uint32_t _bits;
+#else
       uint32_t _bits;
       uint32_t _mask;
+#endif
     };
     uint64_t _value;
   };
