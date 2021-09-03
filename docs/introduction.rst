@@ -7,7 +7,7 @@ truth table manipulation.  A truth table is represented in terms of
 For example, the truth table for the function :math:`x_0 \land x_1` is
 ``0x8`` (which is ``1000`` in base 2) and the truth table for the
 function :math:`\langle x_0x_1x_2\rangle` is ``0xe8`` (which is
-``1110100`` in base 2).  A single 64-bit word can represent functions
+``11101000`` in base 2).  A single 64-bit word can represent functions
 with up to 6 variables.  To store functions with 7 variables, one
 needs two words, for 8 variables one needs 4 words, and so on.
 
