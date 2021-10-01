@@ -112,3 +112,86 @@ TEST_F( NPNTest, random_functions_exact_p )
     EXPECT_EQ( create_from_npn_config( res ), tt );
   }
 }
+
+TEST_F( NPNTest, random_functions_exact_n )
+{
+  kitty::static_truth_table<6> tt;
+  const std::vector<uint8_t> perm = {0, 1, 2, 3, 4, 5};
+
+  using tuple_t = std::tuple<kitty::static_truth_table<6>, uint32_t, std::vector<uint8_t>>;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res_t = exact_n_canonization( tt );
+
+    const tuple_t res( std::get<0>( res_t ), std::get<1>( res_t ), perm );
+    EXPECT_EQ( create_from_npn_config( res ), tt );
+  }
+}
+
+TEST_F( NPNTest, random_functions_exact_n_complete )
+{
+  kitty::static_truth_table<6> tt;
+  const std::vector<uint8_t> perm = {0, 1, 2, 3, 4, 5};
+
+  using tuple_t = std::tuple<kitty::static_truth_table<6>, uint32_t, std::vector<uint8_t>>;
+
+  for ( auto i = 0; i < 1000; ++i )
+  {
+    create_random( tt );
+    const auto res_t = exact_n_canonization_complete( tt );
+
+    for ( uint32_t neg : std::get<1>( res_t ) )
+    {
+      const tuple_t res( std::get<0>( res_t ), neg, perm );
+      EXPECT_EQ( create_from_npn_config( res ), tt );
+    }
+  }
+}
+
+TEST_F( NPNTest, random_functions_exact_np_enumeration )
+{
+  kitty::static_truth_table<4> tt;
+  using tuple_t = std::tuple<kitty::static_truth_table<4>, uint32_t, std::vector<uint8_t>>;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    exact_np_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg, std::vector<uint8_t> const& perm ) { 
+      const tuple_t res( tts, neg, perm );
+      EXPECT_EQ( create_from_npn_config( res ), tt );
+    } );
+  }
+}
+
+TEST_F( NPNTest, random_functions_exact_p_enumeration )
+{
+  kitty::static_truth_table<4> tt;
+  using tuple_t = std::tuple<kitty::static_truth_table<4>, uint32_t, std::vector<uint8_t>>;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    exact_p_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, std::vector<uint8_t> const& perm ) { 
+      const tuple_t res( tts, 0, perm );
+      EXPECT_EQ( create_from_npn_config( res ), tt );
+    } );
+  }
+}
+
+TEST_F( NPNTest, random_functions_exact_n_enumeration )
+{
+  kitty::static_truth_table<4> tt;
+  const std::vector<uint8_t> perm = {0, 1, 2, 3};
+  using tuple_t = std::tuple<kitty::static_truth_table<4>, uint32_t, std::vector<uint8_t>>;
+
+  for ( auto i = 0; i < 100; ++i )
+  {
+    create_random( tt );
+    exact_n_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg ) { 
+      const tuple_t res( tts, neg, perm );
+      EXPECT_EQ( create_from_npn_config( res ), tt );
+    } );
+  }
+}
