@@ -28,7 +28,6 @@
   \brief Implements NPN canonization algorithms
 
   \author Mathias Soeken
-  \author Alessandro Tempia Calvino
 */
 
 #pragma once

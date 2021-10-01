@@ -28,7 +28,6 @@
   \brief Implements operations to construct truth tables
 
   \author Mathias Soeken
-  \author Alessandro Tempia Calvino
 */
 
 #pragma once
