@@ -1204,16 +1204,16 @@ bool formula_execute_operation( std::stack<TT>& truth_tables, unsigned const op 
 /*! \brief Creates a truth table from a Boolean formula
 
   Translates a Boolean expression to a truth table with
-  the variable ordering defined by `var_names`.
-  The following operations are supported:
-  - NOT: as `!` or `'`
-  - AND: as `*` or `&`
-  - OR: as `+` or `|`
-  - XOR: as `^`
+  the variable names and ordering defined by `var_names`.
+  The supported Boolean operations are the negation `!a`
+  or `a'`, the conjunction `a*b` or `a & b` or `a b`,
+  the disjunction `a+b`, or `a|b`, and the exclusive OR
+  `a^b`. Brackets `()` can be used for the operation
+  order.
 
   \param tt Truth table
   \param from Expression as string
-  \param input_tts Names of inputs and order
+  \param input_tts Variable names
 */
 template<typename TT>
 bool create_from_formula( TT& tt, const std::string& expression, const std::vector<std::string>& var_names )
