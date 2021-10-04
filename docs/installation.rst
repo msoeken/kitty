@@ -1,7 +1,7 @@
 Installation
 ============
 
-kitty is a header-only C++-14 library.  Just add the include directory
+kitty is a header-only C++-17 library.  Just add the include directory
 of kitty to your include directories, and you can integrate kitty into
 your source files using
 
