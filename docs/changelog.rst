@@ -3,6 +3,12 @@ Change Log
 
 Next release
 ------------
+* Constructors: ``create_from_formula`` (contributed by Alessandro Tempia Calvino)
+  `#123 <https://github.com/msoeken/kitty/pull/123>`_
+
+* Canonization: ``exact_n_canonization``, ``exact_n_canonization_complete``, ``exact_np_enumeration``, ``exact_p_enumeration``, ``exact_n_enumeration`` (contributed by Alessandro Tempia Calvino)
+  `#123 <https://github.com/msoeken/kitty/pull/123>`_
+
 * Data structure: ``partial_truth_table`` (contributed by Siang-Yun Lee)
   `#102 <https://github.com/msoeken/kitty/pull/102>`_
 

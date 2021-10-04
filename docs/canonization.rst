@@ -6,8 +6,13 @@ The header ``<kitty/npn.hpp>`` implements NPN canonization algorithms.
 .. doc_brief_table::
    exact_npn_canonization
    exact_p_canonization
+   exact_n_canonization
    flip_swap_npn_canonization
    sifting_npn_canonization
+   exact_np_enumeration
+   exact_p_enumeration
+   exact_n_enumeration
+   exact_n_canonization_complete
    create_from_npn_config
 
 The header ``<kitty/spectral.hpp>`` implements canonization algorithms

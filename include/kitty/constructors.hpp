@@ -1205,7 +1205,7 @@ bool formula_execute_operation( std::stack<TT>& truth_tables, unsigned const op 
   Translates a Boolean expression to a truth table with
   the variable names and ordering defined by `var_names`.
   The supported Boolean operations are the negation `!a`
-  or `a'`, the conjunction `a*b` or `a & b` or `a b`,
+  or `a&apos;`, the conjunction `a*b` or `a&b` or `a b`,
   the disjunction `a+b`, or `a|b`, and the exclusive OR
   `a^b`. Brackets `()` can be used for the operation
   order.
