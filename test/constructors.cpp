@@ -478,3 +478,99 @@ TEST( ConstructorsTest, create_prime )
   EXPECT_EQ( p4._bits, 0x28acu );
   EXPECT_EQ( count_ones( p5 ), 172u );
 }
+
+TEST( ConstrutorsTest, create_unary_from_formula )
+{
+  kitty::static_truth_table<3> f1;
+  const std::vector<std::string> vars = {"a", "b", "c"};
+
+  create_from_formula( f1, "0", vars );
+  EXPECT_EQ( f1, f1.construct() );
+
+  create_from_formula( f1, "1", vars );
+  EXPECT_EQ( f1, ~f1.construct() );
+
+  create_from_formula( f1, "!0", vars );
+  EXPECT_EQ( f1, ~f1.construct() );
+
+  create_from_formula( f1, "!1", vars );
+  EXPECT_EQ( f1, f1.construct() );
+
+  create_from_formula( f1, "0'", vars );
+  EXPECT_EQ( f1, ~f1.construct() );
+
+  create_from_formula( f1, "1'", vars );
+  EXPECT_EQ( f1, f1.construct() );
+
+  create_from_formula( f1, "a", vars );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_formula( f1, "b", vars );
+  EXPECT_EQ( f1._bits, 0xccu );
+
+  create_from_formula( f1, "c", vars );
+  EXPECT_EQ( f1._bits, 0xf0u );
+
+  create_from_formula( f1, "!a", vars );
+  EXPECT_EQ( f1._bits, 0x55u );
+
+  create_from_formula( f1, "a'", vars );
+  EXPECT_EQ( f1._bits, 0x55u );
+
+  create_from_formula( f1, "!!!!a", vars );
+  EXPECT_EQ( f1._bits, 0xaau );
+}
+
+TEST( ConstrutorsTest, create_from_nary_formula )
+{
+  kitty::static_truth_table<3> f1;
+  const std::vector<std::string> vars = {"a", "b", "c"};
+
+  create_from_formula( f1, "a*a", vars );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_formula( f1, "a * b", vars );
+  EXPECT_EQ( f1._bits, 0x88u );
+
+  create_from_formula( f1, "a * b * c", vars );
+  EXPECT_EQ( f1._bits, 0x80u );
+
+  create_from_formula( f1, "(a)", vars );
+  EXPECT_EQ( f1._bits, 0xaau );
+
+  create_from_formula( f1, "a+b", vars );
+  EXPECT_EQ( f1._bits, 0xeeu );
+
+  create_from_formula( f1, "a+b+c", vars );
+  EXPECT_EQ( f1._bits, 0xfeu );
+
+  create_from_formula( f1, "a ^ b", vars );
+  EXPECT_EQ( f1._bits, 0x66u );
+
+  create_from_formula( f1, "a ^ b ^ c", vars );
+  EXPECT_EQ( f1._bits, 0x96u );
+}
+
+TEST( ConstrutorsTest, create_from_formula )
+{
+  kitty::static_truth_table<3> f1;
+  const std::vector<std::string> vars = {"a", "b", "c"};
+
+  create_from_formula( f1, "(a*b) ^ (!a c)", vars );
+  EXPECT_EQ( f1._bits, 0xd8u );
+
+  create_from_formula( f1, "(a b) ^ (a c)^(b c)", vars );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_formula( f1, "a b + a c + b c", vars );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_formula( f1, "((a+b)(a+c)(b+c))", vars );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_formula( f1, "!(a'b' + a'c' + b'c')", vars );
+  EXPECT_EQ( f1._bits, 0xe8u );
+
+  create_from_formula( f1, "!(!(a!(a*b))*!(b!(a*b)))", vars );
+  EXPECT_EQ( f1._bits, 0x66u );
+}
