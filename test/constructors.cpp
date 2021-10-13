@@ -31,6 +31,7 @@
 #include <kitty/constructors.hpp>
 #include <kitty/dynamic_truth_table.hpp>
 #include <kitty/static_truth_table.hpp>
+#include <kitty/partial_truth_table.hpp>
 
 using namespace kitty;
 
@@ -41,6 +42,9 @@ TEST( ConstructorsTest, create )
 
   static_truth_table<5> tt_s;
   EXPECT_EQ( tt_s, create<static_truth_table<5>>( 5 ) );
+
+  partial_truth_table tt_p( 32 );
+  EXPECT_EQ( tt_p, create<partial_truth_table>( 5 ) );
 }
 
 TEST( ConstructorsTest, create_nth_var5 )
