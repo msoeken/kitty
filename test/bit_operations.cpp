@@ -93,6 +93,34 @@ TYPED_TEST( BitOperationsTestT, set_get_clear )
   }
 }
 
+TEST_F( BitOperationsTestT, copy_bit )
+{
+  static_truth_table<5> tt_s;
+  dynamic_truth_table tt_d( 7 );
+  create_random( tt_s );
+  create_random( tt_d );
+
+  copy_bit( tt_s, 17, tt_s, 3 );
+  EXPECT_EQ( get_bit( tt_s, 17 ), get_bit( tt_s, 3 ) );
+  copy_bit( tt_d, 0, tt_d, 127 );
+  EXPECT_EQ( get_bit( tt_d, 0 ), get_bit( tt_d, 127 ) );
+  copy_bit( tt_s, 31, tt_d, 31 );
+  EXPECT_EQ( get_bit( tt_s, 31 ), get_bit( tt_d, 31 ) );
+  copy_bit( tt_d, 80, tt_s, 27 );
+  EXPECT_EQ( get_bit( tt_d, 80 ), get_bit( tt_s, 27 ) );
+
+  tt_s = tt_s.construct();
+  tt_d = ~tt_d.construct();
+
+  for ( auto i = 0u; i < static_cast<uint32_t>( tt_s.num_bits() ); ++i )
+  {
+    EXPECT_EQ( get_bit( tt_s, i ), 0u );
+    copy_bit( tt_d, i, tt_s, i );
+    EXPECT_EQ( get_bit( tt_s, i ), 1u );
+  }
+  EXPECT_EQ( count_ones( tt_s ), tt_s.num_bits() );
+}
+
 TEST_F( BitOperationsTest, find_first_bit )
 {
   EXPECT_EQ( find_first_one_bit( from_hex<3>( "00" ) ), -1 );
