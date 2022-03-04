@@ -93,7 +93,7 @@ TYPED_TEST( BitOperationsTestT, set_get_clear )
   }
 }
 
-TEST_F( BitOperationsTestT, copy_bit )
+TEST_F( BitOperationsTest, copy_bit )
 {
   static_truth_table<5> tt_s;
   dynamic_truth_table tt_d( 7 );

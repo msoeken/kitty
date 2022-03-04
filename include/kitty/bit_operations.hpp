@@ -82,7 +82,7 @@ auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! \brief Clears bit at index (sets bit at index to true)
+/*! \brief Clears bit at index (sets bit at index to false)
 
   \param tt Truth table
   \param index Bit index
@@ -128,8 +128,8 @@ void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
   \param tt_to Truth table to write to
   \param index_to Bit index to write to
 */
-template<typename TT>
-void copy_bit( const TT& tt_from, uint64_t index_from, TT& tt_to, uint64_t index_to )
+template<typename TTfrom, typename TTto>
+void copy_bit( const TTfrom& tt_from, uint64_t index_from, TTto& tt_to, uint64_t index_to )
 {
   if ( get_bit( tt_from, index_from ) )
   {
