@@ -82,12 +82,10 @@ auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! \brief Clears bit at index
+/*! \brief Clears bit at index (sets bit at index to true)
 
   \param tt Truth table
   \param index Bit index
-
-  \return 1 if bit is set, otherwise 0
 */
 template<typename TT>
 void clear_bit( TT& tt, uint64_t index )
@@ -103,7 +101,7 @@ void clear_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 /*! \endcond */
 
-/*! \brief Flip bit at index
+/*! \brief Flips bit at index
 
   \param tt Truth table
   \param index Bit index
@@ -119,6 +117,28 @@ template<uint32_t NumVars>
 void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits ^= uint64_t( 1 ) << index;
+}
+
+/*! \brief Copies bit at index
+ 
+  Copy the bit from `tt_from` at index `index_from` to `tt_to` at index `index_to`.
+
+  \param tt_from Truth table to copy from
+  \param index_from Bit index to copy from
+  \param tt_to Truth table to write to
+  \param index_to Bit index to write to
+*/
+template<typename TT>
+void copy_bit( const TT& tt_from, uint64_t index_from, TT& tt_to, uint64_t index_to )
+{
+  if ( get_bit( tt_from, index_from ) )
+  {
+    set_bit( tt_to, index_to );
+  }
+  else
+  {
+    clear_bit( tt_to, index_to );
+  }
 }
 
 /*! \brief Clears all bits
