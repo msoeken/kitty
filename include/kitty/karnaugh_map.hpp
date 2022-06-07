@@ -9,13 +9,12 @@
 #include "constructors.hpp"
 #include "bit_operations.hpp"
 
-
 namespace kitty{
 template <typename TT>
 class karnaugh_map{
   public:
   karnaugh_map() = delete;
-  karnaugh_map(TT tt) : truth_table( tt ) {
+  karnaugh_map(TT tt) : truth_table(tt) {
       uint64_t num_var = log2(tt.num_bits());
       vars_col = num_var >> 1;
       vars_row = num_var - vars_col;
@@ -56,42 +55,39 @@ private:
   std::vector<uint8_t> row_seq;
   std::vector<uint8_t> col_seq;
 
-    std::string binary( uint8_t long n, uint8_t max_var ){
+  std::string binary( uint8_t long n, uint8_t max_var ){
     std::string result;
     uint8_t count = 0u;
-
     do {
-        result.insert(result.begin(), '0' + (n & 1) );
-        count++;
+      result.insert(result.begin(), '0' + (n & 1) );
+      count++;
     }while (n >>= 1);
-
     for(uint8_t i = 0; i < max_var - count; i++){
-        result.insert(result.begin(), '0');
+      result.insert(result.begin(), '0');
     }
-
     return result;
     }
 
-    void print_space(uint8_t val){
-        for(uint8_t i = 0; i < val; i++){
-            std::cout << " ";
-        }
-    }
+  void print_space(uint8_t val){
+      for(uint8_t i = 0; i < val; i++){
+        std::cout << " ";
+      }
+  }
 
-    std::vector<uint8_t> compute_seq_1ham_dist(uint8_t num_var){
-        if(num_var == 1){
-            return {0, 1};
-        }
-        else{
-            std::vector<uint8_t> res = compute_seq_1ham_dist(num_var - 1);
-            std::vector<uint8_t> res_rev (res.rbegin(), res.rend());
-            for(auto &i : res_rev){
-                i += (1 << (num_var - 1));
-            }
-            res.insert(res.end(), res_rev.begin(), res_rev.end());
-            return res;
-        }
+  std::vector<uint8_t> compute_seq_1ham_dist(uint8_t num_var){
+    if(num_var == 1){
+      return {0, 1};
     }
+    else{
+      std::vector<uint8_t> res = compute_seq_1ham_dist(num_var - 1);
+      std::vector<uint8_t> res_rev (res.rbegin(), res.rend());
+      for(auto &i : res_rev){
+        i += (1 << (num_var - 1));
+      }
+      res.insert(res.end(), res_rev.begin(), res_rev.end());
+      return res;
+    }
+  }
 
 };
 
