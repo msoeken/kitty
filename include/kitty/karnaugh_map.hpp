@@ -41,8 +41,11 @@
 #include <string>
 #include <vector>
 
-namespace kitty {
-template <typename TT> class karnaugh_map {
+namespace kitty
+{
+template<typename TT>
+class karnaugh_map
+{
 public:
   /*! \brief Destroys K-map
    */
@@ -51,40 +54,47 @@ public:
   /*! \brief Construncts K-map from truth table
       \param tt truth table
   */
-  karnaugh_map(TT tt) : truth_table(tt) {
-    uint64_t num_var = log2(tt.num_bits());
+  karnaugh_map( TT tt ) : truth_table( tt )
+  {
+    uint64_t num_var = log2( tt.num_bits() );
     vars_col = num_var >> 1;
     vars_row = num_var - vars_col;
-    col_seq = compute_seq_1ham_dist(vars_col);
-    row_seq = compute_seq_1ham_dist(vars_row);
+    col_seq = compute_seq_1ham_dist( vars_col );
+    row_seq = compute_seq_1ham_dist( vars_row );
   }
 
   /*! \brief Prints K-map
       \param os output stream (default = cout)
  */
-  void print(std::ostream &os = std::cout) {
-    print_space(vars_col, os);
+  void print( std::ostream& os = std::cout )
+  {
+    print_space( vars_col, os );
     os << "    ";
-    for (const auto &i : row_seq) {
-      os << binary(i, vars_row);
-      print_space(vars_row, os);
+    for ( const auto& i : row_seq )
+    {
+      os << binary( i, vars_row );
+      print_space( vars_row, os );
       os << "    ";
     }
-    os << std::endl << std::endl;
+    os << std::endl
+       << std::endl;
 
-    for (const auto &j : col_seq) {
-      os << binary(j, vars_col);
+    for ( const auto& j : col_seq )
+    {
+      os << binary( j, vars_col );
       os << "    ";
-      for (const auto &i : row_seq) {
+      for ( const auto& i : row_seq )
+      {
         uint8_t middle_space = 0;
-        if (vars_row > 2)
+        if ( vars_row > 2 )
           middle_space = vars_row / 2;
-        print_space(middle_space, os);
-        os << get_bit(truth_table, (j << vars_row) + i);
-        print_space((vars_row << 1) - 1 - middle_space, os);
+        print_space( middle_space, os );
+        os << get_bit( truth_table, ( j << vars_row ) + i );
+        print_space( ( vars_row << 1 ) - 1 - middle_space, os );
         os << "    ";
       }
-      os << std::endl << std::endl;
+      os << std::endl
+         << std::endl;
     }
   }
 
@@ -107,17 +117,20 @@ private:
       \param n unsigned to convert
       \param max_var number of bits of the string
   */
-  std::string binary(uint8_t long n, uint8_t max_var) {
+  std::string binary( uint8_t long n, uint8_t max_var )
+  {
     std::string result;
     uint8_t count = 0u;
 
-    do {
-      result.insert(result.begin(), '0' + (n & 1));
+    do
+    {
+      result.insert( result.begin(), '0' + ( n & 1 ) );
       count++;
-    } while (n >>= 1);
+    } while ( n >>= 1 );
 
-    for (uint8_t i = 0; i < max_var - count; i++) {
-      result.insert(result.begin(), '0');
+    for ( uint8_t i = 0; i < max_var - count; i++ )
+    {
+      result.insert( result.begin(), '0' );
     }
 
     return result;
@@ -127,8 +140,10 @@ private:
       \param val number of white space to print
       \param os output stream
   */
-  void print_space(uint8_t val, std::ostream &os) {
-    for (uint8_t i = 0; i < val; i++) {
+  void print_space( uint8_t val, std::ostream& os )
+  {
+    for ( uint8_t i = 0; i < val; i++ )
+    {
       os << " ";
     }
   }
@@ -141,16 +156,21 @@ private:
 
       \param num_var number of variables
   */
-  std::vector<uint8_t> compute_seq_1ham_dist(uint8_t num_var) {
-    if (num_var == 1) {
-      return {0, 1};
-    } else {
-      std::vector<uint8_t> res = compute_seq_1ham_dist(num_var - 1);
-      std::vector<uint8_t> res_rev(res.rbegin(), res.rend());
-      for (auto &i : res_rev) {
-        i += (1 << (num_var - 1));
+  std::vector<uint8_t> compute_seq_1ham_dist( uint8_t num_var )
+  {
+    if ( num_var == 1 )
+    {
+      return { 0, 1 };
+    }
+    else
+    {
+      std::vector<uint8_t> res = compute_seq_1ham_dist( num_var - 1 );
+      std::vector<uint8_t> res_rev( res.rbegin(), res.rend() );
+      for ( auto& i : res_rev )
+      {
+        i += ( 1 << ( num_var - 1 ) );
       }
-      res.insert(res.end(), res_rev.begin(), res_rev.end());
+      res.insert( res.end(), res_rev.begin(), res_rev.end() );
       return res;
     }
   }
