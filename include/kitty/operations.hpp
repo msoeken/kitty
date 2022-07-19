@@ -33,17 +33,17 @@
 
 #pragma once
 
-#include <algorithm>
-#include <cassert>
-#include <functional>
-#include <iterator>
-
 #include "algorithm.hpp"
 #include "dynamic_truth_table.hpp"
 #include "static_truth_table.hpp"
 #include "partial_truth_table.hpp"
 #include "detail/shift.hpp"
 #include "traits.hpp"
+
+#include <algorithm>
+#include <cassert>
+#include <functional>
+#include <iterator>
 
 namespace kitty
 {
@@ -62,6 +62,18 @@ template<typename TT>
 inline TT unary_not( const TT& tt )
 {
   return unary_operation( tt, []( auto a ) { return ~a; } );
+}
+
+template<typename TT>
+inline ternary_truth_table<TT> unary_not( const ternary_truth_table<TT>& tt )
+{
+  return ternary_truth_table<TT>( ~( tt._bits ), tt._care );
+}
+
+template<typename TT>
+inline quaternary_truth_table<TT> unary_not( const quaternary_truth_table<TT>& tt )
+{
+  return quaternary_truth_table<TT>( tt._offset, tt._onset );
 }
 
 /*! Inverts all bits in a truth table, based on a condition */
@@ -87,6 +99,28 @@ inline TT binary_and( const TT& first, const TT& second )
   return binary_operation( first, second, std::bit_and<>() );
 }
 
+/*! \brief Bitwise AND of two ternary truth tables
+ *
+ * Computation rules:
+ * - `0 & 0 = 0 & 1 = 1 & 0 = 0`
+ * - `1 & 1 = 1`
+ * - `0 & - = - & 0 = 0`
+ * - `1 & - = - & 1 = - & - = -`
+ */
+template<typename TT>
+inline ternary_truth_table<TT> unary_and( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return b1 & b2;
+  };
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return ( c1 & c2 ) | ( ~b1 & c1 ) | ( ~b2 & c2 );
+  };
+
+  return ternary_truth_table<TT>( quaternary_operation( first._bits, first._care, second._bits, second._care, op_bits ),
+                                  quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
+}
+
 /*! \brief Bitwise OR of two truth tables */
 template<typename TT>
 inline TT binary_or( const TT& first, const TT& second )
@@ -94,11 +128,54 @@ inline TT binary_or( const TT& first, const TT& second )
   return binary_operation( first, second, std::bit_or<>() );
 }
 
+/*! \brief Bitwise OR of two ternary truth tables
+ *
+ * Computation rules:
+ * - `0 | 0 = 0`
+ * - `0 | 1 = 1 | 0 = 1 | 1 = 1`
+ * - `1 | - = - | 1 = 1`
+ * - `0 | - = - | 0 = - | - = -`
+ */
+template<typename TT>
+inline ternary_truth_table<TT> unary_or( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return b1 | b2;
+  };
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return ( c1 & c2 ) | ( b1 & c1 ) | ( b2 & c2 );
+  };
+
+  return ternary_truth_table<TT>( quaternary_operation( first._bits, first._care, second._bits, second._care, op_bits ),
+                                  quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
+}
+
 /*! \brief Bitwise XOR of two truth tables */
 template<typename TT>
 inline TT binary_xor( const TT& first, const TT& second )
 {
   return binary_operation( first, second, std::bit_xor<>() );
+}
+
+/*! \brief Bitwise XOR of two ternary truth tables
+ *
+ * Computation rules:
+ * - `0 ^ 0 = 1 ^ 1 = 0`
+ * - `0 ^ 1 = 1 ^ 0 = 1`
+ * - `0 ^ - = - ^ 0 = 1 ^ - = - ^ 1 = - ^ - = -`
+ */
+template<typename TT>
+inline ternary_truth_table<TT> unary_xor( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return ( b1 ^ b2 ) & ( c1 & c2 );
+  };
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+    return c1 & c2;
+  };
+
+  return ternary_truth_table<TT>( quaternary_operation( first._bits, first._care, second._bits, second._care, op_bits ),
+                                  quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
 }
 
 /*! \brief Ternary majority of three truth tables */

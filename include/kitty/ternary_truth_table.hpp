@@ -45,7 +45,7 @@ namespace kitty
 template<class TT>
 struct ternary_truth_table
 {
-  /*! Standard constructor.
+  /*! \brief Standard constructor.
 
     Initialize the truth table using the constructor of the inner
     truth table type.
@@ -57,12 +57,36 @@ struct ternary_truth_table
   {
   }
 
-  /*! Empty constructor.
+  /*! \brief Empty constructor.
 
     Creates an empty truth table by calling the empty constructor
     of the inner truth table type.
    */
   ternary_truth_table() : _care(), _bits() {}
+
+  /*! \brief Construct from bits and care.
+
+    When `care` bit is 0, `bits` bit must be 0, meaning a don't care bit.
+
+    \param bits Bits truth table.
+    \param care Care truth table.
+  */
+  ternary_truth_table( TT const& bits, TT const& care )
+    : _bits( bits ), _care( care )
+  {
+  }
+
+  /*! \brief Construct from a binary truth table.
+
+    Initialize the truth table as equivalent to a binary truth table.
+    (All bits are cared.)
+
+    \param binary Binary truth table.
+  */
+  ternary_truth_table( TT const& binary )
+    : _care( ~( binary.construct() ) ), _bits( binary )
+  {
+  }
 
   /*! Constructs a new ternary_truth_table instance of the same size. */
   inline ternary_truth_table<TT> construct() const
@@ -86,47 +110,85 @@ struct ternary_truth_table
    */
   inline auto num_bits() const noexcept { return _bits.num_bits(); }
 
-#if 0
   /*! \brief Begin iterator to bits.
    */
-  inline auto begin() noexcept { return _bits.begin(); }
+  inline auto begin_bits() noexcept { return _bits.begin(); }
 
   /*! \brief End iterator to bits.
    */
-  inline auto end() noexcept { return _bits.end(); }
+  inline auto end_bits() noexcept { return _bits.end(); }
 
   /*! \brief Begin iterator to bits.
    */
-  inline auto begin() const noexcept { return _bits.begin(); }
+  inline auto begin_bits() const noexcept { return _bits.begin(); }
 
   /*! \brief End iterator to bits.
    */
-  inline auto end() const noexcept { return _bits.end(); }
+  inline auto end_bits() const noexcept { return _bits.end(); }
 
   /*! \brief Reverse begin iterator to bits.
    */
-  inline auto rbegin() noexcept { return _bits.rbegin(); }
+  inline auto rbegin_bits() noexcept { return _bits.rbegin(); }
 
   /*! \brief Reverse end iterator to bits.
    */
-  inline auto rend() noexcept { return _bits.rend(); }
+  inline auto rend_bits() noexcept { return _bits.rend(); }
 
   /*! \brief Constant begin iterator to bits.
    */
-  inline auto cbegin() const noexcept { return _bits.cbegin(); }
+  inline auto cbegin_bits() const noexcept { return _bits.cbegin(); }
 
   /*! \brief Constant end iterator to bits.
    */
-  inline auto cend() const noexcept { return _bits.cend(); }
+  inline auto cend_bits() const noexcept { return _bits.cend(); }
 
   /*! \brief Constant reverse begin iterator to bits.
    */
-  inline auto crbegin() const noexcept { return _bits.crbegin(); }
+  inline auto crbegin_bits() const noexcept { return _bits.crbegin(); }
 
   /*! \brief Constant teverse end iterator to bits.
    */
-  inline auto crend() const noexcept { return _bits.crend(); }
-#endif
+  inline auto crend_bits() const noexcept { return _bits.crend(); }
+
+  /*! \brief Begin iterator to care.
+   */
+  inline auto begin_care() noexcept { return _care.begin(); }
+
+  /*! \brief End iterator to care.
+   */
+  inline auto end_care() noexcept { return _care.end(); }
+
+  /*! \brief Begin iterator to care.
+   */
+  inline auto begin_care() const noexcept { return _care.begin(); }
+
+  /*! \brief End iterator to care.
+   */
+  inline auto end_care() const noexcept { return _care.end(); }
+
+  /*! \brief Reverse begin iterator to care.
+   */
+  inline auto rbegin_care() noexcept { return _care.rbegin(); }
+
+  /*! \brief Reverse end iterator to care.
+   */
+  inline auto rend_care() noexcept { return _care.rend(); }
+
+  /*! \brief Constant begin iterator to care.
+   */
+  inline auto cbegin_care() const noexcept { return _care.cbegin(); }
+
+  /*! \brief Constant end iterator to care.
+   */
+  inline auto cend_care() const noexcept { return _care.cend(); }
+
+  /*! \brief Constant reverse begin iterator to care.
+   */
+  inline auto crbegin_care() const noexcept { return _care.crbegin(); }
+
+  /*! \brief Constant teverse end iterator to care.
+   */
+  inline auto crend_care() const noexcept { return _care.crend(); }
 
   /*! \brief Assign other truth table.
 
@@ -146,7 +208,23 @@ struct ternary_truth_table
     return *this;
   }
 
-  /*! Masks valid truth table bits.
+  /*! \brief Assigned by a binary truth table.
+
+    Replaces with a truth table equivalent to a binary truth table.
+    (All bits are cared.)
+
+    \param other Binary truth table.
+  */
+  template<class TT2>
+  ternary_truth_table<TT>& operator=( TT const& other )
+  {
+    _bits = other;
+    _care = ~( other.construct() );
+
+    return *this;
+  }
+
+  /*! \brief Masks valid truth table bits.
 
     This operation makes sure to zero out all unused bits.
   */
