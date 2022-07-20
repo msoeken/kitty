@@ -110,7 +110,7 @@ inline TT binary_and( const TT& first, const TT& second )
  * - `1 & - = - & 1 = - & - = -`
  */
 template<typename TT>
-inline ternary_truth_table<TT> unary_and( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+inline ternary_truth_table<TT> binary_and( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
   auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
     return b1 & b2;
@@ -139,7 +139,7 @@ inline TT binary_or( const TT& first, const TT& second )
  * - `0 | - = - | 0 = - | - = -`
  */
 template<typename TT>
-inline ternary_truth_table<TT> unary_or( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+inline ternary_truth_table<TT> binary_or( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
   auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
     return b1 | b2;
@@ -167,7 +167,7 @@ inline TT binary_xor( const TT& first, const TT& second )
  * - `0 ^ - = - ^ 0 = 1 ^ - = - ^ 1 = - ^ - = -`
  */
 template<typename TT>
-inline ternary_truth_table<TT> unary_xor( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+inline ternary_truth_table<TT> binary_xor( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
   auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
     return ( b1 ^ b2 ) & ( c1 & c2 );
