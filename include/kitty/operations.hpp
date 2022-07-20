@@ -37,6 +37,8 @@
 #include "dynamic_truth_table.hpp"
 #include "static_truth_table.hpp"
 #include "partial_truth_table.hpp"
+#include "ternary_truth_table.hpp"
+#include "quaternary_truth_table.hpp"
 #include "detail/shift.hpp"
 #include "traits.hpp"
 
