@@ -127,7 +127,6 @@ TEST_F(PrintTest, anf_to_expression) {
 TEST_F(PrintTest, print_kmap) {
   static_truth_table<4> tt1;
   create_random(tt1);
-  print_binary(tt1);
   karnaugh_map<static_truth_table<4>> k(tt1);
   std::vector<uint8_t> col_seq = k.get_col_seq();
   std::vector<uint8_t> row_seq = k.get_row_seq();

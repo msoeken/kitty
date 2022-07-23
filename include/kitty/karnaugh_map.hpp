@@ -107,7 +107,7 @@ private:
       \param n unsigned to convert
       \param max_var number of bits of the string
   */
-  std::string binary(uint8_t long n, uint8_t max_var) {
+  std::string binary(uint8_t n, uint8_t max_var) {
     std::string result;
     uint8_t count = 0u;
 
