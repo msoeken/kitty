@@ -36,7 +36,7 @@
 #include "constructors.hpp"
 #include "operators.hpp"
 #include <algorithm>
-#include <cmath>
+#include <math.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -56,7 +56,7 @@ public:
   */
   karnaugh_map( TT tt ) : truth_table( tt )
   {
-    uint64_t num_var = log2( tt.num_bits() );
+    uint64_t num_var = (double) log2( tt.num_bits() );
     vars_col = num_var >> 1;
     vars_row = num_var - vars_col;
     col_seq = compute_seq_1ham_dist( vars_col );
