@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2021  EPFL
+ * Copyright (C) 2017-2022  EPFL
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -56,7 +56,7 @@ public:
   */
   karnaugh_map( TT tt ) : truth_table( tt )
   {
-    uint64_t num_var = log2( ( double ) tt.num_bits() );
+    uint64_t num_var = log2( (double)tt.num_bits() );
     vars_col = num_var >> 1;
     vars_row = num_var - vars_col;
     col_seq = compute_seq_1ham_dist( vars_col );

@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2021  EPFL
+ * Copyright (C) 2017-2022  EPFL
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -120,7 +120,7 @@ void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 
 /*! \brief Copies bit at index
- 
+
   Copy the bit from `tt_from` at index `index_from` to `tt_to` at index `index_to`.
 
   \param tt_from Truth table to copy from
@@ -167,7 +167,8 @@ template<typename TT>
 inline uint64_t count_ones( const TT& tt )
 {
   return std::accumulate( tt.cbegin(), tt.cend(), uint64_t( 0 ),
-                          []( auto accu, auto word ) {
+                          []( auto accu, auto word )
+                          {
                             return accu + __builtin_popcount( word & 0xffffffff ) + __builtin_popcount( word >> 32 );
                           } );
 }
@@ -295,7 +296,8 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
     return -1;
   }
 
-  it = std::find_if( it + 1, tt.cend(), []( auto word ) { return word != 0; } );
+  it = std::find_if( it + 1, tt.cend(), []( auto word )
+                     { return word != 0; } );
 
   if ( it == tt.cend() )
   {
@@ -314,7 +316,8 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
 template<typename TT>
 int64_t find_last_one_bit( const TT& tt )
 {
-  const auto it = std::find_if( tt.crbegin(), tt.crend(), []( auto word ) { return word != 0; } );
+  const auto it = std::find_if( tt.crbegin(), tt.crend(), []( auto word )
+                                { return word != 0; } );
 
   if ( it == tt.crend() )
   {
