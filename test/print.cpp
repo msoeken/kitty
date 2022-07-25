@@ -25,13 +25,17 @@
 
 #include <gtest/gtest.h>
 
-#include <sstream>
-
+#include <kitty/karnaugh_map.hpp>
 #include <kitty/print.hpp>
 #include <kitty/properties.hpp>
 #include <kitty/static_truth_table.hpp>
 
 #include "utility.hpp"
+
+#include <cmath>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace kitty;
 
@@ -47,7 +51,9 @@ TEST_F( PrintTest, print_binary )
   EXPECT_EQ( to_binary( from_hex<1>( "2" ) ), "10" );
   EXPECT_EQ( to_binary( from_hex<2>( "8" ) ), "1000" );
   EXPECT_EQ( to_binary( from_hex<3>( "e8" ) ), "11101000" );
-  EXPECT_EQ( to_binary( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "11111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
+  EXPECT_EQ( to_binary( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ),
+             "111111111111111011111110111010001111111011101000111010001000000011"
+             "11111011101000111010001000000011101000100000001000000000000000" );
 }
 
 TEST_F( PrintTest, print_hex )
@@ -58,7 +64,8 @@ TEST_F( PrintTest, print_hex )
   EXPECT_EQ( to_hex( from_hex<1>( "2" ) ), "2" );
   EXPECT_EQ( to_hex( from_hex<2>( "8" ) ), "8" );
   EXPECT_EQ( to_hex( from_hex<3>( "e8" ) ), "e8" );
-  EXPECT_EQ( to_hex( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ), "fffefee8fee8e880fee8e880e8808000" );
+  EXPECT_EQ( to_hex( from_hex<7>( "fffefee8fee8e880fee8e880e8808000" ) ),
+             "fffefee8fee8e880fee8e880e8808000" );
 }
 
 TEST_F( PrintTest, print_raw )
@@ -92,11 +99,14 @@ TEST_F( PrintTest, xmas_one )
 TEST_F( PrintTest, xmas_all )
 {
   std::stringstream ss;
-  print_xmas_tree_for_functions<dynamic_truth_table>( 3,
-                                                      {{is_krom<dynamic_truth_table>, {31}},
-                                                       {is_horn<dynamic_truth_table>, {32}},
-                                                       {[]( const dynamic_truth_table& f ) { return is_horn( f ) && is_krom( f ); }, {33}}},
-                                                      ss );
+  print_xmas_tree_for_functions<dynamic_truth_table>(
+      3,
+      { { is_krom<dynamic_truth_table>, { 31 } },
+        { is_horn<dynamic_truth_table>, { 32 } },
+        { []( const dynamic_truth_table& f )
+          { return is_horn( f ) && is_krom( f ); },
+          { 33 } } },
+      ss );
   EXPECT_EQ( 7046u, ss.str().size() );
 }
 
@@ -125,4 +135,37 @@ TEST_F( PrintTest, anf_to_expression )
   anf_to_expression_test<5>();
   anf_to_expression_test<6>();
   anf_to_expression_test<7>();
+}
+
+TEST_F( PrintTest, print_kmap )
+{
+  static_truth_table<4> tt1;
+  create_random( tt1 );
+  karnaugh_map<static_truth_table<4>> k( tt1 );
+  std::vector<uint8_t> col_seq = k.get_col_seq();
+  std::vector<uint8_t> row_seq = k.get_row_seq();
+  std::ofstream outfile( "result.txt" );
+  print_kmap( tt1, outfile );
+  outfile.close();
+  std::ifstream infile( "result.txt" );
+  unsigned vars_rows = log2( row_seq.size() );
+  std::string read_bit;
+  for ( uint8_t i = 0u; i < row_seq.size() + 1; i++ )
+  {
+    infile >> read_bit;
+  }
+  while ( !infile.eof() )
+  {
+    for ( const auto& i : col_seq )
+    {
+      for ( const auto& j : row_seq )
+      {
+        infile >> read_bit;
+        EXPECT_EQ( std::stoi( read_bit ), get_bit( tt1, ( i << ( vars_rows ) ) + j ) );
+      }
+      if ( !infile.eof() )
+        infile >> read_bit;
+    }
+  }
+  infile.close();
 }
