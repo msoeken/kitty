@@ -60,7 +60,6 @@ TEST_F( HashTest, hash_static )
   EXPECT_LE( counts.size(), 10u );
 }
 
-
 TEST_F( HashTest, hash_dynamic )
 {
   std::unordered_map<dynamic_truth_table, uint64_t, hash<dynamic_truth_table>> counts;

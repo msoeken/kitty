@@ -78,7 +78,7 @@ TEST( PartialTruthTableTest, hex_binary )
   create_from_hex_string( tt1, "fffefee8fee8e880fee8e880e8808000" );
   EXPECT_EQ( to_hex( tt1 ), "fffefee8fee8e880fee8e880e8808000" );
   EXPECT_EQ( to_binary( tt1 ), "11111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
-  
+
   partial_truth_table tt2( 10 );
   create_from_hex_string( tt2, "1a3" );
   EXPECT_EQ( to_hex( tt2 ), "1a3" );
@@ -93,7 +93,6 @@ TEST( PartialTruthTableTest, hex_binary )
   create_from_hex_string( tt4, "7ffefee8fee8e880fee8e880e8808000" );
   EXPECT_EQ( to_hex( tt4 ), "7ffefee8fee8e880fee8e880e8808000" );
   EXPECT_EQ( to_binary( tt4 ), "1111111111111101111111011101000111111101110100011101000100000001111111011101000111010001000000011101000100000001000000000000000" );
-
 }
 
 TEST( PartialTruthTableTest, create_nth_var5 )
@@ -126,10 +125,10 @@ TEST( PartialTruthTableTest, operations )
   auto const tt4_d = tt1_d >> 100;
   auto const tt4_p = tt1_p >> 100;
 
-  EXPECT_EQ( (~tt1_p)._bits, (~tt1_d)._bits );
+  EXPECT_EQ( ( ~tt1_p )._bits, ( ~tt1_d )._bits );
   EXPECT_EQ( tt3_p._bits, tt3_d._bits );
   EXPECT_EQ( tt4_p._bits, tt4_d._bits );
-  EXPECT_TRUE( tt1_p == ~(~tt1_p) );
+  EXPECT_TRUE( tt1_p == ~( ~tt1_p ) );
 }
 
 TEST( PartialTruthTableTest, erase_bit )
@@ -141,7 +140,7 @@ TEST( PartialTruthTableTest, erase_bit )
   tt.erase_bit_shift( 3 );
   str.erase( tt.num_bits() - 3, 1 );
   EXPECT_EQ( to_binary( tt ), str );
-  
+
   tt.erase_bit_swap( 10 );
   std::swap( str[0], str[tt.num_bits() - 10] );
   str.erase( 0, 1 );
@@ -150,7 +149,7 @@ TEST( PartialTruthTableTest, erase_bit )
   tt.erase_bit_shift( 95 );
   str.erase( tt.num_bits() - 95, 1 );
   EXPECT_EQ( to_binary( tt ), str );
-  
+
   tt.erase_bit_swap( 88 );
   std::swap( str[0], str[tt.num_bits() - 88] );
   str.erase( 0, 1 );

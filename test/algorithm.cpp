@@ -46,11 +46,13 @@ TEST_F( AlgorithmTest, for_each_static_large )
   create_majority( tt );
 
   std::deque<uint64_t> blocks;
-  for_each_block( tt, [&blocks]( auto block ) { blocks.push_back( block ); } );
+  for_each_block( tt, [&blocks]( auto block )
+                  { blocks.push_back( block ); } );
   EXPECT_TRUE( std::equal( tt._bits.begin(), tt._bits.end(), blocks.begin(), blocks.end() ) );
 
   blocks.clear();
-  for_each_block_reversed( tt, [&blocks]( auto block ) { blocks.push_front( block ); } );
+  for_each_block_reversed( tt, [&blocks]( auto block )
+                           { blocks.push_front( block ); } );
   EXPECT_TRUE( std::equal( tt._bits.begin(), tt._bits.end(), blocks.begin(), blocks.end() ) );
 }
 
@@ -60,11 +62,13 @@ TEST_F( AlgorithmTest, for_each_dynamic_large )
   create_majority( tt );
 
   std::deque<uint64_t> blocks;
-  for_each_block( tt, [&blocks]( auto block ) { blocks.push_back( block ); } );
+  for_each_block( tt, [&blocks]( auto block )
+                  { blocks.push_back( block ); } );
   EXPECT_TRUE( std::equal( tt._bits.begin(), tt._bits.end(), blocks.begin(), blocks.end() ) );
 
   blocks.clear();
-  for_each_block_reversed( tt, [&blocks]( auto block ) { blocks.push_front( block ); } );
+  for_each_block_reversed( tt, [&blocks]( auto block )
+                           { blocks.push_front( block ); } );
   EXPECT_TRUE( std::equal( tt._bits.begin(), tt._bits.end(), blocks.begin(), blocks.end() ) );
 }
 
@@ -74,12 +78,14 @@ TEST_F( AlgorithmTest, for_each_static_small )
   create_majority( tt );
 
   std::deque<uint64_t> blocks;
-  for_each_block( tt, [&blocks]( auto block ) { blocks.push_back( block ); } );
+  for_each_block( tt, [&blocks]( auto block )
+                  { blocks.push_back( block ); } );
   EXPECT_TRUE( blocks.size() == 1 );
   EXPECT_EQ( blocks.front(), tt._bits );
 
   blocks.clear();
-  for_each_block_reversed( tt, [&blocks]( auto block ) { blocks.push_front( block ); } );
+  for_each_block_reversed( tt, [&blocks]( auto block )
+                           { blocks.push_front( block ); } );
   EXPECT_TRUE( blocks.size() == 1 );
   EXPECT_EQ( blocks.front(), tt._bits );
 }
@@ -90,12 +96,14 @@ TEST_F( AlgorithmTest, for_each_dynamic_small )
   create_majority( tt );
 
   std::deque<uint64_t> blocks;
-  for_each_block( tt, [&blocks]( auto block ) { blocks.push_back( block ); } );
+  for_each_block( tt, [&blocks]( auto block )
+                  { blocks.push_back( block ); } );
   EXPECT_TRUE( blocks.size() == 1 );
   EXPECT_EQ( blocks.front(), tt._bits.front() );
 
   blocks.clear();
-  for_each_block_reversed( tt, [&blocks]( auto block ) { blocks.push_front( block ); } );
+  for_each_block_reversed( tt, [&blocks]( auto block )
+                           { blocks.push_front( block ); } );
   EXPECT_TRUE( blocks.size() == 1 );
   EXPECT_EQ( blocks.front(), tt._bits.front() );
 }
@@ -106,8 +114,9 @@ TEST_F( AlgorithmTest, for_each_one_bit_static_small )
   create_majority( tt );
 
   std::vector<uint64_t> bits;
-  for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
-  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
+  for_each_one_bit( tt, [&bits]( auto bit )
+                    { bits.push_back( bit ); } );
+  EXPECT_EQ( bits, std::vector<uint64_t>( { 3, 5, 6, 7 } ) );
 }
 
 TEST_F( AlgorithmTest, for_each_one_bit_dynamic_small )
@@ -116,8 +125,9 @@ TEST_F( AlgorithmTest, for_each_one_bit_dynamic_small )
   create_majority( tt );
 
   std::vector<uint64_t> bits;
-  for_each_one_bit( tt, [&bits]( auto bit ) { bits.push_back( bit ); } );
-  EXPECT_EQ( bits, std::vector<uint64_t>( {3, 5, 6, 7} ) );
+  for_each_one_bit( tt, [&bits]( auto bit )
+                    { bits.push_back( bit ); } );
+  EXPECT_EQ( bits, std::vector<uint64_t>( { 3, 5, 6, 7 } ) );
 }
 
 TEST_F( AlgorithmTest, for_each_one_bit_static_large )
@@ -125,7 +135,8 @@ TEST_F( AlgorithmTest, for_each_one_bit_static_large )
   static_truth_table<9> tt, tt2;
   create_majority( tt );
 
-  for_each_one_bit( tt, [&tt2]( auto bit ) { set_bit( tt2, bit ); } );
+  for_each_one_bit( tt, [&tt2]( auto bit )
+                    { set_bit( tt2, bit ); } );
 
   EXPECT_EQ( tt, tt2 );
 }
@@ -135,8 +146,8 @@ TEST_F( AlgorithmTest, for_each_one_bit_dynamic_large )
   dynamic_truth_table tt( 9 ), tt2( 9 );
   create_majority( tt );
 
-  for_each_one_bit( tt, [&tt2]( auto bit ) { set_bit( tt2, bit ); } );
+  for_each_one_bit( tt, [&tt2]( auto bit )
+                    { set_bit( tt2, bit ); } );
 
   EXPECT_EQ( tt, tt2 );
 }
-
