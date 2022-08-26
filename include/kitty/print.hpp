@@ -43,6 +43,7 @@
 
 #include "algorithm.hpp"
 #include "operations.hpp"
+#include "constructors.hpp"
 
 namespace kitty
 {
@@ -176,6 +177,35 @@ inline void print_binary( const partial_truth_table& tt, std::ostream& os = std:
 }
 /*! \endcond */
 
+template<typename TT>
+void print_binary( ternary_truth_table<TT>& tt, std::ostream& os = std::cout )
+{
+  auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
+  std::string tt_string = "";
+  for_each_block_reversed( tt._bits, [&os, &tt_string, chunk_size]( auto word ) {
+    std::string chunk( chunk_size, '0' );
+    auto it = chunk.rbegin();
+    while ( word && it != chunk.rend() )
+    {
+      if ( word & 1 )
+      {
+        *it = '1';
+      }
+      ++it;
+      word >>= 1;
+    }
+    tt_string += chunk;
+  } );
+  for( auto i = 0; i < tt.num_bits(); i++ )
+  {
+    if( is_dont_care( tt, tt.num_bits() - 1 - i ) )
+    {
+      tt_string[i] = '-';
+    }
+  }
+  os << tt_string;
+}
+
 /*! \brief Prints truth table in hexadecimal representation
 
   The most-significant bit will be the first character of the string.
@@ -183,7 +213,7 @@ inline void print_binary( const partial_truth_table& tt, std::ostream& os = std:
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT>
+template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
@@ -252,7 +282,7 @@ inline void print_hex( const partial_truth_table& tt, std::ostream& os = std::co
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT>
+template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
 void print_raw( const TT& tt, std::ostream& os )
 {
   for_each_block( tt, [&os]( auto word ) {
@@ -267,10 +297,24 @@ void print_raw( const TT& tt, std::ostream& os )
   \param tt Truth table
 */
 template<typename TT>
-inline std::string to_binary( const TT& tt )
+inline std::string to_binary( TT& tt )
 {
   std::stringstream st;
   print_binary( tt, st );
+  return st.str();
+}
+
+/*! \brief Returns ternary truth table as a string in binary representation
+
+  Calls `print_binary` internally on a string stream.
+
+  \param tt Ternary truth table
+*/
+template<typename TT>
+inline std::string to_binary( const ternary_truth_table<TT>& tt )
+{
+  std::stringstream st;
+  print_binary<TT>( tt, st );
   return st.str();
 }
 
@@ -280,7 +324,7 @@ inline std::string to_binary( const TT& tt )
 
   \param tt Truth table
 */
-template<typename TT>
+template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
 inline std::string to_hex( const TT& tt )
 {
   std::stringstream st;
@@ -298,7 +342,7 @@ inline std::string to_hex( const TT& tt )
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
   detail::print_xmas_tree( os, tt.num_vars(),
@@ -379,6 +423,20 @@ std::string anf_to_expression( const TT& anf )
   } );
 
   return terms == 1 ? expr : "[" + expr + "]";
+}
+
+/*! \brief Creates an expression for an ANF form
+
+  All don't cares are considered to be zero.
+
+  It is a "restricted" ANF for the ternary turth table.
+ *
+ * \param anf Ternary truth table in ANF encoding
+ */
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+std::string anf_to_expression( const ternary_truth_table<TT>& anf )
+{
+  return anf_to_expression( anf._bits );
 }
 
 } /* namespace kitty */

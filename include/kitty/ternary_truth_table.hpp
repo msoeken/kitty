@@ -35,9 +35,11 @@
 #include <cstdint>
 #include <type_traits>
 #include <vector>
+#include <optional>
 
 #include "detail/constants.hpp"
 #include "traits.hpp"
+#include "partial_truth_table.hpp"
 
 namespace kitty
 {
@@ -222,48 +224,6 @@ struct ternary_truth_table
     _care = ~( other.construct() );
 
     return *this;
-  }
-
-  /*! \brief Masks valid truth table bits.
-
-    This operation makes sure to zero out all unused bits.
-  */
-  inline void mask_bits() noexcept
-  {
-    _care.mask_bits();
-    _bits.mask_bits();
-  }
-
-  bool is_dont_care( uint64_t index )
-  {
-    return get_bit( _care, index );
-  }
-
-  std::optional<bool> get_bit( uint64_t index )
-  {
-    return get_bit( _care, index ) ? get_bit( _bits, index ) : std::nullopt;
-  }
-
-  void set_bit( uint64_t index, bool value = true )
-  {
-    set_bit( _care, index );
-    if ( value )
-      set_bit( _bits, index );
-    else
-      clear_bit( _bits, index );
-  }
-
-  void flip_bit( uint64_t index )
-  {
-    if ( !get_bit( _care, index ) )
-      return;
-    flip_bit( _bits, index );
-  }
-
-  void set_dont_care( uint64_t index )
-  {
-    clear_bit( _care, index );
-    clear_bit( _bits, index );
   }
 
   /*! \cond PRIVATE */
