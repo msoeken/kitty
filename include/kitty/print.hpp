@@ -208,7 +208,8 @@ void print_binary( const ternary_truth_table<TT>& tt, std::ostream& os = std::co
     }
   }
   os << tt_string;
-  
+}
+
 /*! \brief Prints K-map of given truth table.
 
   Columns represent the values of the least significant variables, rows of the
@@ -231,7 +232,7 @@ void print_kmap( const TT& tt, std::ostream& os = std::cout )
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
+template<typename TT, typename = std::enable_if_t<is_completely_specified_truth_table<TT>::value>>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size =
@@ -295,7 +296,7 @@ inline void print_hex( const partial_truth_table& tt,
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>>
 void print_raw( const TT& tt, std::ostream& os )
 {
   for_each_block( tt, [&os]( auto word )
@@ -322,7 +323,7 @@ inline std::string to_binary( const TT& tt )
 
   \param tt Truth table
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
+template<typename TT, typename = std::enable_if_t<is_completely_specified_truth_table<TT>::value>>
 inline std::string to_hex( const TT& tt )
 {
   std::stringstream st;
@@ -340,7 +341,7 @@ inline std::string to_hex( const TT& tt )
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<is_completely_specified_truth_table<TT>::value>>
 
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
@@ -389,7 +390,7 @@ void print_xmas_tree_for_functions(
                           return p.first( tt );
                         },
                         p.second ); } );
-                        
+
   detail::print_xmas_tree( os, 1 << num_vars, _preds );
 }
 

@@ -104,12 +104,9 @@ auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 \return 1 if bit is set, 0 if it is reset, nullopt if it is a don't care
 */
 template<typename TT>
-std::optional<bool> get_bit( const ternary_truth_table<TT>& tt, uint64_t index )
+auto get_bit( const ternary_truth_table<TT>& tt, uint64_t index )
 {
-  if ( get_bit( tt._care, index ) )
-    return get_bit( tt._bits, index );
-  else
-    return std::nullopt;
+  return get_bit( tt._bits, index );
 }
 
 /*! \endcond */
@@ -159,7 +156,7 @@ void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
   tt._bits ^= uint64_t( 1 ) << index;
 }
 
-/*! \brief Checks if a bit in a ternary truth table is a don't care
+/*! \brief Checks if a bit in a truth table is a don't care
 
   \param tt Ternary truth table
   \param index Bit index
@@ -168,6 +165,13 @@ template<typename TT>
 bool is_dont_care( const ternary_truth_table<TT>& tt, uint64_t index )
 {
   return !get_bit( tt._care, index );
+}
+
+/*! \cond PRIVATE */
+template<typename TT>
+bool is_dont_care( const TT& tt, uint64_t index )
+{
+  return false;
 }
 
 /*! \brief Sets a bit in a ternary truth table as a don't care

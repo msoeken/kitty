@@ -1733,10 +1733,10 @@ inline auto compose_truth_table( const ternary_truth_table<TTf>& f, const std::v
       {
         return ( a | detail::projections_neg[f.num_vars() - j - 1] );
       };
-      auto bit = get_bit( vars[j], i );
-      if ( bit.has_value() )
+      if ( !is_dont_care( vars[j], i ) )
       {
-        if ( bit.value() )
+        auto bit = get_bit( vars[j], i );
+        if ( bit )
         {
           auto ttt_mask = ternary_truth_table<TTf>( unary_operation( tt_mask, projection ) );
           f_copy &= ttt_mask;
