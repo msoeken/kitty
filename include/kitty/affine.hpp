@@ -130,9 +130,8 @@ TT exact_linear_canonization_old( const TT& tt )
 
   auto min = tt;
 
-  detail::for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask ) {
-    min = std::min( min, detail::permute_with_masks_opt( tt, mask ) );
-  } );
+  detail::for_each_permutation_mask( tt.num_vars(), [&min, &tt]( const auto* mask )
+                                     { min = std::min( min, detail::permute_with_masks_opt( tt, mask ) ); } );
 
   return min;
 }

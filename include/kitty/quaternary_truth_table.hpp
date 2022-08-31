@@ -53,7 +53,7 @@ struct quaternary_truth_table
     \param n Number of variables or number of bits (when `TT = partial_truth_table`)
   */
   explicit quaternary_truth_table( uint32_t n )
-    : _onset( n ), _offset( n )
+      : _onset( n ), _offset( n )
   {
   }
 
@@ -75,7 +75,7 @@ struct quaternary_truth_table
     \param offset Offset truth table.
   */
   quaternary_truth_table( TT const& onset, TT const& offset )
-    : _onset( onset ), _offset( offset )
+      : _onset( onset ), _offset( offset )
   {
   }
 
@@ -88,7 +88,7 @@ struct quaternary_truth_table
     \param binary Binary truth table.
   */
   quaternary_truth_table( TT const& binary )
-    : _onset( binary ), _offset( ~binary )
+      : _onset( binary ), _offset( ~binary )
   {
   }
 
@@ -247,9 +247,13 @@ public: /* fields */
 };
 
 template<class TT>
-struct is_truth_table<kitty::quaternary_truth_table<TT>> : is_truth_table<TT> {};
+struct is_truth_table<kitty::quaternary_truth_table<TT>> : is_truth_table<TT>
+{
+};
 
 template<class TT>
-struct is_complete_truth_table<kitty::quaternary_truth_table<TT>> : is_complete_truth_table<TT> {};
+struct is_complete_truth_table<kitty::quaternary_truth_table<TT>> : is_complete_truth_table<TT>
+{
+};
 
 } // namespace kitty

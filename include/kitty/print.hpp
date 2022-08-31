@@ -75,7 +75,7 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
                              const std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>>& style_predicates = {} )
 {
   /* create rows */
-  std::vector<std::vector<uint16_t>> current( 1, {0} ), next;
+  std::vector<std::vector<uint16_t>> current( 1, { 0 } ), next;
 
   for ( auto i = 0u; i < num_vars; ++i )
   {
@@ -84,10 +84,12 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
       if ( row.size() != 1u )
       {
         next.emplace_back();
-        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( auto cell ) { return cell << 1; } );
+        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( auto cell )
+                        { return cell << 1; } );
       }
       next.emplace_back( 1, row.front() << 1 );
-      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( auto cell ) { return ( cell << 1 ) ^ 1; } );
+      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( auto cell )
+                      { return ( cell << 1 ) ^ 1; } );
     }
 
     std::swap( current, next );
@@ -130,7 +132,8 @@ template<typename TT>
 void print_binary( const TT& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
-  for_each_block_reversed( tt, [&os, chunk_size]( auto word ) {
+  for_each_block_reversed( tt, [&os, chunk_size]( auto word )
+                           {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -142,8 +145,7 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
       ++it;
       word >>= 1;
     }
-    os << chunk;
-  } );
+    os << chunk; } );
 }
 
 /*! \cond PRIVATE */
@@ -151,7 +153,8 @@ inline void print_binary( const partial_truth_table& tt, std::ostream& os = std:
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
   bool first = true;
-  for_each_block_reversed( tt, [&tt, &os, chunk_size, &first]( auto word ) {
+  for_each_block_reversed( tt, [&tt, &os, chunk_size, &first]( auto word )
+                           {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -172,17 +175,17 @@ inline void print_binary( const partial_truth_table& tt, std::ostream& os = std:
     else
     {
       os << chunk;
-    }
-  } );
+    } } );
 }
 /*! \endcond */
 
 template<typename TT>
-void print_binary( ternary_truth_table<TT>& tt, std::ostream& os = std::cout )
+void print_binary( const ternary_truth_table<TT>& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
   std::string tt_string = "";
-  for_each_block_reversed( tt._bits, [&os, &tt_string, chunk_size]( auto word ) {
+  for_each_block_reversed( tt._bits, [&os, &tt_string, chunk_size]( auto word )
+                           {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -194,11 +197,10 @@ void print_binary( ternary_truth_table<TT>& tt, std::ostream& os = std::cout )
       ++it;
       word >>= 1;
     }
-    tt_string += chunk;
-  } );
-  for( auto i = 0; i < tt.num_bits(); i++ )
+    tt_string += chunk; } );
+  for ( auto i = 0; i < tt.num_bits(); i++ )
   {
-    if( is_dont_care( tt, tt.num_bits() - 1 - i ) )
+    if ( is_dont_care( tt, tt.num_bits() - 1 - i ) )
     {
       tt_string[i] = '-';
     }
@@ -213,12 +215,13 @@ void print_binary( ternary_truth_table<TT>& tt, std::ostream& os = std::cout )
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
 
-  for_each_block_reversed( tt, [&os, chunk_size]( auto word ) {
+  for_each_block_reversed( tt, [&os, chunk_size]( auto word )
+                           {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -235,15 +238,15 @@ void print_hex( const TT& tt, std::ostream& os = std::cout )
       ++it;
       word >>= 4;
     }
-    os << chunk;
-  } );
+    os << chunk; } );
 }
 
 /*! \cond PRIVATE */
 inline void print_hex( const partial_truth_table& tt, std::ostream& os = std::cout )
 {
   bool first = true;
-  for_each_block_reversed( tt, [&tt, &os, &first]( auto word ) {
+  for_each_block_reversed( tt, [&tt, &os, &first]( auto word )
+                           {
     std::string chunk( 16, '0' );
     auto it = chunk.rbegin();
     while ( word && it != chunk.rend() )
@@ -269,8 +272,7 @@ inline void print_hex( const partial_truth_table& tt, std::ostream& os = std::co
     else
     {
       os << chunk;
-    }
-  } );
+    } } );
 }
 /*! \endcond */
 
@@ -282,12 +284,11 @@ inline void print_hex( const partial_truth_table& tt, std::ostream& os = std::co
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
 void print_raw( const TT& tt, std::ostream& os )
 {
-  for_each_block( tt, [&os]( auto word ) {
-    os.write( reinterpret_cast<char*>( &word ), sizeof( word ) );
-  } );
+  for_each_block( tt, [&os]( auto word )
+                  { os.write( reinterpret_cast<char*>( &word ), sizeof( word ) ); } );
 }
 
 /*! \brief Returns truth table as a string in binary representation
@@ -297,24 +298,10 @@ void print_raw( const TT& tt, std::ostream& os )
   \param tt Truth table
 */
 template<typename TT>
-inline std::string to_binary( TT& tt )
+inline std::string to_binary( const TT& tt )
 {
   std::stringstream st;
   print_binary( tt, st );
-  return st.str();
-}
-
-/*! \brief Returns ternary truth table as a string in binary representation
-
-  Calls `print_binary` internally on a string stream.
-
-  \param tt Ternary truth table
-*/
-template<typename TT>
-inline std::string to_binary( const ternary_truth_table<TT>& tt )
-{
-  std::stringstream st;
-  print_binary<TT>( tt, st );
   return st.str();
 }
 
@@ -324,7 +311,7 @@ inline std::string to_binary( const ternary_truth_table<TT>& tt )
 
   \param tt Truth table
 */
-template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
 inline std::string to_hex( const TT& tt )
 {
   std::stringstream st;
@@ -342,12 +329,16 @@ inline std::string to_hex( const TT& tt )
   \param tt Truth table
   \param os Output stream
 */
-template<typename TT, typename TT1, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<TT1>>::value>>
+template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
   detail::print_xmas_tree( os, tt.num_vars(),
-                           {{[&]( auto v ) { return get_bit( tt, v ); }, {32}},
-                            {[&]( auto v ) { return !get_bit( tt, v ); }, {31}}} );
+                           { { [&]( auto v )
+                               { return get_bit( tt, v ); },
+                               { 32 } },
+                             { [&]( auto v )
+                               { return !get_bit( tt, v ); },
+                               { 31 } } } );
 }
 
 /*! \brief Prints all Boolean functions of n variables in christmas tree pattern
@@ -373,12 +364,13 @@ void print_xmas_tree_for_functions( uint32_t num_vars,
 {
   std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>> _preds;
   std::transform( style_predicates.begin(), style_predicates.end(), std::back_inserter( _preds ),
-                  [&]( const auto& p ) { return std::make_pair( [&]( uint16_t v ) {
+                  [&]( const auto& p )
+                  { return std::make_pair( [&]( uint16_t v )
+                                           {
                                            auto tt = create<TT>( num_vars );
                                            std::copy( &v, &v + 1, tt.begin() );
-                                           return p.first( tt );
-                                         },
-                                                                p.second ); } );
+                                           return p.first( tt ); },
+                                           p.second ); } );
   detail::print_xmas_tree( os, 1 << num_vars, _preds );
 }
 
@@ -398,7 +390,8 @@ std::string anf_to_expression( const TT& anf )
 
   std::string expr;
 
-  for_each_one_bit( anf, [&]( auto bit ) {
+  for_each_one_bit( anf, [&]( auto bit )
+                    {
     if ( bit == 0 )
     {
       expr += "1";
@@ -419,8 +412,7 @@ std::string anf_to_expression( const TT& anf )
     if ( weight != 1 )
     {
       expr += ")";
-    }
-  } );
+    } } );
 
   return terms == 1 ? expr : "[" + expr + "]";
 }

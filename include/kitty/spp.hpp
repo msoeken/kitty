@@ -69,7 +69,8 @@ inline std::pair<std::vector<cube>, std::vector<uint64_t>> simple_spp( const std
     }
 
     const auto it = std::find_if( copy.begin() + i, copy.begin() + e,
-                                  [&]( auto const& c2 ) {
+                                  [&]( auto const& c2 )
+                                  {
                                     bool cnd1 = ( c2._mask & var_mask ) == c2._mask;
                                     const auto same_mask = c._mask & c2._mask;
                                     bool cnd2 = ( c._bits & same_mask ) == ( c2._bits & same_mask );
@@ -91,7 +92,7 @@ inline std::pair<std::vector<cube>, std::vector<uint64_t>> simple_spp( const std
   }
 
   copy.resize( e );
-  return {copy, sums};
+  return { copy, sums };
 }
 
 /*! \brief Creates truth table from SPP

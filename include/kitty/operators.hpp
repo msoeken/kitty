@@ -327,7 +327,6 @@ inline ternary_truth_table<TT> operator<<( const ternary_truth_table<TT>& tt, ui
   return shift_left( tt, shift );
 }
 
-
 /*! \brief Operator for left_shift_inplace */
 inline void operator<<=( dynamic_truth_table& tt, uint64_t shift )
 {

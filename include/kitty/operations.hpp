@@ -64,7 +64,8 @@ dynamic_truth_table create<dynamic_truth_table>( unsigned num_vars );
 template<typename TT>
 inline TT unary_not( const TT& tt )
 {
-  return unary_operation( tt, []( auto a ) { return ~a; } );
+  return unary_operation( tt, []( auto a )
+                          { return ~a; } );
 }
 
 template<typename TT>
@@ -84,14 +85,15 @@ template<typename TT>
 inline TT unary_not_if( const TT& tt, bool cond )
 {
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable:4146)
+#pragma warning( push )
+#pragma warning( disable : 4146 )
 #endif
   const auto mask = -static_cast<uint64_t>( cond );
 #ifdef _MSC_VER
-#pragma warning(pop)
+#pragma warning( pop )
 #endif
-  return unary_operation( tt, [mask]( auto a ) { return a ^ mask; } );
+  return unary_operation( tt, [mask]( auto a )
+                          { return a ^ mask; } );
 }
 
 /*! \brief Bitwise AND of two truth tables */
@@ -113,10 +115,12 @@ inline TT binary_and( const TT& first, const TT& second )
 template<typename TT>
 inline ternary_truth_table<TT> binary_and( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
-  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return b1 & b2;
   };
-  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return ( c1 & c2 ) | ( ~b1 & c1 ) | ( ~b2 & c2 );
   };
 
@@ -142,10 +146,12 @@ inline TT binary_or( const TT& first, const TT& second )
 template<typename TT>
 inline ternary_truth_table<TT> binary_or( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
-  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return b1 | b2;
   };
-  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return b1 | b2 | ( c1 & c2 );
   };
 
@@ -170,10 +176,12 @@ inline TT binary_xor( const TT& first, const TT& second )
 template<typename TT>
 inline ternary_truth_table<TT> binary_xor( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
-  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return ( b1 ^ b2 ) & ( c1 & c2 );
   };
-  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return c1 & c2;
   };
 
@@ -185,23 +193,27 @@ inline ternary_truth_table<TT> binary_xor( const ternary_truth_table<TT>& first,
 template<typename TT>
 inline TT ternary_majority( const TT& first, const TT& second, const TT& third )
 {
-  return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & ( b ^ c ) ) ^ ( b & c ); } );
+  return ternary_operation( first, second, third, []( auto a, auto b, auto c )
+                            { return ( a & ( b ^ c ) ) ^ ( b & c ); } );
 }
 
 /*! \brief Ternary majority of three truth tables */
 template<typename TT>
 inline ternary_truth_table<TT> ternary_majority( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second, const ternary_truth_table<TT>& third )
 {
-  auto const op_bits = []( auto a, auto b, auto c) {
+  auto const op_bits = []( auto a, auto b, auto c )
+  {
     return ( a & ( b ^ c ) ) ^ ( b & c );
   };
-  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 ) {
+  auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
+  {
     return ( b1 & c1 & b2 & c2 ) | ( ( ~b1 ) & c1 & ( ~b2 ) & c2 );
   };
   TT care12 = quaternary_operation( first._bits, first._care, second._bits, second._care, op_care );
   TT care23 = quaternary_operation( second._bits, second._care, third._bits, third._care, op_care );
   TT care13 = quaternary_operation( first._bits, first._care, third._bits, third._care, op_care );
-  auto const ternary_or = []( auto a, auto b, auto c ) {
+  auto const ternary_or = []( auto a, auto b, auto c )
+  {
     return a | b | c;
   };
   return ternary_truth_table<TT>( ternary_operation( first._bits, second._bits, third._bits, op_bits ),
@@ -217,28 +229,33 @@ inline ternary_truth_table<TT> ternary_majority( const ternary_truth_table<TT>& 
 template<typename TT>
 inline TT ternary_ite( const TT& first, const TT& second, const TT& third )
 {
-  return ternary_operation( first, second, third, []( auto a, auto b, auto c ) { return ( a & b ) ^ ( ~a & c ); } );
+  return ternary_operation( first, second, third, []( auto a, auto b, auto c )
+                            { return ( a & b ) ^ ( ~a & c ); } );
 }
 
 template<typename TT>
 inline ternary_truth_table<TT> ternary_ite( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second, const ternary_truth_table<TT>& third )
 {
-  auto const op_bits = []( auto a, auto b, auto c) {
-     return ( a & b ) ^ ( ~a & c );
+  auto const op_bits = []( auto a, auto b, auto c )
+  {
+    return ( a & b ) ^ ( ~a & c );
   };
-  auto const op_care1 = []( auto b1, auto c1, auto b2, auto c2 ) {
-    return ( ~( c1 ) & b2 ) | ( b1 & ~( c2 ) ) | ( ( ~c1 ) & ( ~c2 ) );
+  auto const op_care1 = []( auto b2, auto c2, auto b3, auto c3 )
+  {
+    return ( ( ~b2 ) & c2 & b3 ) | ( b2 & c2 & ( ~b3 ) ) | ( c2 & ( ~c3 ) ) | ( c3 & ( ~c2 ) ) | ( ( ~c3 ) & ( ~c2 ) );
   };
-  auto const op_care2 = []( auto b1, auto c1, auto b3, auto c3 ) {
-    return ( ~( c1 ) & b3 ) | ( ( ~b1 ) & c1 & ( ~c3 ) ) | ( ( ~c1 ) & ( ~c3 ) );
+  auto const op_care2 = []( auto b1, auto c1, auto c2, auto c3 )
+  {
+    return c1 & ( ( ( ~c2 ) & b1 ) | ( ( ~b1 ) & ( ~c3 ) ) | ( ( ~c3 ) & ( ~c2 ) ) );
   };
-  TT care1 = quaternary_operation( first._bits, first._care, second._bits, second._care, op_care1 );
-  TT care2 = quaternary_operation( first._bits, first._care, third._bits, third._care, op_care2 );
-  auto const nor = []( auto a, auto b ) {
-    return ~( a | b );
+  TT care1 = quaternary_operation( second._bits, second._care, third._bits, third._care, op_care1 );
+  TT care2 = quaternary_operation( first._bits, first._care, second._care, third._care, op_care2 );
+  auto const final_op = []( auto c1, auto res1, auto res2 )
+  {
+    return ~( ( ( ~c1 ) & res1 ) | res2 );
   };
   return ternary_truth_table<TT>( ternary_operation( first._bits, second._bits, third._bits, op_bits ),
-                                  binary_operation( care1, care2, nor ) );
+                                  ternary_operation( first._care, care1, care2, final_op ) );
 }
 
 /*! \brief Muxes two truth tables based on a variable
@@ -253,8 +270,9 @@ inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
   if ( var_index < 6u )
   {
     return binary_operation( then_, else_,
-                             [&]( auto a, auto b ) { return ( a & detail::projections[var_index] ) |
-                                                            ( b & detail::projections_neg[var_index] ); } );
+                             [&]( auto a, auto b )
+                             { return ( a & detail::projections[var_index] ) |
+                                      ( b & detail::projections_neg[var_index] ); } );
   }
   else
   {
@@ -263,16 +281,16 @@ inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
     auto res = then_.construct();
 
     std::transform( then_.begin(), then_.end(), else_.begin(), res.begin(),
-      [&]( auto a, auto b ) {
-        return ( j++ % ( 2 * step ) ) < step ? b : a;
-      }
-    );
+                    [&]( auto a, auto b )
+                    {
+                      return ( j++ % ( 2 * step ) ) < step ? b : a;
+                    } );
 
     return res;
   }
 }
 
-/*! \brief Muxes two truth tables based on a variable
+/*! \brief Muxes two ternary truth tables based on a variable
 
  * Values that are not taken by the projections become 0s.
 
@@ -283,21 +301,25 @@ inline TT mux_var( uint8_t var_index, const TT& then_, const TT& else_ )
 template<typename TT>
 inline ternary_truth_table<TT> mux_var( uint8_t var_index, const ternary_truth_table<TT>& then_, const ternary_truth_table<TT>& else_ )
 {
-  auto const projection = [&var_index]( auto a ) {
+  auto const projection = [&var_index]( auto a )
+  {
     return ( a & detail::projections[var_index] );
   };
-  auto const projection_care = [&var_index]( auto a ) {
-    return ( ( a & detail::projections[var_index] ) | detail::projections_neg[var_index]);
+  auto const projection_care = [&var_index]( auto a )
+  {
+    return ( ( a & detail::projections[var_index] ) | detail::projections_neg[var_index] );
   };
-  auto const projection_neg = [&var_index]( auto a ) {
+  auto const projection_neg = [&var_index]( auto a )
+  {
     return ( a & detail::projections_neg[var_index] );
   };
-  auto const projection_neg_care = [&var_index]( auto a ) {
-    return ( ( a & detail::projections_neg[var_index] ) | detail::projections[var_index]);
+  auto const projection_neg_care = [&var_index]( auto a )
+  {
+    return ( ( a & detail::projections_neg[var_index] ) | detail::projections[var_index] );
   };
   ternary_truth_table<TT> then_new( unary_operation( then_._bits, projection ), unary_operation( then_._care, projection_care ) );
   ternary_truth_table<TT> else_new( unary_operation( else_._bits, projection_neg ), unary_operation( else_._care, projection_neg_care ) );
-  return then_new | else_new; 
+  return then_new | else_new;
 }
 
 /*! \brief Checks whether two truth tables are equal
@@ -342,7 +364,8 @@ inline bool equal( const ternary_truth_table<TT>& first, const ternary_truth_tab
 template<typename TT>
 inline bool implies( const TT& first, const TT& second )
 {
-  return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & ~b ) == 0u; } );
+  return binary_predicate( first, second, []( uint64_t a, uint64_t b )
+                           { return ( a & ~b ) == 0u; } );
 }
 
 /*! \brief Checks if first ternary truth table implies a ternary second truth table
@@ -396,7 +419,8 @@ inline bool less_than( const ternary_truth_table<TT>& first, const ternary_truth
 template<typename TT>
 inline bool is_const0( const TT& tt )
 {
-  return std::all_of( std::begin( tt._bits ), std::end( tt._bits ), []( uint64_t word ) { return word == 0; } );
+  return std::all_of( std::begin( tt._bits ), std::end( tt._bits ), []( uint64_t word )
+                      { return word == 0; } );
 }
 
 /*! \cond PRIVATE */
@@ -429,13 +453,17 @@ template<typename TT, bool polarity1 = true, bool polarity2 = true>
 bool intersection_is_empty( const TT& first, const TT& second )
 {
   if constexpr ( polarity1 && polarity2 )
-    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & b ) == 0u; } );
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b )
+                             { return ( a & b ) == 0u; } );
   else if constexpr ( !polarity1 && polarity2 )
-    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( ~a & b ) == 0u; } );
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b )
+                             { return ( ~a & b ) == 0u; } );
   else if constexpr ( polarity1 && !polarity2 )
-    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( a & ~b ) == 0u; } );
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b )
+                             { return ( a & ~b ) == 0u; } );
   else // !polarity1 && !polarity2
-    return binary_predicate( first, second, []( uint64_t a, uint64_t b ){ return ( ~a & ~b ) == 0u; } );
+    return binary_predicate( first, second, []( uint64_t a, uint64_t b )
+                             { return ( ~a & ~b ) == 0u; } );
 }
 
 /*! \brief Checks whether the intersection of two ternary truth tables is empty
@@ -449,9 +477,9 @@ template<typename TT, bool polarity1 = true, bool polarity2 = true>
 bool intersection_is_empty( const ternary_truth_table<TT>& a, const ternary_truth_table<TT>& b )
 {
   if constexpr ( polarity1 && polarity2 )
-   return is_const0( a & b );
+    return is_const0( a & b );
   else if constexpr ( !polarity1 && polarity2 )
-   return is_const0( ~a & b );
+    return is_const0( ~a & b );
   else if constexpr ( polarity1 && !polarity2 )
     return is_const0( a & ~b );
   else // !polarity1 && !polarity2
@@ -471,21 +499,29 @@ template<typename TT, bool polarity1 = true, bool polarity2 = true, bool polarit
 bool intersection_is_empty( const TT& first, const TT& second, const TT& third )
 {
   if constexpr ( polarity1 && polarity2 && polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( a & b & c ) == 0u; } );
   else if constexpr ( !polarity1 && polarity2 && polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & b & c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( ~a & b & c ) == 0u; } );
   else if constexpr ( polarity1 && !polarity2 && polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & ~b & c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( a & ~b & c ) == 0u; } );
   else if constexpr ( polarity1 && polarity2 && !polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & b & ~c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( a & b & ~c ) == 0u; } );
   else if constexpr ( !polarity1 && !polarity2 && polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & ~b & c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( ~a & ~b & c ) == 0u; } );
   else if constexpr ( polarity1 && !polarity2 && !polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( a & ~b & ~c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( a & ~b & ~c ) == 0u; } );
   else if constexpr ( !polarity1 && polarity2 && !polarity3 )
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & b & ~c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( ~a & b & ~c ) == 0u; } );
   else // !polarity1 && !polarity2 && !polarity3
-    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c ){ return ( ~a & ~b & ~c ) == 0u; } );
+    return ternary_predicate( first, second, third, []( uint64_t a, uint64_t b, uint64_t c )
+                              { return ( ~a & ~b & ~c ) == 0u; } );
 }
 
 /*! \brief Checks whether the intersection of three ternary truth tables is empty
@@ -531,8 +567,9 @@ bool has_var( const TT& tt, uint8_t var_index )
   if ( tt.num_vars() <= 6 || var_index < 6 )
   {
     return std::any_of( std::begin( tt._bits ), std::end( tt._bits ),
-                        [var_index]( uint64_t word ) { return ( ( word >> ( uint64_t( 1 ) << var_index ) ) & detail::projections_neg[var_index] ) !=
-                                                              ( word & detail::projections_neg[var_index] ); } );
+                        [var_index]( uint64_t word )
+                        { return ( ( word >> ( uint64_t( 1 ) << var_index ) ) & detail::projections_neg[var_index] ) !=
+                                 ( word & detail::projections_neg[var_index] ); } );
   }
 
   const auto step = 1 << ( var_index - 6 );
@@ -559,7 +596,6 @@ bool has_var( const static_truth_table<NumVars, true>& tt, uint8_t var_index )
          ( tt._bits & detail::projections_neg[var_index] );
 }
 /*! \endcond */
-
 
 /*! \brief Checks whether a ternary truth table depends on given variable index
            Don't cares are treated like zeros.
@@ -632,7 +668,7 @@ inline void next_inplace( partial_truth_table& tt )
   larger truth table. If `tt` is already the largest truth table, the
   updated truth table will contain all zeros.
 
-  Don't cares are treated like zeros, so the truth table 1110 and 111- will become 1111.
+  Don't cares are treated like zeros, so the truth tables 1110 and 111- will become 1111.
 
   This method never increase the number of don't cares of the input truth table.
 
@@ -674,8 +710,9 @@ void cofactor0_inplace( TT& tt, uint8_t var_index )
   {
     std::transform( std::begin( tt._bits ), std::end( tt._bits ),
                     std::begin( tt._bits ),
-                    [var_index]( uint64_t word ) { return ( ( word & detail::projections_neg[var_index] ) << ( uint64_t( 1 ) << var_index ) ) |
-                                                          ( word & detail::projections_neg[var_index] ); } );
+                    [var_index]( uint64_t word )
+                    { return ( ( word & detail::projections_neg[var_index] ) << ( uint64_t( 1 ) << var_index ) ) |
+                             ( word & detail::projections_neg[var_index] ); } );
   }
   else
   {
@@ -736,8 +773,9 @@ void cofactor1_inplace( TT& tt, uint8_t var_index )
   {
     std::transform( std::begin( tt._bits ), std::end( tt._bits ),
                     std::begin( tt._bits ),
-                    [var_index]( uint64_t word ) { return ( word & detail::projections[var_index] ) |
-                                                          ( ( word & detail::projections[var_index] ) >> ( uint64_t( 1 ) << var_index ) ); } );
+                    [var_index]( uint64_t word )
+                    { return ( word & detail::projections[var_index] ) |
+                             ( ( word & detail::projections[var_index] ) >> ( uint64_t( 1 ) << var_index ) ); } );
   }
   else
   {
@@ -804,7 +842,8 @@ void swap_adjacent_inplace( TT& tt, uint8_t var_index )
   {
     const auto shift = uint64_t( 1 ) << var_index;
     std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
-                    [shift, var_index]( uint64_t word ) {
+                    [shift, var_index]( uint64_t word )
+                    {
                       return ( word & detail::permutation_masks[var_index][0] ) |
                              ( ( word & detail::permutation_masks[var_index][1] ) << shift ) |
                              ( ( word & detail::permutation_masks[var_index][2] ) >> shift );
@@ -830,7 +869,7 @@ void swap_adjacent_inplace( TT& tt, uint8_t var_index )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         std::swap( *( it + i + step ), *( it + i + 2 * step ) );
       }
@@ -919,7 +958,8 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     const auto& pmask = detail::ppermutation_masks[var_index1][var_index2];
     const auto shift = ( 1 << var_index2 ) - ( 1 << var_index1 );
     std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
-                    [shift, &pmask]( uint64_t word ) {
+                    [shift, &pmask]( uint64_t word )
+                    {
                       return ( word & pmask[0] ) | ( ( word & pmask[1] ) << shift ) | ( ( word & pmask[2] ) >> shift );
                     } );
   }
@@ -930,7 +970,7 @@ void swap_inplace( TT& tt, uint8_t var_index1, uint8_t var_index2 )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         const auto low_to_high = ( *( it + i ) & detail::projections[var_index1] ) >> shift;
         const auto high_to_low = ( *( it + i + step ) << shift ) & detail::projections[var_index1];
@@ -1036,7 +1076,8 @@ void flip_inplace( TT& tt, uint8_t var_index )
   {
     const auto shift = 1 << var_index;
     std::transform( std::begin( tt._bits ), std::end( tt._bits ), std::begin( tt._bits ),
-                    [var_index, shift]( uint64_t word ) {
+                    [var_index, shift]( uint64_t word )
+                    {
                       return ( ( word << shift ) & detail::projections[var_index] ) | ( ( word & detail::projections[var_index] ) >> shift );
                     } );
   }
@@ -1046,7 +1087,7 @@ void flip_inplace( TT& tt, uint8_t var_index )
     auto it = std::begin( tt._bits );
     while ( it != std::end( tt._bits ) )
     {
-      for ( auto i = decltype( step ){0}; i < step; ++i )
+      for ( auto i = decltype( step ){ 0 }; i < step; ++i )
       {
         std::swap( *( it + i ), *( it + i + step ) );
       }
@@ -1459,7 +1500,7 @@ inline void shift_left_inplace( ternary_truth_table<TT>& tt, uint64_t shift )
 {
   shift_left_inplace( tt._bits, shift );
   shift_left_inplace( tt._care, shift );
-  for( auto i = 0u; i < shift; i++ )
+  for ( auto i = 0u; i < shift; i++ )
   {
     set_bit( tt._care, i );
   }
@@ -1593,7 +1634,7 @@ inline void shift_right_inplace( ternary_truth_table<TT>& tt, uint64_t shift )
 {
   shift_right_inplace( tt._bits, shift );
   shift_right_inplace( tt._care, shift );
-  for( auto i = 0u; i < shift; i++ )
+  for ( auto i = 0u; i < shift; i++ )
   {
     set_bit( tt._care, tt._care.num_bits() - 1 - i );
   }
@@ -1656,7 +1697,7 @@ inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
 
   Given a function `f`, and a set of truth tables as arguments, computes the
   composed truth table.  For example, if `f(x1, x2) = 1001` and
-  `vars = {x1 = 1001, x2= 1010}`, the function returns 1000. 
+  `vars = {x1 = 1001, x2= 1010}`, the function returns 1000.
   In case of don't cares this method treats them as "don't knows".
   For example, if `f(x1, x2) = 1-00` and
   `vars = {x1 = 1001, x2= 1010}`, the function returns 100-.
@@ -1673,7 +1714,9 @@ template<class TTf, class TTv, typename = std::enable_if_t<is_complete_truth_tab
 inline auto compose_truth_table( const ternary_truth_table<TTf>& f, const std::vector<ternary_truth_table<TTv>>& vars )
 {
   assert( vars.size() == static_cast<std::size_t>( f.num_vars() ) );
-  auto composed = vars[0].construct();
+  auto a = create<TTv>( vars[0].num_vars() );
+  auto b = create<TTv>( vars[0].num_vars() );
+  auto composed = ternary_truth_table<TTv>( a, b );
 
   for ( uint64_t i = 0u; i < composed.num_bits(); ++i )
   {
@@ -1682,16 +1725,18 @@ inline auto compose_truth_table( const ternary_truth_table<TTf>& f, const std::v
     for ( uint64_t j = 0u; j < vars.size(); ++j )
     {
       auto tt_mask = f._bits.construct();
-      auto const projection = [&j, &f]( auto a ) {
-        return ( a | detail::projections[f.num_vars() - 1 -j] );
+      auto const projection = [&j, &f]( auto a )
+      {
+        return ( a | detail::projections[f.num_vars() - 1 - j] );
       };
-      auto const projection_neg = [&j, &f]( auto a ) {
-        return ( a | detail::projections_neg[f.num_vars() - j - 1 ] );
+      auto const projection_neg = [&j, &f]( auto a )
+      {
+        return ( a | detail::projections_neg[f.num_vars() - j - 1] );
       };
       auto bit = get_bit( vars[j], i );
-      if( bit.has_value() )
+      if ( bit.has_value() )
       {
-        if( bit.value() )
+        if ( bit.value() )
         {
           auto ttt_mask = ternary_truth_table<TTf>( unary_operation( tt_mask, projection ) );
           f_copy &= ttt_mask;
@@ -1713,7 +1758,7 @@ inline auto compose_truth_table( const ternary_truth_table<TTf>& f, const std::v
     }
     else
     {
-      if( count_ones( f_copy._bits ) == (1 << cnt_care) )
+      if ( count_ones( f_copy._bits ) == ( 1 << cnt_care ) )
       {
         set_bit( composed, i );
       }

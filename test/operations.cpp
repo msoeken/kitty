@@ -29,8 +29,10 @@
 #include <random>
 
 #include <kitty/dynamic_truth_table.hpp>
+#include <kitty/ternary_truth_table.hpp>
 #include <kitty/operations.hpp>
 #include <kitty/static_truth_table.hpp>
+#include <kitty/print.hpp>
 
 #include "utility.hpp"
 
@@ -308,7 +310,7 @@ TEST_F( OperationsTest, cofactors )
 
 TEST_F( OperationsTest, swap_adjacent_inplace_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "bce8" }, { 1u, "e6e8" }, { 2u, "dea8" } } )
   {
     auto tt_s = from_hex<4>( "dae8" );
     swap_adjacent_inplace( tt_s, p.first );
@@ -322,7 +324,7 @@ TEST_F( OperationsTest, swap_adjacent_inplace_small )
 
 TEST_F( OperationsTest, swap_adjacent_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "bce8"}, {1u, "e6e8"}, {2u, "dea8"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "bce8" }, { 1u, "e6e8" }, { 2u, "dea8" } } )
   {
     EXPECT_EQ( swap_adjacent( from_hex<4>( "dae8" ), p.first ), from_hex<4>( p.second ) );
     EXPECT_EQ( swap_adjacent( from_hex( 4, "dae8" ), p.first ), from_hex( 4, p.second ) );
@@ -376,7 +378,7 @@ INSTANTIATE_TEST_SUITE_P( OperationsTestSwapInst,
 
 TEST_F( OperationsTest, flip_inplace_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "0b34" }, { 1u, "0dc2" }, { 2u, "7083" }, { 3u, "3807" } } )
   {
     auto tt_s = from_hex<4>( "0738" );
     flip_inplace( tt_s, p.first );
@@ -390,7 +392,7 @@ TEST_F( OperationsTest, flip_inplace_small )
 
 TEST_F( OperationsTest, flip_small )
 {
-  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{{0u, "0b34"}, {1u, "0dc2"}, {2u, "7083"}, {3u, "3807"}} )
+  for ( const auto& p : std::vector<std::pair<unsigned, std::string>>{ { 0u, "0b34" }, { 1u, "0dc2" }, { 2u, "7083" }, { 3u, "3807" } } )
   {
     EXPECT_EQ( flip( from_hex<4>( "0738" ), p.first ), from_hex<4>( p.second ) );
     EXPECT_EQ( flip( from_hex( 4, "0738" ), p.first ), from_hex( 4, p.second ) );
@@ -448,7 +450,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<3>( "a0" ); /* (ac) */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {0, 2} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 0, 2 } ) );
     EXPECT_EQ( tt, from_hex<3>( "88" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<3>( "a0" ) );
@@ -457,7 +459,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<4>( "3c3c" ); /* [bc] */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {1, 2} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 1, 2 } ) );
     EXPECT_EQ( tt, from_hex<4>( "6666" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<4>( "3c3c" ) );
@@ -466,7 +468,7 @@ TEST_F( OperationsTest, min_base )
   {
     auto tt = from_hex<7>( "ff55ff55ff55ff555555555555555555" ); /* {!a(dg)} */
     const auto support = min_base_inplace( tt );
-    EXPECT_EQ( support, std::vector<uint8_t>( {0, 3, 6} ) );
+    EXPECT_EQ( support, std::vector<uint8_t>( { 0, 3, 6 } ) );
     EXPECT_EQ( tt, from_hex<7>( "d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5" ) );
     expand_inplace( tt, support );
     EXPECT_EQ( tt, from_hex<7>( "ff55ff55ff55ff555555555555555555" ) );
@@ -482,8 +484,8 @@ TEST_F( OperationsTest, expand )
   auto f_and_e = extend_to( f_and, 4 );
   auto f_or_e = extend_to( f_or, 4 );
 
-  expand_inplace( f_and_e, std::vector<uint8_t>{0, 2} );
-  expand_inplace( f_or_e, std::vector<uint8_t>{1, 3} );
+  expand_inplace( f_and_e, std::vector<uint8_t>{ 0, 2 } );
+  expand_inplace( f_or_e, std::vector<uint8_t>{ 1, 3 } );
 
   EXPECT_EQ( f_and_e ^ f_or_e, from_hex( 4, "5f6c" ) );
 }
@@ -571,7 +573,8 @@ TEST_F( OperationsTest, majority7 )
   static_truth_table<7> maj7;
   create_majority( maj7 );
 
-  auto special_func = []( auto a, auto b, auto c, auto d, auto e, auto f ) {
+  auto special_func = []( auto a, auto b, auto c, auto d, auto e, auto f )
+  {
     return ternary_majority( ternary_majority( a, b, c ), d, ternary_majority( e, f, ternary_majority( a, b, c ) ) );
   };
 
@@ -833,4 +836,391 @@ TEST_F( OperationsTest, intersection_is_empty )
 
   bool res = intersection_is_empty<static_truth_table<3>, true, false>( from_hex<3>( "a2" ), from_hex<3>( "ff" ) );
   EXPECT_TRUE( res );
+}
+
+TEST_F( OperationsTest, unary_for_ternary )
+{
+  EXPECT_EQ( unary_not( ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "f" ) ) ), ternary_truth_table<static_truth_table<2>>( from_hex<2>( "7" ), from_hex<2>( "f" ) ) );
+  EXPECT_EQ( unary_not( ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "a" ) ) ), ternary_truth_table<static_truth_table<2>>( from_hex<2>( "2" ), from_hex<2>( "a" ) ) );
+  EXPECT_EQ( unary_not( ternary_truth_table<static_truth_table<3>>( from_hex<3>( "80" ), from_hex<3>( "ff" ) ) ), ternary_truth_table<static_truth_table<3>>( from_hex<3>( "7f" ), from_hex<3>( "ff" ) ) );
+  EXPECT_EQ( unary_not( ternary_truth_table<static_truth_table<3>>( from_hex<3>( "80" ), from_hex<3>( "aa" ) ) ), ternary_truth_table<static_truth_table<3>>( from_hex<3>( "2a" ), from_hex<3>( "aa" ) ) );
+}
+
+TEST_F( OperationsTest, binary_for_ternary )
+{
+  auto tt1 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "5" ), from_hex<2>( "f" ) );
+  auto tt2 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "3" ), from_hex<2>( "f" ) );
+  auto res_or = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "7" ), from_hex<2>( "f" ) );
+  auto res_and = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "1" ), from_hex<2>( "f" ) );
+  auto res_xor = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "6" ), from_hex<2>( "f" ) );
+  auto res_mux = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "1" ), from_hex<2>( "f" ) );
+  EXPECT_EQ( binary_or( tt1, tt2 ), res_or );
+  EXPECT_EQ( binary_and( tt1, tt2 ), res_and );
+  EXPECT_EQ( binary_xor( tt1, tt2 ), res_xor );
+  EXPECT_EQ( mux_var( 0, tt1, tt2 ), res_mux );
+
+  tt1 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "d" ) );
+  tt2 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "4" ), from_hex<2>( "4" ) );
+  res_or = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "c" ), from_hex<2>( "c" ) );
+  res_and = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "0" ), from_hex<2>( "5" ) );
+  res_xor = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "4" ), from_hex<2>( "4" ) );
+  res_mux = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "c" ) );
+  EXPECT_EQ( binary_or( tt1, tt2 ), res_or );
+  EXPECT_EQ( binary_and( tt1, tt2 ), res_and );
+  EXPECT_EQ( binary_xor( tt1, tt2 ), res_xor );
+  EXPECT_EQ( mux_var( 1, tt1, tt2 ), res_mux );
+
+  auto tt11 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "adadadadadadadadadadadadadadadad" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto tt22 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "97979797979797979797979797979797" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto res_and1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "85858585858585858585858585858585" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto res_or1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "bfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbf" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto res_xor1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto res_mux1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  EXPECT_EQ( binary_or( tt11, tt22 ), res_or1 );
+  EXPECT_EQ( binary_and( tt11, tt22 ), res_and1 );
+  EXPECT_EQ( binary_xor( tt11, tt22 ), res_xor1 );
+  EXPECT_EQ( mux_var( 0, tt11, tt22 ), res_mux1 );
+
+  tt11 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a8a" ), from_hex<7>( "9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b9b" ) );
+  tt22 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "45454545454545454545454545454545" ), from_hex<7>( "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d" ) );
+  res_or1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "cfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcf" ), from_hex<7>( "cfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcf" ) );
+  res_and1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "00000000000000000000000000000000" ), from_hex<7>( "19191919191919191919191919191919" ) );
+  res_xor1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "09090909090909090909090909090909" ), from_hex<7>( "09090909090909090909090909090909" ) );
+  res_mux1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "cfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcf" ), from_hex<7>( "cfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcf" ) );
+  EXPECT_EQ( binary_or( tt11, tt22 ), res_or1 );
+  EXPECT_EQ( binary_and( tt11, tt22 ), res_and1 );
+  EXPECT_EQ( binary_xor( tt11, tt22 ), res_xor1 );
+  EXPECT_EQ( mux_var( 0, tt11, tt22 ), res_mux1 );
+}
+
+TEST_F( OperationsTest, ternary_for_ternary )
+{
+  auto tt1 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "9" ), from_hex<2>( "f" ) );
+  auto tt2 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "d" ), from_hex<2>( "f" ) );
+  auto tt3 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "2" ), from_hex<2>( "f" ) );
+  auto res_maj = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "9" ), from_hex<2>( "f" ) );
+  auto res_ite = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "b" ), from_hex<2>( "f" ) );
+  EXPECT_EQ( ternary_majority( tt1, tt2, tt3 ), res_maj );
+  EXPECT_EQ( ternary_ite( tt1, tt2, tt3 ), res_ite );
+
+  tt1 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "9" ) );
+  tt2 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "0" ), from_hex<2>( "5" ) );
+  tt3 = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "9" ), from_hex<2>( "d" ) );
+  res_maj = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "8" ), from_hex<2>( "d" ) );
+  res_ite = ternary_truth_table<static_truth_table<2>>( from_hex<2>( "1" ), from_hex<2>( "5" ) );
+  EXPECT_EQ( ternary_majority( tt1, tt2, tt3 ), res_maj );
+  EXPECT_EQ( ternary_ite( tt1, tt2, tt3 ), res_ite );
+
+  auto tt11 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "97979797979797979797979797979797" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto tt22 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "85858585858585858585858585858585" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto tt33 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "28282828282828282828282828282828" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  auto res_maj1 = tt22;
+  auto res_ite1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "adadadadadadadadadadadadadadadad" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) );
+  EXPECT_EQ( ternary_majority( tt11, tt22, tt33 ), res_maj1 );
+  EXPECT_EQ( ternary_ite( tt11, tt22, tt33 ), res_ite1 );
+
+  tt11 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1" ), from_hex<7>( "afafafafafafafafafafafafafafafaf" ) );
+  tt22 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "13131313131313131313131313131313" ), from_hex<7>( "1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b" ) );
+  tt33 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a" ), from_hex<7>( "9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e9e" ) );
+  res_maj1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "03030303030303030303030303030303" ), from_hex<7>( "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f" ) );
+  res_ite1 = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b" ), from_hex<7>( "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f" ) );
+  EXPECT_EQ( ternary_majority( tt11, tt22, tt33 ), res_maj1 );
+  EXPECT_EQ( ternary_ite( tt11, tt22, tt33 ), res_ite1 );
+}
+
+TEST_F( OperationsTest, predicate_for_ternary )
+{
+  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "5" ), from_hex( 2, "f" ) );
+  auto tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "3" ), from_hex( 2, "f" ) );
+  EXPECT_FALSE( implies( tt1, tt2 ) );
+  EXPECT_TRUE( implies( tt1, tt1 ) );
+  EXPECT_TRUE( implies( tt2, tt2 ) );
+  EXPECT_TRUE( less_than( tt2, tt1 ) );
+  EXPECT_TRUE( has_var( tt1, 0 ) );
+  EXPECT_FALSE( has_var( tt1, 1 ) );
+  EXPECT_TRUE( has_var( tt2, 1 ) );
+  EXPECT_FALSE( has_var( tt2, 0 ) );
+
+  tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "0" ), from_hex( 2, "6" ) );
+  tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "a" ), from_hex( 2, "a" ) );
+  EXPECT_FALSE( implies( tt1, tt2 ) );
+  EXPECT_TRUE( less_than( tt1, tt2 ) );
+  EXPECT_FALSE( has_var( tt1, 0 ) );
+  EXPECT_FALSE( has_var( tt1, 1 ) );
+  EXPECT_TRUE( has_var( tt2, 0 ) );
+  EXPECT_FALSE( has_var( tt2, 1 ) );
+
+  auto tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
+  auto tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
+  EXPECT_FALSE( implies( tt11, tt22 ) );
+  EXPECT_TRUE( less_than( tt22, tt11 ) );
+  EXPECT_TRUE( has_var( tt11, 0 ) );
+  EXPECT_TRUE( has_var( tt11, 1 ) );
+  EXPECT_TRUE( has_var( tt11, 2 ) );
+  EXPECT_FALSE( has_var( tt11, 3 ) );
+  EXPECT_FALSE( has_var( tt11, 4 ) );
+  EXPECT_FALSE( has_var( tt11, 5 ) );
+  EXPECT_FALSE( has_var( tt11, 6 ) );
+  EXPECT_FALSE( has_var( tt22, 0 ) );
+  EXPECT_TRUE( has_var( tt22, 1 ) );
+  EXPECT_TRUE( has_var( tt22, 2 ) );
+  EXPECT_FALSE( has_var( tt22, 3 ) );
+  EXPECT_FALSE( has_var( tt22, 4 ) );
+  EXPECT_FALSE( has_var( tt22, 5 ) );
+  EXPECT_FALSE( has_var( tt22, 6 ) );
+
+  tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "05050505050505050505050505050505" ), from_hex( 7, "4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f" ) );
+  tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "13131313131313131313131313131313" ), from_hex( 7, "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3" ) );
+  EXPECT_FALSE( implies( tt11, tt22 ) );
+  EXPECT_TRUE( less_than( tt11, tt22 ) );
+  EXPECT_TRUE( has_var( tt11, 0 ) );
+  EXPECT_FALSE( has_var( tt11, 1 ) );
+  EXPECT_TRUE( has_var( tt11, 2 ) );
+  EXPECT_FALSE( has_var( tt11, 3 ) );
+  EXPECT_FALSE( has_var( tt11, 4 ) );
+  EXPECT_FALSE( has_var( tt11, 5 ) );
+  EXPECT_FALSE( has_var( tt11, 6 ) );
+  EXPECT_TRUE( has_var( tt22, 0 ) );
+  EXPECT_TRUE( has_var( tt22, 1 ) );
+  EXPECT_TRUE( has_var( tt22, 2 ) );
+  EXPECT_FALSE( has_var( tt22, 3 ) );
+  EXPECT_FALSE( has_var( tt22, 4 ) );
+  EXPECT_FALSE( has_var( tt22, 5 ) );
+  EXPECT_FALSE( has_var( tt22, 6 ) );
+}
+
+TEST_F( OperationsTest, instersection_for_ternary )
+{
+  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "5" ), from_hex( 2, "f" ) );
+  auto tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "d" ), from_hex( 2, "f" ) );
+  auto tt3 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "2" ), from_hex( 2, "f" ) );
+  EXPECT_FALSE( intersection_is_empty( tt1, tt2 ) );
+  EXPECT_TRUE( intersection_is_empty( tt1, tt3 ) );
+  EXPECT_TRUE( intersection_is_empty( tt3, tt2 ) );
+  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
+
+  tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "4" ), from_hex( 2, "5" ) );
+  tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "8" ), from_hex( 2, "e" ) );
+  tt3 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "3" ), from_hex( 2, "b" ) );
+  EXPECT_FALSE( intersection_is_empty( tt1, tt2 ) );
+  EXPECT_FALSE( intersection_is_empty( tt1, tt3 ) );
+  EXPECT_FALSE( intersection_is_empty( tt3, tt2 ) );
+  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
+
+  auto tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
+  auto tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "92929292929292929292929292929292" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
+  auto tt33 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
+  EXPECT_FALSE( intersection_is_empty( tt11, tt22 ) );
+  EXPECT_FALSE( intersection_is_empty( tt11, tt33 ) );
+  EXPECT_TRUE( intersection_is_empty( tt33, tt22 ) );
+  EXPECT_TRUE( intersection_is_empty( tt11, tt22, tt33 ) );
+
+  tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "46464646464646464646464646464646" ), from_hex( 7, "77777777777777777777777777777777" ) );
+  tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "01010101010101010101010101010101" ), from_hex( 7, "c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7" ) );
+  tt33 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "50505050505050505050505050505050" ), from_hex( 7, "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" ) );
+  EXPECT_FALSE( intersection_is_empty( tt11, tt22 ) );
+  EXPECT_FALSE( intersection_is_empty( tt11, tt33 ) );
+  EXPECT_FALSE( intersection_is_empty( tt33, tt22 ) );
+  EXPECT_TRUE( intersection_is_empty( tt11, tt22, tt33 ) );
+}
+
+TEST_F( OperationsTest, cofactor_for_ternary )
+{
+  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "5b" ), from_hex( 3, "ff" ) );
+  auto cof_a0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "bb" ), from_hex( 3, "ff" ) );
+  auto cof_a1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "55" ), from_hex( 3, "ff" ) );
+  auto cof_b0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "5f" ), from_hex( 3, "ff" ) );
+  auto cof_b1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "5a" ), from_hex( 3, "ff" ) );
+  auto cof_c0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "f3" ), from_hex( 3, "ff" ) );
+  auto cof_c1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "0f" ), from_hex( 3, "ff" ) );
+  EXPECT_EQ( cofactor0( tt1, 2 ), cof_a0 );
+  EXPECT_EQ( cofactor1( tt1, 2 ), cof_a1 );
+  EXPECT_EQ( cofactor0( tt1, 1 ), cof_b0 );
+  EXPECT_EQ( cofactor1( tt1, 1 ), cof_b1 );
+  EXPECT_EQ( cofactor0( tt1, 0 ), cof_c0 );
+  EXPECT_EQ( cofactor1( tt1, 0 ), cof_c1 );
+
+  tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "95" ), from_hex( 3, "d5" ) );
+  cof_a0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "55" ), from_hex( 3, "55" ) );
+  cof_a1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "99" ), from_hex( 3, "dd" ) );
+  cof_b0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "55" ), from_hex( 3, "55" ) );
+  cof_b1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "a5" ), from_hex( 3, "f5" ) );
+  cof_c0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "3f" ), from_hex( 3, "ff" ) );
+  cof_c1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "c0" ), from_hex( 3, "c0" ) );
+  EXPECT_EQ( cofactor0( tt1, 2 ), cof_a0 );
+  EXPECT_EQ( cofactor1( tt1, 2 ), cof_a1 );
+  EXPECT_EQ( cofactor0( tt1, 1 ), cof_b0 );
+  EXPECT_EQ( cofactor1( tt1, 1 ), cof_b1 );
+  EXPECT_EQ( cofactor0( tt1, 0 ), cof_c0 );
+  EXPECT_EQ( cofactor1( tt1, 0 ), cof_c1 );
+
+  auto tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "12121212121212121212121212121212" ), from_hex( 7, "97979797979797979797979797979797" ) );
+  auto cof_a00 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "22222222222222222222222222222222" ), from_hex( 7, "77777777777777777777777777777777" ) );
+  auto cof_a11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "11111111111111111111111111111111" ), from_hex( 7, "99999999999999999999999999999999" ) );
+  auto cof_b00 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a" ), from_hex( 7, "5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f" ) );
+  auto cof_b11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "00000000000000000000000000000000" ), from_hex( 7, "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5" ) );
+  auto cof_c00 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "30303030303030303030303030303030" ), from_hex( 7, "3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f" ) );
+  auto cof_c11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "03030303030303030303030303030303" ), from_hex( 7, "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3" ) );
+  EXPECT_EQ( cofactor0( tt11, 6 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 6 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 5 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 5 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 4 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 4 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 3 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 3 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 2 ), cof_a00 );
+  EXPECT_EQ( cofactor1( tt11, 2 ), cof_a11 );
+  EXPECT_EQ( cofactor0( tt11, 1 ), cof_b00 );
+  EXPECT_EQ( cofactor1( tt11, 1 ), cof_b11 );
+  EXPECT_EQ( cofactor0( tt11, 0 ), cof_c00 );
+  EXPECT_EQ( cofactor1( tt11, 0 ), cof_c11 );
+}
+
+TEST_F( OperationsTest, next_for_ternary )
+{
+  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "0" ), from_hex( 2, "0" ) );
+  std::vector<std::string> sample = { "0000", "1111", "1110", "1101", "1100", "1011", "1010", "1001", "1000", "-111", "-110", "-101", "-100", "--11", "--10", "---1" };
+  for ( uint16_t i = 15; i > 0; i-- )
+  {
+    next_inplace( tt1 );
+    EXPECT_EQ( to_binary( tt1 ), sample[i] );
+  }
+}
+
+TEST_F( OperationsTest, swap_flip_for_ternary )
+{
+  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "2c" ), from_hex( 3, "ff" ) );
+  auto sw_ad0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "4a" ), from_hex( 3, "ff" ) );
+  auto sw_ad1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "38" ), from_hex( 3, "ff" ) );
+  auto sw = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "64" ), from_hex( 3, "ff" ) );
+  auto f0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "1c" ), from_hex( 3, "ff" ) );
+  auto f1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "83" ), from_hex( 3, "ff" ) );
+  auto f2 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "c2" ), from_hex( 3, "ff" ) );
+  EXPECT_EQ( swap_adjacent( tt1, 0 ), sw_ad0 );
+  EXPECT_EQ( swap_adjacent( tt1, 1 ), sw_ad1 );
+  EXPECT_EQ( swap( tt1, 0, 2 ), sw );
+  EXPECT_EQ( flip( tt1, 0 ), f0 );
+  EXPECT_EQ( flip( tt1, 1 ), f1 );
+  EXPECT_EQ( flip( tt1, 2 ), f2 );
+
+  tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "3b" ) );
+  sw_ad0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "5d" ) );
+  sw_ad1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "05" ), from_hex( 3, "2f" ) );
+  sw = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "03" ), from_hex( 3, "73" ) );
+  f0 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "22" ), from_hex( 3, "37" ) );
+  f1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "44" ), from_hex( 3, "ce" ) );
+  f2 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "b3" ) );
+  EXPECT_EQ( swap_adjacent( tt1, 0 ), sw_ad0 );
+  EXPECT_EQ( swap_adjacent( tt1, 1 ), sw_ad1 );
+  EXPECT_EQ( flip( tt1, 0 ), f0 );
+  EXPECT_EQ( flip( tt1, 1 ), f1 );
+  EXPECT_EQ( flip( tt1, 2 ), f2 );
+  EXPECT_EQ( swap( tt1, 0, 2 ), sw );
+}
+
+TEST_F( OperationsTest, min_base_for_ternary )
+{
+  auto tt = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "c0" ), from_hex<3>( "ff" ) ); /* (ab) */
+  auto support = min_base_inplace( tt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 1, 2 } ) );
+  EXPECT_EQ( tt, ternary_truth_table<static_truth_table<3>>( from_hex<3>( "88" ), from_hex<3>( "ff" ) ) );
+  expand_inplace( tt, support );
+  EXPECT_EQ( tt, ternary_truth_table<static_truth_table<3>>( from_hex<3>( "c0" ), from_hex<3>( "ff" ) ) );
+
+  tt = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "c0" ), from_hex<3>( "f0" ) );
+  support = min_base_inplace( tt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 1, 2 } ) );
+  EXPECT_EQ( tt, ternary_truth_table<static_truth_table<3>>( from_hex<3>( "88" ), from_hex<3>( "cc" ) ) );
+  expand_inplace( tt, support );
+  EXPECT_EQ( tt, ternary_truth_table<static_truth_table<3>>( from_hex<3>( "c0" ), from_hex<3>( "f0" ) ) );
+
+  auto ttt = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffffffffff00000000" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) ); /* {x7 + x6} */
+  support = min_base_inplace( ttt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 5, 6 } ) );
+  EXPECT_EQ( ttt, ternary_truth_table<static_truth_table<7>>( from_hex<7>( "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) ) );
+  expand_inplace( ttt, support );
+  EXPECT_EQ( ttt, ternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffffffffff00000000" ), from_hex<7>( "ffffffffffffffffffffffffffffffff" ) ) );
+
+  ttt = ternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffaaaaaaaaaaaaaaaa" ), from_hex<7>( "ffffffffffffffff00000000ffffffff" ) ); /* {x7 + x0} */
+  support = min_base_inplace( ttt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 0, 6 } ) );
+  EXPECT_EQ( ttt, ternary_truth_table<static_truth_table<7>>( from_hex<7>( "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ), from_hex<7>( "ccccccccffffffffccccccccffffffff" ) ) );
+  expand_inplace( ttt, support );
+  EXPECT_EQ( ttt, ternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffaaaaaaaaaaaaaaaa" ), from_hex<7>( "ffffffffffffffff00000000ffffffff" ) ) );
+}
+
+TEST_F( OperationsTest, extend_for_ternary )
+{
+  auto tt = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "69" ), from_hex( 3, "f0" ) );
+  EXPECT_EQ( extend_to( tt, 4 ), ternary_truth_table<dynamic_truth_table>( from_hex( 4, "6969" ), from_hex( 4, "f0f0" ) ) );
+  EXPECT_EQ( extend_to( tt, 5 ), ternary_truth_table<dynamic_truth_table>( from_hex( 5, "69696969" ), from_hex( 5, "f0f0f0f0" ) ) );
+
+  auto ttt = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "0123456789abcdeffedcba9876543210" ), from_hex( 7, "9abcd3452de8869212aceeac456789bb" ) );
+  EXPECT_EQ( extend_to( ttt, 8 ), ternary_truth_table<dynamic_truth_table>( from_hex( 8, "0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210" ), from_hex( 8, "9abcd3452de8869212aceeac456789bb9abcd3452de8869212aceeac456789bb" ) ) );
+}
+
+TEST_F( OperationsTest, shrink_for_ternary )
+{
+  auto tt = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "baba" ), from_hex( 4, "8989" ) );
+  EXPECT_EQ( shrink_to( tt, 3 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "ba" ), from_hex( 3, "89" ) ) );
+  EXPECT_EQ( shrink_to( tt, 2 ), ternary_truth_table<dynamic_truth_table>( from_hex( 2, "a" ), from_hex( 2, "9" ) ) );
+
+  auto ttt = ternary_truth_table<dynamic_truth_table>( from_hex( 8, "0123456789abcdeffedcba98765432100123456789abcdeffedcba9876543210" ), from_hex( 8, "9abcd3452de8869212aceeac456789bb0123456789abcdeffedcba9876543210" ) );
+  EXPECT_EQ( shrink_to( ttt, 7 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "0123456789abcdeffedcba9876543210" ), from_hex( 7, "0123456789abcdeffedcba9876543210" ) ) );
+}
+
+TEST_F( OperationsTest, shift_for_ternary )
+{
+  auto tt = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "ca" ), from_hex( 3, "cb" ) );
+  EXPECT_EQ( shift_left( tt, 4 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "a0" ), from_hex( 3, "bf" ) ) );
+  EXPECT_EQ( shift_left( tt, 3 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "50" ), from_hex( 3, "5f" ) ) );
+  EXPECT_EQ( shift_left( tt, 2 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "28" ), from_hex( 3, "2f" ) ) );
+  EXPECT_EQ( shift_left( tt, 1 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "94" ), from_hex( 3, "97" ) ) );
+  EXPECT_EQ( shift_right( tt, 4 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "0c" ), from_hex( 3, "fc" ) ) );
+  EXPECT_EQ( shift_right( tt, 3 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "19" ), from_hex( 3, "f9" ) ) );
+  EXPECT_EQ( shift_right( tt, 2 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "32" ), from_hex( 3, "f2" ) ) );
+  EXPECT_EQ( shift_right( tt, 1 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "65" ), from_hex( 3, "e5" ) ) );
+
+  auto ttt = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "abababababababababababababababab" ), from_hex( 7, "ebebebebebebebebebebebebebebebeb" ) );
+  EXPECT_EQ( shift_left( ttt, 4 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "bababababababababababababababab0" ), from_hex( 7, "bebebebebebebebebebebebebebebebf" ) ) );
+  EXPECT_EQ( shift_left( ttt, 3 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "5d5d5d5d5d5d5d5d5d5d5d5d5d5d5d58" ), from_hex( 7, "5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f" ) ) );
+  EXPECT_EQ( shift_left( ttt, 2 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeac" ), from_hex( 7, "afafafafafafafafafafafafafafafaf" ) ) );
+  EXPECT_EQ( shift_left( ttt, 1 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "57575757575757575757575757575756" ), from_hex( 7, "d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7" ) ) );
+  EXPECT_EQ( shift_right( ttt, 4 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "0abababababababababababababababa" ), from_hex( 7, "febebebebebebebebebebebebebebebe" ) ) );
+  EXPECT_EQ( shift_right( ttt, 3 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "15757575757575757575757575757575" ), from_hex( 7, "fd7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d" ) ) );
+  EXPECT_EQ( shift_right( ttt, 2 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "2aeaeaeaeaeaeaeaeaeaeaeaeaeaeaea" ), from_hex( 7, "fafafafafafafafafafafafafafafafa" ) ) );
+  EXPECT_EQ( shift_right( ttt, 1 ), ternary_truth_table<dynamic_truth_table>( from_hex( 7, "55d5d5d5d5d5d5d5d5d5d5d5d5d5d5d5" ), from_hex( 7, "f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5" ) ) );
+}
+
+TEST_F( OperationsTest, compose_for_ternary )
+{
+  auto op = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "c" ), from_hex( 2, "d" ) );
+  auto v1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "2" ), from_hex( 2, "e" ) );
+  auto v2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "a" ), from_hex( 2, "f" ) );
+  std::vector<ternary_truth_table<dynamic_truth_table>> v = { v1, v2 };
+  EXPECT_EQ( compose_truth_table( op, v ), ternary_truth_table<dynamic_truth_table>( from_hex( 2, "2" ), from_hex( 2, "6" ) ) );
+
+  auto op1 = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "20" ), from_hex<3>( "ef" ) );
+  auto v11 = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "80" ), from_hex<3>( "df" ) );
+  auto v21 = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "35" ), from_hex<3>( "bd" ) );
+  auto v31 = ternary_truth_table<static_truth_table<3>>( from_hex<3>( "44" ), from_hex<3>( "75" ) );
+  std::vector<ternary_truth_table<static_truth_table<3>>> vector = { v11, v21, v31 };
+  EXPECT_EQ( compose_truth_table( op1, vector ), ternary_truth_table<static_truth_table<3>>( from_hex<3>( "00" ), from_hex<3>( "7f" ) ) );
+
+  auto op2 = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "a321" ), from_hex( 4, "af3d" ) );
+  auto v12 = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "e182" ), from_hex( 4, "eddf" ) );
+  auto v22 = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "3015" ), from_hex( 4, "7b9d" ) );
+  auto v32 = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "4348" ), from_hex( 4, "f37b" ) );
+  auto v42 = ternary_truth_table<dynamic_truth_table>( from_hex( 4, "4948" ), from_hex( 4, "d97f" ) );
+  v = { v12, v22, v32, v42 };
+  EXPECT_EQ( compose_truth_table( op2, v ), ternary_truth_table<dynamic_truth_table>( from_hex( 4, "0000" ), from_hex( 4, "4319" ) ) );
+}
+
+TEST_F( OperationsTest, shift_mask_for_ternary )
+{
+  auto tt = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "7d" ) );
+  EXPECT_EQ( shift_with_mask( tt, 0b110 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "03" ), from_hex( 3, "ff" ) ) );
+  EXPECT_EQ( shift_with_mask( tt, 0b101 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "05" ), from_hex( 3, "ff" ) ) );
+  EXPECT_EQ( shift_with_mask( tt, 0b011 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "ff" ) ) );
 }

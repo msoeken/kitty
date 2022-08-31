@@ -74,7 +74,7 @@ struct ternary_truth_table
     \param care Care truth table.
   */
   ternary_truth_table( TT const& bits, TT const& care )
-    : _bits( bits ), _care( care )
+      : _bits( bits ), _care( care )
   {
   }
 
@@ -86,7 +86,7 @@ struct ternary_truth_table
     \param binary Binary truth table.
   */
   ternary_truth_table( TT const& binary )
-    : _care( ~( binary.construct() ) ), _bits( binary )
+      : _care( ~( binary.construct() ) ), _bits( binary )
   {
   }
 
@@ -233,11 +233,14 @@ public: /* fields */
   /*! \endcond */
 };
 
+template<class TT>
+struct is_truth_table<kitty::ternary_truth_table<TT>> : is_truth_table<TT>
+{
+};
 
 template<class TT>
-struct is_truth_table<kitty::ternary_truth_table<TT>> : is_truth_table<TT> {};
-
-template<class TT>
-struct is_complete_truth_table<kitty::ternary_truth_table<TT>> : is_complete_truth_table<TT> {};
+struct is_complete_truth_table<kitty::ternary_truth_table<TT>> : is_complete_truth_table<TT>
+{
+};
 
 } // namespace kitty

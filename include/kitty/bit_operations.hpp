@@ -97,19 +97,19 @@ void clear_bit( TT& tt, uint64_t index )
   tt._bits[index >> 6] &= ~( uint64_t( 1 ) << ( index & 0x3f ) );
 }
 
-  /*! \brief Gets bit at index
+/*! \brief Gets bit at index
 
-  \param tt Ternary truth table
-  \param index Bit index
+\param tt Ternary truth table
+\param index Bit index
 
-  \return 1 if bit is set, 0 if it is reset, nullopt if it is a don't care
+\return 1 if bit is set, 0 if it is reset, nullopt if it is a don't care
 */
 template<typename TT>
-std::optional<bool> get_bit( const ternary_truth_table<TT> &tt, uint64_t index )
+std::optional<bool> get_bit( const ternary_truth_table<TT>& tt, uint64_t index )
 {
-  if( get_bit( tt._care, index ) ) 
+  if ( get_bit( tt._care, index ) )
     return get_bit( tt._bits, index );
-  else 
+  else
     return std::nullopt;
 }
 
@@ -125,13 +125,13 @@ inline void mask_bits( ternary_truth_table<TT>& tt ) noexcept
 }
 
 template<typename TT>
-bool is_dont_care( const ternary_truth_table<TT> &tt, uint64_t index )
+bool is_dont_care( const ternary_truth_table<TT>& tt, uint64_t index )
 {
   return !get_bit( tt._care, index );
 }
 
 template<typename TT>
-void set_bit( ternary_truth_table<TT> &tt, uint64_t index, bool value = true )
+void set_bit( ternary_truth_table<TT>& tt, uint64_t index, bool value = true )
 {
   set_bit( tt._care, index );
   if ( value )
@@ -141,7 +141,7 @@ void set_bit( ternary_truth_table<TT> &tt, uint64_t index, bool value = true )
 }
 
 template<typename TT>
-void flip_bit( ternary_truth_table<TT> &tt, uint64_t index )
+void flip_bit( ternary_truth_table<TT>& tt, uint64_t index )
 {
   if ( !get_bit( tt._care, index ) )
     return;
@@ -149,7 +149,7 @@ void flip_bit( ternary_truth_table<TT> &tt, uint64_t index )
 }
 
 template<typename TT>
-void set_dont_care( ternary_truth_table<TT> &tt, uint64_t index )
+void set_dont_care( ternary_truth_table<TT>& tt, uint64_t index )
 {
   clear_bit( tt._care, index );
   clear_bit( tt._bits, index );
@@ -182,7 +182,7 @@ void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 }
 
 /*! \brief Copies bit at index
- 
+
   Copy the bit from `tt_from` at index `index_from` to `tt_to` at index `index_to`.
 
   \param tt_from Truth table to copy from
@@ -229,7 +229,8 @@ template<typename TT>
 inline uint64_t count_ones( const TT& tt )
 {
   return std::accumulate( tt.cbegin(), tt.cend(), uint64_t( 0 ),
-                          []( auto accu, auto word ) {
+                          []( auto accu, auto word )
+                          {
                             return accu + __builtin_popcount( word & 0xffffffff ) + __builtin_popcount( word >> 32 );
                           } );
 }
@@ -357,7 +358,8 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
     return -1;
   }
 
-  it = std::find_if( it + 1, tt.cend(), []( auto word ) { return word != 0; } );
+  it = std::find_if( it + 1, tt.cend(), []( auto word )
+                     { return word != 0; } );
 
   if ( it == tt.cend() )
   {
@@ -376,7 +378,8 @@ int64_t find_first_one_bit( const TT& tt, int64_t start = 0 )
 template<typename TT>
 int64_t find_last_one_bit( const TT& tt )
 {
-  const auto it = std::find_if( tt.crbegin(), tt.crend(), []( auto word ) { return word != 0; } );
+  const auto it = std::find_if( tt.crbegin(), tt.crend(), []( auto word )
+                                { return word != 0; } );
 
   if ( it == tt.crend() )
   {
