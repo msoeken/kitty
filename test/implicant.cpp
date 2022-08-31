@@ -39,8 +39,8 @@ class ImplicantTest : public kitty::testing::Test
 
 TEST_F( ImplicantTest, get_minterms )
 {
-  auto minterms = get_minterms( from_hex<3>( "e8") );
-  EXPECT_EQ( minterms, ( std::vector<uint32_t>{3u, 5u, 6u, 7u} ) );
+  auto minterms = get_minterms( from_hex<3>( "e8" ) );
+  EXPECT_EQ( minterms, ( std::vector<uint32_t>{ 3u, 5u, 6u, 7u } ) );
 }
 
 TEST_F( ImplicantTest, get_jbuddies )

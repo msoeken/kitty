@@ -35,20 +35,23 @@ using namespace kitty;
 TEST( EnumerationTest, small_spectral )
 {
   std::vector<static_truth_table<4>> functions( 1u );
-  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return exact_spectral_canonization( tt ); } );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt )
+                                   { return exact_spectral_canonization( tt ); } );
   ASSERT_EQ( functions.size(), 8u );
 }
 
 TEST( EnumerationTest, small_npn )
 {
   std::vector<static_truth_table<4>> functions( 1u );
-  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return std::get<0>( exact_npn_canonization( tt ) ); } );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt )
+                                   { return std::get<0>( exact_npn_canonization( tt ) ); } );
   ASSERT_EQ( functions.size(), 222u );
 }
 
 TEST( EnumerationTest, small_spectral_dynamic )
 {
   std::vector<dynamic_truth_table> functions( 1u, dynamic_truth_table( 4u ) );
-  fuller_neighborhood_enumeration( functions, []( const auto& tt ) { return exact_spectral_canonization( tt ); } );
+  fuller_neighborhood_enumeration( functions, []( const auto& tt )
+                                   { return exact_spectral_canonization( tt ); } );
   ASSERT_EQ( functions.size(), 8u );
 }

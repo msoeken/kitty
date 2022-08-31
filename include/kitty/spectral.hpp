@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2021  EPFL
+ * Copyright (C) 2017-2022  EPFL
  * Copyright (C) 2017-2021  University of Victoria
  *
  * Permission is hereby granted, free of charge, to any person

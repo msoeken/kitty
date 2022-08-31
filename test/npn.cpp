@@ -54,17 +54,17 @@ TEST_F( NPNTest, random_functions_exact )
 {
   using pair_vec_t = std::vector<std::pair<std::string, std::string>>;
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "0" } } )
   {
     check_npn<0>( p.first, p.second );
   }
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "1"}, {"2", "1"}, {"3", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "1" }, { "2", "1" }, { "3", "0" } } )
   {
     check_npn<1>( p.first, p.second );
   }
 
-  for ( const auto& p : pair_vec_t{{"0", "0"}, {"1", "1"}, {"2", "1"}, {"3", "3"}, {"4", "1"}, {"5", "3"}, {"6", "6"}, {"7", "1"}, {"8", "1"}, {"9", "6"}, {"a", "3"}, {"b", "1"}, {"c", "3"}, {"d", "1"}, {"e", "1"}, {"f", "0"}} )
+  for ( const auto& p : pair_vec_t{ { "0", "0" }, { "1", "1" }, { "2", "1" }, { "3", "3" }, { "4", "1" }, { "5", "3" }, { "6", "6" }, { "7", "1" }, { "8", "1" }, { "9", "6" }, { "a", "3" }, { "b", "1" }, { "c", "3" }, { "d", "1" }, { "e", "1" }, { "f", "0" } } )
   {
     check_npn<2>( p.first, p.second );
   }
@@ -116,7 +116,7 @@ TEST_F( NPNTest, random_functions_exact_p )
 TEST_F( NPNTest, random_functions_exact_n )
 {
   kitty::static_truth_table<6> tt;
-  const std::vector<uint8_t> perm = {0, 1, 2, 3, 4, 5};
+  const std::vector<uint8_t> perm = { 0, 1, 2, 3, 4, 5 };
 
   using tuple_t = std::tuple<kitty::static_truth_table<6>, uint32_t, std::vector<uint8_t>>;
 
@@ -133,7 +133,7 @@ TEST_F( NPNTest, random_functions_exact_n )
 TEST_F( NPNTest, random_functions_exact_n_complete )
 {
   kitty::static_truth_table<6> tt;
-  const std::vector<uint8_t> perm = {0, 1, 2, 3, 4, 5};
+  const std::vector<uint8_t> perm = { 0, 1, 2, 3, 4, 5 };
 
   using tuple_t = std::tuple<kitty::static_truth_table<6>, uint32_t, std::vector<uint8_t>>;
 
@@ -158,10 +158,10 @@ TEST_F( NPNTest, random_functions_exact_np_enumeration )
   for ( auto i = 0; i < 100; ++i )
   {
     create_random( tt );
-    exact_np_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg, std::vector<uint8_t> const& perm ) { 
+    exact_np_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg, std::vector<uint8_t> const& perm )
+                          { 
       const tuple_t res( tts, neg, perm );
-      EXPECT_EQ( create_from_npn_config( res ), tt );
-    } );
+      EXPECT_EQ( create_from_npn_config( res ), tt ); } );
   }
 }
 
@@ -173,25 +173,25 @@ TEST_F( NPNTest, random_functions_exact_p_enumeration )
   for ( auto i = 0; i < 100; ++i )
   {
     create_random( tt );
-    exact_p_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, std::vector<uint8_t> const& perm ) { 
+    exact_p_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, std::vector<uint8_t> const& perm )
+                         { 
       const tuple_t res( tts, 0, perm );
-      EXPECT_EQ( create_from_npn_config( res ), tt );
-    } );
+      EXPECT_EQ( create_from_npn_config( res ), tt ); } );
   }
 }
 
 TEST_F( NPNTest, random_functions_exact_n_enumeration )
 {
   kitty::static_truth_table<4> tt;
-  const std::vector<uint8_t> perm = {0, 1, 2, 3};
+  const std::vector<uint8_t> perm = { 0, 1, 2, 3 };
   using tuple_t = std::tuple<kitty::static_truth_table<4>, uint32_t, std::vector<uint8_t>>;
 
   for ( auto i = 0; i < 100; ++i )
   {
     create_random( tt );
-    exact_n_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg ) { 
+    exact_n_enumeration( tt, [&]( kitty::static_truth_table<4> const& tts, uint32_t neg )
+                         { 
       const tuple_t res( tts, neg, perm );
-      EXPECT_EQ( create_from_npn_config( res ), tt );
-    } );
+      EXPECT_EQ( create_from_npn_config( res ), tt ); } );
   }
 }

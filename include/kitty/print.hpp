@@ -1,5 +1,5 @@
 /* kitty: C++ truth table library
- * Copyright (C) 2017-2021  EPFL
+ * Copyright (C) 2017-2022  EPFL
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -42,6 +42,7 @@
 #include <vector>
 
 #include "algorithm.hpp"
+#include "karnaugh_map.hpp"
 #include "operations.hpp"
 #include "constructors.hpp"
 
@@ -71,8 +72,10 @@ inline std::string to_binary( uint16_t value, uint32_t num_vars )
   return res;
 }
 
-inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
-                             const std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>>& style_predicates = {} )
+inline void print_xmas_tree(
+    std::ostream& os, uint32_t num_vars,
+    const std::vector<std::pair<std::function<bool( uint16_t )>,
+                                std::vector<int>>>& style_predicates = {} )
 {
   /* create rows */
   std::vector<std::vector<uint16_t>> current( 1, { 0 } ), next;
@@ -84,11 +87,15 @@ inline void print_xmas_tree( std::ostream& os, uint32_t num_vars,
       if ( row.size() != 1u )
       {
         next.emplace_back();
-        std::transform( row.begin() + 1, row.end(), std::back_inserter( next.back() ), []( auto cell )
+
+        std::transform( row.begin() + 1, row.end(),
+                        std::back_inserter( next.back() ),
+                        []( auto cell )
                         { return cell << 1; } );
       }
       next.emplace_back( 1, row.front() << 1 );
-      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ), []( auto cell )
+      std::transform( row.begin(), row.end(), std::back_inserter( next.back() ),
+                      []( auto cell )
                       { return ( cell << 1 ) ^ 1; } );
     }
 
@@ -135,11 +142,10 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
   for_each_block_reversed( tt, [&os, chunk_size]( auto word )
                            {
     std::string chunk( chunk_size, '0' );
+
     auto it = chunk.rbegin();
-    while ( word && it != chunk.rend() )
-    {
-      if ( word & 1 )
-      {
+    while (word && it != chunk.rend()) {
+      if (word & 1) {
         *it = '1';
       }
       ++it;
@@ -149,7 +155,8 @@ void print_binary( const TT& tt, std::ostream& os = std::cout )
 }
 
 /*! \cond PRIVATE */
-inline void print_binary( const partial_truth_table& tt, std::ostream& os = std::cout )
+inline void print_binary( const partial_truth_table& tt,
+                          std::ostream& os = std::cout )
 {
   auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
   bool first = true;
@@ -157,23 +164,18 @@ inline void print_binary( const partial_truth_table& tt, std::ostream& os = std:
                            {
     std::string chunk( chunk_size, '0' );
     auto it = chunk.rbegin();
-    while ( word && it != chunk.rend() )
-    {
-      if ( word & 1 )
-      {
+    while (word && it != chunk.rend()) {
+      if (word & 1) {
         *it = '1';
       }
       ++it;
       word >>= 1;
     }
 
-    if ( first && ( chunk_size == 64 ) && ( tt.num_bits() % 64 ) )
-    {
+    if (first && (chunk_size == 64) && (tt.num_bits() % 64)) {
       first = false;
-      os << chunk.substr( 64 - ( tt.num_bits() % 64 ) );
-    }
-    else
-    {
+      os << chunk.substr(64 - (tt.num_bits() % 64));
+    } else {
       os << chunk;
     } } );
 }
@@ -206,6 +208,20 @@ void print_binary( const ternary_truth_table<TT>& tt, std::ostream& os = std::co
     }
   }
   os << tt_string;
+  
+/*! \brief Prints K-map of given truth table.
+
+  Columns represent the values of the least significant variables, rows of the
+  most significant ones.
+
+  \param tt Truth table
+  \param os Output stream (default = cout)
+*/
+template<typename TT>
+void print_kmap( const TT& tt, std::ostream& os = std::cout )
+{
+  karnaugh_map<TT> kmap( tt );
+  kmap.print( os );
 }
 
 /*! \brief Prints truth table in hexadecimal representation
@@ -218,22 +234,20 @@ void print_binary( const ternary_truth_table<TT>& tt, std::ostream& os = std::co
 template<typename TT, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
 void print_hex( const TT& tt, std::ostream& os = std::cout )
 {
-  auto const chunk_size = std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
+  auto const chunk_size =
+      std::min<uint64_t>( tt.num_vars() <= 1 ? 1 : ( tt.num_bits() >> 2 ), 16 );
 
   for_each_block_reversed( tt, [&os, chunk_size]( auto word )
                            {
     std::string chunk( chunk_size, '0' );
+
     auto it = chunk.rbegin();
-    while ( word && it != chunk.rend() )
-    {
+    while (word && it != chunk.rend()) {
       auto hex = word & 0xf;
-      if ( hex < 10 )
-      {
-        *it = '0' + static_cast<char>( hex );
-      }
-      else
-      {
-        *it = 'a' + static_cast<char>( hex - 10 );
+      if (hex < 10) {
+        *it = '0' + static_cast<char>(hex);
+      } else {
+        *it = 'a' + static_cast<char>(hex - 10);
       }
       ++it;
       word >>= 4;
@@ -242,35 +256,32 @@ void print_hex( const TT& tt, std::ostream& os = std::cout )
 }
 
 /*! \cond PRIVATE */
-inline void print_hex( const partial_truth_table& tt, std::ostream& os = std::cout )
+inline void print_hex( const partial_truth_table& tt,
+                       std::ostream& os = std::cout )
 {
   bool first = true;
   for_each_block_reversed( tt, [&tt, &os, &first]( auto word )
                            {
     std::string chunk( 16, '0' );
+
     auto it = chunk.rbegin();
-    while ( word && it != chunk.rend() )
-    {
+    while (word && it != chunk.rend()) {
       auto hex = word & 0xf;
-      if ( hex < 10 )
-      {
-        *it = '0' + static_cast<char>( hex );
-      }
-      else
-      {
-        *it = 'a' + static_cast<char>( hex - 10 );
+      if (hex < 10) {
+        *it = '0' + static_cast<char>(hex);
+      } else {
+        *it = 'a' + static_cast<char>(hex - 10);
       }
       ++it;
       word >>= 4;
     }
 
-    if ( first && ( tt.num_bits() % 64 ) )
-    {
+    if (first && (tt.num_bits() % 64)) {
       first = false;
-      os << chunk.substr( ( tt.num_bits() % 4 ) ? ( 15 - ( ( tt.num_bits() >> 2 ) % 16 ) ) : ( 16 - ( ( tt.num_bits() >> 2 ) % 16 ) ) );
-    }
-    else
-    {
+      os << chunk.substr((tt.num_bits() % 4)
+                             ? (15 - ((tt.num_bits() >> 2) % 16))
+                             : (16 - ((tt.num_bits() >> 2) % 16)));
+    } else {
       os << chunk;
     } } );
 }
@@ -330,6 +341,7 @@ inline std::string to_hex( const TT& tt )
   \param os Output stream
 */
 template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<dynamic_truth_table>>::value>, typename = std::enable_if_t<!std::is_same<TT, ternary_truth_table<partial_truth_table>>::value>>
+
 void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
 {
   detail::print_xmas_tree( os, tt.num_vars(),
@@ -358,19 +370,26 @@ void print_xmas_tree_for_function( const TT& tt, std::ostream& os = std::cout )
   \param os Output stream
 */
 template<class TT>
-void print_xmas_tree_for_functions( uint32_t num_vars,
-                                    const std::vector<std::pair<std::function<bool( TT const& )>, std::vector<int>>>& style_predicates = {},
-                                    std::ostream& os = std::cout )
+void print_xmas_tree_for_functions(
+    uint32_t num_vars,
+    const std::vector<std::pair<std::function<bool( TT const& )>,
+                                std::vector<int>>>& style_predicates = {},
+    std::ostream& os = std::cout )
 {
-  std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>> _preds;
-  std::transform( style_predicates.begin(), style_predicates.end(), std::back_inserter( _preds ),
-                  [&]( const auto& p )
-                  { return std::make_pair( [&]( uint16_t v )
-                                           {
-                                           auto tt = create<TT>( num_vars );
-                                           std::copy( &v, &v + 1, tt.begin() );
-                                           return p.first( tt ); },
-                                           p.second ); } );
+
+  std::vector<std::pair<std::function<bool( uint16_t )>, std::vector<int>>>
+      _preds;
+  std::transform( style_predicates.begin(), style_predicates.end(),
+                  std::back_inserter( _preds ), [&]( const auto& p )
+                  { return std::make_pair(
+                        [&]( uint16_t v )
+                        {
+                          auto tt = create<TT>( num_vars );
+                          std::copy( &v, &v + 1, tt.begin() );
+                          return p.first( tt );
+                        },
+                        p.second ); } );
+                        
   detail::print_xmas_tree( os, 1 << num_vars, _preds );
 }
 
@@ -378,7 +397,8 @@ void print_xmas_tree_for_functions( uint32_t num_vars,
  *
  * \param anf Truth table in ANF encoding
  */
-template<typename TT, typename = std::enable_if_t<!std::is_same<TT, partial_truth_table>::value>>
+template<typename TT, typename = std::enable_if_t<
+                          !std::is_same<TT, partial_truth_table>::value>>
 std::string anf_to_expression( const TT& anf )
 {
   const auto terms = count_ones( anf );
@@ -394,23 +414,20 @@ std::string anf_to_expression( const TT& anf )
                     {
     if ( bit == 0 )
     {
+
       expr += "1";
       return;
     }
-    auto weight = __builtin_popcount( static_cast<uint32_t>( bit ) );
-    if ( weight != 1 )
-    {
+    auto weight = __builtin_popcount(static_cast<uint32_t>(bit));
+    if (weight != 1) {
       expr += "(";
     }
-    for ( auto i = 0u; i < anf.num_vars(); ++i )
-    {
-      if ( ( bit >> i ) & 1 )
-      {
-        expr += std::string( 1, 'a' + i );
+    for (auto i = 0u; i < anf.num_vars(); ++i) {
+      if ((bit >> i) & 1) {
+        expr += std::string(1, 'a' + i);
       }
     }
-    if ( weight != 1 )
-    {
+    if (weight != 1) {
       expr += ")";
     } } );
 

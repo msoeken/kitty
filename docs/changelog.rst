@@ -3,6 +3,9 @@ Change Log
 
 Next release
 ------------
+* Print: ``print_kmap`` (contributed by Gianluca Radi)
+  `#129 <https://github.com/msoeken/kitty/pull/129>`_
+
 * Constructors: ``create_from_formula`` (contributed by Alessandro Tempia Calvino)
   `#123 <https://github.com/msoeken/kitty/pull/123>`_
 

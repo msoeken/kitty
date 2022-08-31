@@ -41,7 +41,7 @@ using namespace kitty;
 TEST( PermutationTest, small_permutations_static )
 {
   static_truth_table<3> base;
-  std::vector<uint32_t> perm{0u, 2u, 3u, 5u, 7u, 1u, 4u, 6u};
+  std::vector<uint32_t> perm{ 0u, 2u, 3u, 5u, 7u, 1u, 4u, 6u };
 
   const auto masks = compute_permutation_masks( base, perm );
   EXPECT_EQ( masks.size(), 5u );

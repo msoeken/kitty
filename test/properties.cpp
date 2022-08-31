@@ -175,9 +175,9 @@ TEST_F( PropertiesTest, runlength_pattern )
   auto xor3 = from_hex<3>( "96" );
   auto xor4 = from_hex<4>( "6996" );
 
-  EXPECT_EQ( runlength_pattern( xor2 ), ( std::vector<uint32_t>{{1, 2, 1}} ) );
-  EXPECT_EQ( runlength_pattern( xor3 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 1}} ) );
-  EXPECT_EQ( runlength_pattern( xor4 ), ( std::vector<uint32_t>{{1, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1}} ) );
+  EXPECT_EQ( runlength_pattern( xor2 ), ( std::vector<uint32_t>{ { 1, 2, 1 } } ) );
+  EXPECT_EQ( runlength_pattern( xor3 ), ( std::vector<uint32_t>{ { 1, 2, 1, 1, 2, 1 } } ) );
+  EXPECT_EQ( runlength_pattern( xor4 ), ( std::vector<uint32_t>{ { 1, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1 } } ) );
 }
 
 TEST_F( PropertiesTest, polynomial_degree )
