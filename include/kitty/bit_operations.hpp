@@ -63,6 +63,17 @@ void set_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits |= uint64_t( 1 ) << index;
 }
+
+template<typename TT>
+void set_bit( ternary_truth_table<TT>& tt, uint64_t index, bool value = true )
+{
+  set_bit( tt._care, index );
+  if ( value )
+    set_bit( tt._bits, index );
+  else
+    clear_bit( tt._bits, index );
+}
+
 /*! \endcond */
 
 /*! \brief Gets bit at index
@@ -84,18 +95,6 @@ auto get_bit( const static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   return ( tt._bits >> index ) & 0x1;
 }
-/*! \endcond */
-
-/*! \brief Clears bit at index (sets bit at index to false)
-
-  \param tt Truth table
-  \param index Bit index
-*/
-template<typename TT>
-void clear_bit( TT& tt, uint64_t index )
-{
-  tt._bits[index >> 6] &= ~( uint64_t( 1 ) << ( index & 0x3f ) );
-}
 
 /*! \brief Gets bit at index
 
@@ -113,46 +112,17 @@ std::optional<bool> get_bit( const ternary_truth_table<TT>& tt, uint64_t index )
     return std::nullopt;
 }
 
-/*! \brief Masks valid truth table bits.
+/*! \endcond */
 
-  This operation makes sure to zero out all unused bits.
+/*! \brief Clears bit at index (sets bit at index to false)
+
+  \param tt Truth table
+  \param index Bit index
 */
 template<typename TT>
-inline void mask_bits( ternary_truth_table<TT>& tt ) noexcept
+void clear_bit( TT& tt, uint64_t index )
 {
-  tt._care.mask_bits();
-  tt._bits.mask_bits();
-}
-
-template<typename TT>
-bool is_dont_care( const ternary_truth_table<TT>& tt, uint64_t index )
-{
-  return !get_bit( tt._care, index );
-}
-
-template<typename TT>
-void set_bit( ternary_truth_table<TT>& tt, uint64_t index, bool value = true )
-{
-  set_bit( tt._care, index );
-  if ( value )
-    set_bit( tt._bits, index );
-  else
-    clear_bit( tt._bits, index );
-}
-
-template<typename TT>
-void flip_bit( ternary_truth_table<TT>& tt, uint64_t index )
-{
-  if ( !get_bit( tt._care, index ) )
-    return;
-  flip_bit( tt._bits, index );
-}
-
-template<typename TT>
-void set_dont_care( ternary_truth_table<TT>& tt, uint64_t index )
-{
-  clear_bit( tt._care, index );
-  clear_bit( tt._bits, index );
+  tt._bits[index >> 6] &= ~( uint64_t( 1 ) << ( index & 0x3f ) );
 }
 
 /*! \cond PRIVATE */
@@ -174,11 +144,42 @@ void flip_bit( TT& tt, uint64_t index )
   tt._bits[index >> 6] ^= uint64_t( 1 ) << ( index & 0x3f );
 }
 
+template<typename TT>
+void flip_bit( ternary_truth_table<TT>& tt, uint64_t index )
+{
+  if ( !get_bit( tt._care, index ) )
+    return;
+  flip_bit( tt._bits, index );
+}
+
 /*! \cond PRIVATE */
 template<uint32_t NumVars>
 void flip_bit( static_truth_table<NumVars, true>& tt, uint64_t index )
 {
   tt._bits ^= uint64_t( 1 ) << index;
+}
+
+/*! \brief Checks if a bit in a ternary truth table is a don't care
+
+  \param tt Ternary truth table
+  \param index Bit index
+*/
+template<typename TT>
+bool is_dont_care( const ternary_truth_table<TT>& tt, uint64_t index )
+{
+  return !get_bit( tt._care, index );
+}
+
+/*! \brief Sets a bit in a ternary truth table as a don't care
+
+  \param tt Ternary truth table
+  \param index Bit index
+*/
+template<typename TT>
+void set_dont_care( ternary_truth_table<TT>& tt, uint64_t index )
+{
+  clear_bit( tt._care, index );
+  clear_bit( tt._bits, index );
 }
 
 /*! \brief Copies bit at index

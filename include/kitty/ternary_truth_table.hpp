@@ -226,6 +226,16 @@ struct ternary_truth_table
     return *this;
   }
 
+  /*! \brief Masks valid truth table bits.
+
+  This operation makes sure to zero out all unused bits.
+  */
+  inline void mask_bits() noexcept
+  {
+    _care.mask_bits();
+    _bits.mask_bits();
+  }
+
   /*! \cond PRIVATE */
 public: /* fields */
   TT _care;
