@@ -10,6 +10,8 @@ The header ``<kitty/bit_operations.hpp>`` implements bit manipulation on truth t
    flip_bit
    is_dont_care
    set_dont_care
+   get_block
+   copy_bit
    clear
    count_ones
    count_zeros

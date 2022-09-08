@@ -1224,3 +1224,323 @@ TEST_F( OperationsTest, shift_mask_for_ternary )
   EXPECT_EQ( shift_with_mask( tt, 0b101 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "05" ), from_hex( 3, "ff" ) ) );
   EXPECT_EQ( shift_with_mask( tt, 0b011 ), ternary_truth_table<dynamic_truth_table>( from_hex( 3, "11" ), from_hex( 3, "ff" ) ) );
 }
+
+TEST_F( OperationsTest, unary_for_quaternary )
+{
+  EXPECT_EQ( unary_not( quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "4c" ), from_hex<3>( "85" ) ) ), quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "85" ), from_hex<3>( "4c" ) ) );
+  EXPECT_EQ( unary_not( quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "012a012a012a012a012a012a012a012a" ), from_hex<7>( "4cb14cb14cb14cb14cb14cb14cb14cb1" ) ) ), quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "4cb14cb14cb14cb14cb14cb14cb14cb1" ), from_hex<7>( "012a012a012a012a012a012a012a012a" ) ) );
+}
+
+TEST_F( OperationsTest, binary_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "0ff0" ), from_hex<4>( "0f0f" ) );
+  auto tt2 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "6666" ), from_hex<4>( "5555" ) );
+  auto res_or = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "27f6" ), from_hex<4>( "0505" ) );
+  auto res_and = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "0660" ), from_hex<4>( "175f" ) );
+  auto res_xor = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "0756" ), from_hex<4>( "0765" ) );
+  auto res_mux_0 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "4ee4" ), from_hex<4>( "5f5f" ) );
+  auto res_mux_1 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "2ee2" ), from_hex<4>( "1d1d" ) );
+  auto res_mux_2 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "06f6" ), from_hex<4>( "0505" ) );
+  auto res_mux_3 = quaternary_truth_table<static_truth_table<4>>( from_hex<4>( "0f66" ), from_hex<4>( "0f55" ) );
+
+  EXPECT_EQ( binary_or( tt1, tt2 ), res_or );
+  EXPECT_EQ( binary_and( tt1, tt2 ), res_and );
+  EXPECT_EQ( binary_xor( tt1, tt2 ), res_xor );
+  EXPECT_EQ( mux_var( 0, tt1, tt2 ), res_mux_0 );
+  EXPECT_EQ( mux_var( 1, tt1, tt2 ), res_mux_1 );
+  EXPECT_EQ( mux_var( 2, tt1, tt2 ), res_mux_2 );
+  EXPECT_EQ( mux_var( 3, tt1, tt2 ), res_mux_3 );
+
+  auto ttt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "0ff00ff00ff00ff00ff00ff00ff00ff0" ), from_hex( 7, "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f" ) );
+  auto ttt2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "66666666666666666666666666666666" ), from_hex( 7, "55555555555555555555555555555555" ) );
+  auto res_or1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "27f627f627f627f627f627f627f627f6" ), from_hex( 7, "05050505050505050505050505050505" ) );
+  auto res_and1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "06600660066006600660066006600660" ), from_hex( 7, "175f175f175f175f175f175f175f175f" ) );
+  auto res_xor1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "07560756075607560756075607560756" ), from_hex( 7, "07650765076507650765076507650765" ) );
+  auto res_mux_01 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "4ee44ee44ee44ee44ee44ee44ee44ee4" ), from_hex( 7, "5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f" ) );
+  auto res_mux_11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "2ee22ee22ee22ee22ee22ee22ee22ee2" ), from_hex( 7, "1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d" ) );
+  auto res_mux_21 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "06f606f606f606f606f606f606f606f6" ), from_hex( 7, "05050505050505050505050505050505" ) );
+  auto res_mux_31 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "0f660f660f660f660f660f660f660f66" ), from_hex( 7, "0f550f550f550f550f550f550f550f55" ) );
+
+  EXPECT_EQ( binary_or( ttt1, ttt2 ), res_or1 );
+  EXPECT_EQ( binary_and( ttt1, ttt2 ), res_and1 );
+  EXPECT_EQ( binary_xor( ttt1, ttt2 ), res_xor1 );
+  EXPECT_EQ( mux_var( 0, ttt1, ttt2 ), res_mux_01 );
+  EXPECT_EQ( mux_var( 1, ttt1, ttt2 ), res_mux_11 );
+  EXPECT_EQ( mux_var( 2, ttt1, ttt2 ), res_mux_21 );
+  EXPECT_EQ( mux_var( 3, ttt1, ttt2 ), res_mux_31 );
+}
+
+TEST_F( OperationsTest, ternary_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<static_truth_table<6>>( from_hex<6>( "0000ffffffff0000" ), from_hex<6>( "0000ffff0000ffff" ) );
+  auto tt2 = quaternary_truth_table<static_truth_table<6>>( from_hex<6>( "0ff00ff00ff00ff0" ), from_hex<6>( "0f0f0f0f0f0f0f0f" ) );
+  auto tt3 = quaternary_truth_table<static_truth_table<6>>( from_hex<6>( "6666666666666666" ), from_hex<6>( "5555555555555555" ) );
+  auto res_maj = quaternary_truth_table<static_truth_table<6>>( from_hex<6>( "0020077627f60660" ), from_hex<6>( "000107570505175f" ) );
+  auto res_ite = quaternary_truth_table<static_truth_table<6>>( from_hex<6>( "042007760ff06666" ), from_hex<6>( "040107570f0f5555" ) );
+  EXPECT_EQ( ternary_majority( tt1, tt2, tt3 ), res_maj );
+  EXPECT_EQ( ternary_ite( tt1, tt2, tt3 ), res_ite );
+
+  auto ttt1 = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "0000ffffffff00000000ffffffff0000" ), from_hex<7>( "0000ffff0000ffff0000ffff0000ffff" ) );
+  auto ttt2 = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "0ff00ff00ff00ff00ff00ff00ff00ff0" ), from_hex<7>( "0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f" ) );
+  auto ttt3 = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "66666666666666666666666666666666" ), from_hex<7>( "55555555555555555555555555555555" ) );
+  auto res_maj1 = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "0020077627f606600020077627f60660" ), from_hex<7>( "000107570505175f000107570505175f" ) );
+  auto res_ite1 = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "042007760ff06666042007760ff06666" ), from_hex<7>( "040107570f0f5555040107570f0f5555" ) );
+  EXPECT_EQ( ternary_majority( ttt1, ttt2, ttt3 ), res_maj1 );
+  EXPECT_EQ( ternary_ite( ttt1, ttt2, ttt3 ), res_ite1 );
+}
+
+TEST_F( OperationsTest, predicate_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "c" ), from_hex( 2, "9" ) );
+  auto tt2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "e" ), from_hex( 2, "9" ) );
+  EXPECT_TRUE( implies( tt1, tt2 ) );
+  EXPECT_FALSE( implies( tt1, tt1 ) );
+  EXPECT_TRUE( implies( tt2, tt2 ) );
+  EXPECT_TRUE( less_than( tt1, tt2 ) );
+  EXPECT_TRUE( has_var( tt1, 1 ) );
+  EXPECT_TRUE( has_var( tt1, 0 ) );
+  EXPECT_TRUE( has_var( tt2, 1 ) );
+  EXPECT_TRUE( has_var( tt2, 0 ) );
+  EXPECT_TRUE( has_var( tt2, 1 ) );
+
+  set_dont_care( tt2, 0 );
+  EXPECT_FALSE( has_var( tt2, 1 ) );
+  EXPECT_FALSE( has_var( tt2, 0 ) );
+
+  auto ttt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "cccccccccccccccccccccccccccccccc" ), from_hex( 7, "19191919191919191919191919191919" ) );
+  auto ttt2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d" ), from_hex( 7, "5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b" ) );
+  EXPECT_FALSE( implies( ttt1, ttt2 ) );
+  EXPECT_FALSE( implies( ttt1, ttt1 ) );
+  EXPECT_FALSE( implies( ttt2, ttt2 ) );
+  EXPECT_TRUE( less_than( ttt2, ttt1 ) );
+  EXPECT_FALSE( has_var( ttt1, 6 ) );
+  EXPECT_FALSE( has_var( ttt1, 5 ) );
+  EXPECT_FALSE( has_var( ttt1, 4 ) );
+  EXPECT_FALSE( has_var( ttt1, 3 ) );
+  EXPECT_FALSE( has_var( ttt1, 2 ) );
+  EXPECT_TRUE( has_var( ttt1, 1 ) );
+  EXPECT_TRUE( has_var( ttt1, 0 ) );
+  EXPECT_FALSE( has_var( ttt2, 6 ) );
+  EXPECT_FALSE( has_var( ttt2, 5 ) );
+  EXPECT_FALSE( has_var( ttt2, 4 ) );
+  EXPECT_FALSE( has_var( ttt2, 3 ) );
+  EXPECT_TRUE( has_var( ttt2, 2 ) );
+  EXPECT_TRUE( has_var( ttt2, 1 ) );
+  EXPECT_TRUE( has_var( ttt2, 0 ) );
+}
+
+TEST_F( OperationsTest, instersection_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "c3" ), from_hex( 3, "b9" ) );
+  auto tt2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "30" ), from_hex( 3, "d7" ) );
+  auto tt3 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "5b" ), from_hex( 3, "f6" ) );
+  EXPECT_TRUE( intersection_is_empty( tt1, tt2 ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt1, tt2 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt1, tt2 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt1, tt2 ) ) );
+  EXPECT_TRUE( intersection_is_empty( tt1, tt3 ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt1, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt1, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt1, tt3 ) ) );
+  EXPECT_FALSE( intersection_is_empty( tt2, tt3 ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt2, tt3 ) ) );
+
+  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
+  EXPECT_TRUE( ( intersection_is_empty<dynamic_truth_table, true, true, false>( tt1, tt2, tt3 ) ) );
+  EXPECT_TRUE( ( intersection_is_empty<dynamic_truth_table, true, false, true>( tt1, tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false, false>( tt1, tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true, true>( tt1, tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true, false>( tt1, tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false, true>( tt1, tt2, tt3 ) ) );
+  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false, false>( tt1, tt2, tt3 ) ) );
+}
+
+TEST_F( OperationsTest, cofactor_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "ac" ), from_hex( 3, "6a" ) );
+  auto cof_c0 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "0c" ), from_hex( 3, "c0" ) );
+  auto cof_c1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "fc" ), from_hex( 3, "3f" ) );
+  auto cof_b0 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "a0" ), from_hex( 3, "aa" ) );
+  auto cof_b1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "af" ), from_hex( 3, "5a" ) );
+  auto cof_a0 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "cc" ), from_hex( 3, "aa" ) );
+  auto cof_a1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "aa" ), from_hex( 3, "66" ) );
+  EXPECT_EQ( cofactor0( tt1, 2 ), cof_a0 );
+  EXPECT_EQ( cofactor1( tt1, 2 ), cof_a1 );
+  EXPECT_EQ( cofactor0( tt1, 1 ), cof_b0 );
+  EXPECT_EQ( cofactor1( tt1, 1 ), cof_b1 );
+  EXPECT_EQ( cofactor0( tt1, 0 ), cof_c0 );
+  EXPECT_EQ( cofactor1( tt1, 0 ), cof_c1 );
+
+  auto tt11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d4d" ), from_hex( 7, "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1" ) );
+  auto cof_c11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c" ), from_hex( 7, "f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0" ) );
+  auto cof_c00 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "cfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcf" ), from_hex( 7, "03030303030303030303030303030303" ) );
+  auto cof_b00 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "05050505050505050505050505050505" ), from_hex( 7, "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5" ) );
+  auto cof_b11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f" ), from_hex( 7, "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0" ) );
+  auto cof_a00 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "dddddddddddddddddddddddddddddddd" ), from_hex( 7, "11111111111111111111111111111111" ) );
+  auto cof_a11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "44444444444444444444444444444444" ), from_hex( 7, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" ) );
+  EXPECT_EQ( cofactor0( tt11, 6 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 6 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 5 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 5 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 4 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 4 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 3 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 3 ), tt11 );
+  EXPECT_EQ( cofactor0( tt11, 2 ), cof_a00 );
+  EXPECT_EQ( cofactor1( tt11, 2 ), cof_a11 );
+  EXPECT_EQ( cofactor0( tt11, 1 ), cof_b00 );
+  EXPECT_EQ( cofactor1( tt11, 1 ), cof_b11 );
+  EXPECT_EQ( cofactor0( tt11, 0 ), cof_c00 );
+  EXPECT_EQ( cofactor1( tt11, 0 ), cof_c11 );
+}
+
+TEST_F( OperationsTest, next_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 1, "0" ), from_hex( 1, "3" ) );
+  std::vector<std::string> sample = { "00", "xx", "x-", "x1", "x0", "-x", "--", "-1", "-0", "1x", "1-", "11", "10", "0x", "0-", "01" };
+  for ( uint16_t i = 15; i > 0; i-- )
+  {
+    next_inplace( tt1 );
+    EXPECT_EQ( to_binary( tt1 ), sample[i] );
+  }
+}
+
+TEST_F( OperationsTest, swap_flip_for_quaternary )
+{
+  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "72" ), from_hex( 3, "3c" ) );
+  auto sw_ad0 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "74" ), from_hex( 3, "5a" ) );
+  auto sw_ad1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "4e" ), from_hex( 3, "3c" ) );
+  auto sw = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "3a" ), from_hex( 3, "66" ) );
+  auto f0 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "b1" ), from_hex( 3, "3c" ) );
+  auto f1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "d8" ), from_hex( 3, "c3" ) );
+  auto f2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "27" ), from_hex( 3, "c3" ) );
+  EXPECT_EQ( swap_adjacent( tt1, 0 ), sw_ad0 );
+  EXPECT_EQ( swap_adjacent( tt1, 1 ), sw_ad1 );
+  EXPECT_EQ( swap( tt1, 0, 2 ), sw );
+  EXPECT_EQ( flip( tt1, 0 ), f0 );
+  EXPECT_EQ( flip( tt1, 1 ), f1 );
+  EXPECT_EQ( flip( tt1, 2 ), f2 );
+
+  auto ttt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "72727272727272727272727272727272" ), from_hex( 7, "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c" ) );
+  auto sw_ad01 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "74747474747474747474747474747474" ), from_hex( 7, "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a" ) );
+  auto sw_ad11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "4e4e4e4e4e4e4e4e4e4e4e4e4e4e4e4e" ), from_hex( 7, "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c" ) );
+  auto sw1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a" ), from_hex( 7, "66666666666666666666666666666666" ) );
+  auto f01 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1" ), from_hex( 7, "3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c" ) );
+  auto f11 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8" ), from_hex( 7, "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3" ) );
+  auto f21 = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "27272727272727272727272727272727" ), from_hex( 7, "c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3c3" ) );
+  EXPECT_EQ( swap_adjacent( ttt1, 0 ), sw_ad01 );
+  EXPECT_EQ( swap_adjacent( ttt1, 1 ), sw_ad11 );
+  EXPECT_EQ( swap( ttt1, 0, 2 ), sw1 );
+  EXPECT_EQ( flip( ttt1, 0 ), f01 );
+  EXPECT_EQ( flip( ttt1, 1 ), f11 );
+  EXPECT_EQ( flip( ttt1, 2 ), f21 );
+  EXPECT_EQ( flip( ttt1, 3 ), ttt1 );
+  EXPECT_EQ( flip( ttt1, 4 ), ttt1 );
+  EXPECT_EQ( flip( ttt1, 5 ), ttt1 );
+  EXPECT_EQ( flip( ttt1, 6 ), ttt1 );
+}
+
+TEST_F( OperationsTest, min_base_for_quaternary )
+{
+  auto tt = quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "c7" ), from_hex<3>( "0d" ) ); /* (ab) */
+  auto support = min_base_inplace( tt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 1, 2 } ) );
+  EXPECT_EQ( tt, quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "9b" ), from_hex<3>( "23" ) ) );
+  expand_inplace( tt, support );
+  EXPECT_EQ( tt, quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "c7" ), from_hex<3>( "0d" ) ) );
+
+  auto ttt = quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffaaaaaaaaaaaaaaaa" ), from_hex<7>( "00000000000000000000000000000000" ) ); /* {x7 + x0} */
+  support = min_base_inplace( ttt );
+  EXPECT_EQ( support, std::vector<uint8_t>( { 0, 6 } ) );
+  EXPECT_EQ( ttt, quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" ), from_hex<7>( "00000000000000000000000000000000" ) ) );
+  expand_inplace( ttt, support );
+  EXPECT_EQ( ttt, quaternary_truth_table<static_truth_table<7>>( from_hex<7>( "ffffffffffffffffaaaaaaaaaaaaaaaa" ), from_hex<7>( "00000000000000000000000000000000" ) ) );
+}
+
+TEST_F( OperationsTest, extend_for_quaternary )
+{
+  auto tt = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "45" ), from_hex( 3, "d1" ) );
+  EXPECT_EQ( extend_to( tt, 4 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "4545" ), from_hex( 4, "d1d1" ) ) );
+  EXPECT_EQ( extend_to( tt, 5 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 5, "45454545" ), from_hex( 5, "d1d1d1d1" ) ) );
+
+  auto ttt = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "fedcba98765432100123456789abcdef" ), from_hex( 7, "23cd45abc57839ed580ab09529ba4398" ) );
+  EXPECT_EQ( extend_to( ttt, 8 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 8, "fedcba98765432100123456789abcdeffedcba98765432100123456789abcdef" ), from_hex( 8, "23cd45abc57839ed580ab09529ba439823cd45abc57839ed580ab09529ba4398" ) ) );
+}
+
+TEST_F( OperationsTest, shrink_for_quaternary )
+{
+  auto tt = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "7676" ), from_hex( 4, "a2a2" ) );
+  EXPECT_EQ( shrink_to( tt, 3 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "76" ), from_hex( 3, "a2" ) ) );
+  EXPECT_EQ( shrink_to( tt, 2 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "6" ), from_hex( 2, "2" ) ) );
+
+  auto ttt = quaternary_truth_table<dynamic_truth_table>( from_hex( 8, "fedcba98765432100123456789abcdeffedcba98765432100123456789abcdef" ), from_hex( 8, "23cd45abc57839ed580ab09529ba439823cd45abc57839ed580ab09529ba4398" ) );
+  EXPECT_EQ( shrink_to( ttt, 7 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "fedcba98765432100123456789abcdef" ), from_hex( 7, "23cd45abc57839ed580ab09529ba4398" ) ) );
+}
+
+TEST_F( OperationsTest, shift_for_quaternary )
+{
+  auto tt = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "4d" ), from_hex( 3, "8b" ) );
+  EXPECT_EQ( shift_left( tt, 4 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "d0" ), from_hex( 3, "bf" ) ) );
+  EXPECT_EQ( shift_left( tt, 3 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "68" ), from_hex( 3, "5f" ) ) );
+  EXPECT_EQ( shift_left( tt, 2 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "34" ), from_hex( 3, "2f" ) ) );
+  EXPECT_EQ( shift_left( tt, 1 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "9a" ), from_hex( 3, "17" ) ) );
+  EXPECT_EQ( shift_right( tt, 4 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "04" ), from_hex( 3, "f8" ) ) );
+  EXPECT_EQ( shift_right( tt, 3 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "09" ), from_hex( 3, "f1" ) ) );
+  EXPECT_EQ( shift_right( tt, 2 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "13" ), from_hex( 3, "e2" ) ) );
+  EXPECT_EQ( shift_right( tt, 1 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "26" ), from_hex( 3, "c5" ) ) );
+
+  auto ttt = quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6" ), from_hex( 7, "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b" ) );
+  EXPECT_EQ( shift_left( ttt, 4 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c60" ), from_hex( 7, "b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4bf" ) ) );
+  EXPECT_EQ( shift_left( ttt, 3 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "36363636363636363636363636363630" ), from_hex( 7, "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5f" ) ) );
+  EXPECT_EQ( shift_left( ttt, 2 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "1b1b1b1b1b1b1b1b1b1b1b1b1b1b1b18" ), from_hex( 7, "2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2f" ) ) );
+  EXPECT_EQ( shift_left( ttt, 1 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "8d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8c" ), from_hex( 7, "96969696969696969696969696969697" ) ) );
+  EXPECT_EQ( shift_right( ttt, 4 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "0c6c6c6c6c6c6c6c6c6c6c6c6c6c6c6c" ), from_hex( 7, "f4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4" ) ) );
+  EXPECT_EQ( shift_right( ttt, 3 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "18d8d8d8d8d8d8d8d8d8d8d8d8d8d8d8" ), from_hex( 7, "e9696969696969696969696969696969" ) ) );
+  EXPECT_EQ( shift_right( ttt, 2 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "31b1b1b1b1b1b1b1b1b1b1b1b1b1b1b1" ), from_hex( 7, "d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2" ) ) );
+  EXPECT_EQ( shift_right( ttt, 1 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 7, "63636363636363636363636363636363" ), from_hex( 7, "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5" ) ) );
+}
+
+TEST_F( OperationsTest, compose_for_quaternary )
+{
+  auto op = quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "e" ), from_hex( 2, "2" ) );
+  auto v1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "9" ), from_hex( 2, "2" ) );
+  auto v2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "4" ), from_hex( 2, "5" ) );
+  std::vector<quaternary_truth_table<dynamic_truth_table>> v = { v1, v2 };
+  EXPECT_EQ( compose_truth_table( op, v ), quaternary_truth_table<dynamic_truth_table>( from_hex( 2, "9" ), from_hex( 2, "0" ) ) );
+
+  auto op1 = quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "e6" ), from_hex<3>( "9d" ) );
+  auto v11 = quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "6d" ), from_hex<3>( "72" ) );
+  auto v21 = quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "35" ), from_hex<3>( "ec" ) );
+  auto v31 = quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "0a" ), from_hex<3>( "a6" ) );
+  std::vector<quaternary_truth_table<static_truth_table<3>>> vector = { v11, v21, v31 };
+  EXPECT_EQ( compose_truth_table( op1, vector ), quaternary_truth_table<static_truth_table<3>>( from_hex<3>( "2d" ), from_hex<3>( "b4" ) ) );
+
+  auto op2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "8a3b" ), from_hex( 4, "4525" ) );
+  auto v12 = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "19ae" ), from_hex( 4, "d64d" ) );
+  auto v22 = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "ed63" ), from_hex( 4, "d1ac" ) );
+  auto v32 = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "97c2" ), from_hex( 4, "743a" ) );
+  auto v42 = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "2ad5" ), from_hex( 4, "4e9b" ) );
+  v = { v12, v22, v32, v42 };
+  EXPECT_EQ( compose_truth_table( op2, v ), quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "4084" ), from_hex( 4, "0088" ) ) );
+}
+
+TEST_F( OperationsTest, shift_mask_for_quaternary )
+{
+  auto tt = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "8c" ), from_hex( 3, "44" ) );
+  auto ttab = shift_with_mask( tt, 0b110 );
+  auto ttac = shift_with_mask( tt, 0b101 );
+  EXPECT_EQ( ttab, quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "c4" ), from_hex( 3, "0c" ) ) );
+  EXPECT_EQ( ttac, quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "b0" ), from_hex( 3, "50" ) ) );
+  EXPECT_EQ( shift_with_mask( tt, 0b011 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "8c" ), from_hex( 3, "44" ) ) );
+
+  auto ttt = quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "c142" ), from_hex( 4, "33c3" ) );
+  auto tttacd = shift_with_mask( ttt, 0b1011 );
+  auto tttbcd = shift_with_mask( ttt, 0b0111 );
+  auto tttabd = shift_with_mask( ttt, 0b1101 );
+  EXPECT_EQ( tttacd, quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "8918" ), from_hex( 4, "3399" ) ) );
+  EXPECT_EQ( tttbcd, quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "8198" ), from_hex( 4, "3939" ) ) );
+  EXPECT_EQ( tttabd, quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "a124" ), from_hex( 4, "55a5" ) ) );
+  EXPECT_EQ( shift_with_mask( ttt, 0b1110 ), quaternary_truth_table<dynamic_truth_table>( from_hex( 4, "c142" ), from_hex( 4, "33c3" ) ) );
+}

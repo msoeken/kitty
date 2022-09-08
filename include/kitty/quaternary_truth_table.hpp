@@ -256,4 +256,9 @@ struct is_complete_truth_table<kitty::quaternary_truth_table<TT>> : is_complete_
 {
 };
 
+template<class TT>
+struct is_completely_specified_truth_table<kitty::quaternary_truth_table<TT>> : std::false_type
+{
+};
+
 } // namespace kitty

@@ -210,6 +210,35 @@ void print_binary( const ternary_truth_table<TT>& tt, std::ostream& os = std::co
   os << tt_string;
 }
 
+template<typename TT>
+void print_binary( const quaternary_truth_table<TT>& tt, std::ostream& os = std::cout )
+{
+  auto const chunk_size = std::min<uint64_t>( tt.num_bits(), 64 );
+  std::string tt_string = "";
+  for_each_block_reversed( tt._onset, [&os, &tt_string, chunk_size]( auto word )
+                           {
+    std::string chunk( chunk_size, '0' );
+    auto it = chunk.rbegin();
+    while ( word && it != chunk.rend() )
+    {
+      if ( word & 1 )
+      {
+        *it = '1';
+      }
+      ++it;
+      word >>= 1;
+    }
+    tt_string += chunk; } );
+  for ( auto i = 0; i < tt.num_bits(); i++ )
+  {
+    if ( is_dont_care( tt, tt.num_bits() - 1 - i ) )
+      tt_string[i] = '-';
+    if ( is_dont_know( tt, tt.num_bits() - 1 - i ) )
+      tt_string[i] = 'x';
+  }
+  os << tt_string;
+}
+
 /*! \brief Prints K-map of given truth table.
 
   Columns represent the values of the least significant variables, rows of the

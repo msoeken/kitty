@@ -59,10 +59,6 @@ public:
     uint64_t num_var = log2( (double)tt.num_bits() );
     vars_col = num_var >> 1;
     vars_row = num_var - vars_col;
-    if ( is_completely_specified_truth_table<TT>::value )
-      has_dont_care = false;
-    else
-      has_dont_care = true;
     col_seq = compute_seq_1ham_dist( vars_col );
     row_seq = compute_seq_1ham_dist( vars_row );
   }
@@ -94,16 +90,15 @@ public:
         if ( vars_row > 2 )
           middle_space = vars_row / 2;
         print_space( middle_space, os );
-        if ( has_dont_care )
-        {
-          auto bit = get_bit( truth_table, ( j << vars_row ) + i );
-          if ( !is_dont_care( truth_table, ( j << vars_row ) + i ) )
-            os << bit;
-          else
-            os << "-";
-        }
+        if ( is_dont_care( truth_table, ( j << vars_row ) + i ) )
+          os << "-";
         else
-          os << get_bit( truth_table, ( j << vars_row ) + i );
+        {
+          if ( is_dont_know( truth_table, ( j << vars_row ) + i ) )
+            os << "x";
+          else
+            os << get_bit( truth_table, ( j << vars_row ) + i );
+        }
         print_space( ( vars_row << 1 ) - 1 - middle_space, os );
         os << "    ";
       }
@@ -124,7 +119,6 @@ private:
   TT truth_table;
   unsigned vars_row;
   unsigned vars_col;
-  bool has_dont_care;
   std::vector<uint8_t> row_seq;
   std::vector<uint8_t> col_seq;
 

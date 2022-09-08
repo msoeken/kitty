@@ -37,6 +37,7 @@
 #include "static_truth_table.hpp"
 #include "partial_truth_table.hpp"
 #include "ternary_truth_table.hpp"
+#include "quaternary_truth_table.hpp"
 
 namespace kitty
 {
@@ -67,6 +68,13 @@ inline ternary_truth_table<TT> operator~( const ternary_truth_table<TT>& tt )
   return unary_not( tt );
 }
 
+/*! \brief Operator for unary_not */
+template<typename TT>
+inline quaternary_truth_table<TT> operator~( const quaternary_truth_table<TT>& tt )
+{
+  return unary_not( tt );
+}
+
 /*! \brief Operator for binary_and */
 inline dynamic_truth_table operator&( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -89,6 +97,13 @@ inline partial_truth_table operator&( const partial_truth_table& first, const pa
 /*! \brief Operator for binary_and */
 template<typename TT>
 inline ternary_truth_table<TT> operator&( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return binary_and( first, second );
+}
+
+/*! \brief Operator for binary_and */
+template<typename TT>
+inline quaternary_truth_table<TT> operator&( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return binary_and( first, second );
 }
@@ -119,6 +134,13 @@ inline void operator&=( ternary_truth_table<TT>& first, const ternary_truth_tabl
   first = binary_and( first, second );
 }
 
+/*! \brief Operator for binary_and and assign */
+template<typename TT>
+inline void operator&=( quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  first = binary_and( first, second );
+}
+
 /*! \brief Operator for binary_or */
 inline dynamic_truth_table operator|( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -141,6 +163,13 @@ inline partial_truth_table operator|( const partial_truth_table& first, const pa
 /*! \brief Operator for binary_or */
 template<typename TT>
 inline ternary_truth_table<TT> operator|( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return binary_or( first, second );
+}
+
+/*! \brief Operator for binary_or */
+template<typename TT>
+inline quaternary_truth_table<TT> operator|( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return binary_or( first, second );
 }
@@ -171,6 +200,13 @@ inline void operator|=( ternary_truth_table<TT>& first, const ternary_truth_tabl
   first = binary_or( first, second );
 }
 
+/*! \brief Operator for binary_or and assign */
+template<typename TT>
+inline void operator|=( quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  first = binary_or( first, second );
+}
+
 /*! \brief Operator for binary_xor */
 inline dynamic_truth_table operator^( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -193,6 +229,13 @@ inline partial_truth_table operator^( const partial_truth_table& first, const pa
 /*! \brief Operator for binary_xor */
 template<typename TT>
 inline ternary_truth_table<TT> operator^( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return binary_xor( first, second );
+}
+
+/*! \brief Operator for binary_xor */
+template<typename TT>
+inline quaternary_truth_table<TT> operator^( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return binary_xor( first, second );
 }
@@ -223,6 +266,13 @@ inline void operator^=( ternary_truth_table<TT>& first, const ternary_truth_tabl
   first = binary_xor( first, second );
 }
 
+/*! \brief Operator for binary_xor and assign */
+template<typename TT>
+inline void operator^=( quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  first = binary_xor( first, second );
+}
+
 /*! \brief Operator for equal */
 inline bool operator==( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -245,6 +295,13 @@ inline bool operator==( const partial_truth_table& first, const partial_truth_ta
 /*! \brief Operator for equal */
 template<typename TT>
 inline bool operator==( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return equal( first, second );
+}
+
+/*! \brief Operator for equal */
+template<typename TT>
+inline bool operator==( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return equal( first, second );
 }
@@ -275,6 +332,13 @@ inline bool operator!=( const ternary_truth_table<TT>& first, const ternary_trut
   return !equal( first, second );
 }
 
+/*! \brief Operator for not equals (!equal) */
+template<typename TT>
+inline bool operator!=( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  return !equal( first, second );
+}
+
 /*! \brief Operator for less_than */
 inline bool operator<( const dynamic_truth_table& first, const dynamic_truth_table& second )
 {
@@ -297,6 +361,13 @@ inline bool operator<( const partial_truth_table& first, const partial_truth_tab
 /*! \brief Operator for less_than */
 template<typename TT>
 inline bool operator<( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return less_than( first, second );
+}
+
+/*! \brief Operator for less_than */
+template<typename TT>
+inline bool operator<( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return less_than( first, second );
 }
@@ -327,6 +398,13 @@ inline ternary_truth_table<TT> operator<<( const ternary_truth_table<TT>& tt, ui
   return shift_left( tt, shift );
 }
 
+/*! \brief Operator for left_shift */
+template<typename TT>
+inline quaternary_truth_table<TT> operator<<( const quaternary_truth_table<TT>& tt, uint64_t shift )
+{
+  return shift_left( tt, shift );
+}
+
 /*! \brief Operator for left_shift_inplace */
 inline void operator<<=( dynamic_truth_table& tt, uint64_t shift )
 {
@@ -349,6 +427,13 @@ inline void operator<<=( partial_truth_table& tt, uint64_t shift )
 /*! \brief Operator for left_shift_inplace */
 template<typename TT>
 inline void operator<<=( ternary_truth_table<TT>& tt, uint64_t shift )
+{
+  shift_left_inplace( tt, shift );
+}
+
+/*! \brief Operator for left_shift_inplace */
+template<typename TT>
+inline void operator<<=( quaternary_truth_table<TT>& tt, uint64_t shift )
 {
   shift_left_inplace( tt, shift );
 }
@@ -379,6 +464,13 @@ inline ternary_truth_table<TT> operator>>( const ternary_truth_table<TT>& tt, ui
   return shift_right( tt, shift );
 }
 
+/*! \brief Operator for right_shift */
+template<typename TT>
+inline quaternary_truth_table<TT> operator>>( const quaternary_truth_table<TT>& tt, uint64_t shift )
+{
+  return shift_right( tt, shift );
+}
+
 /*! \brief Operator for right_shift_inplace */
 inline void operator>>=( dynamic_truth_table& tt, uint64_t shift )
 {
@@ -401,6 +493,13 @@ inline void operator>>=( partial_truth_table& tt, uint64_t shift )
 /*! \brief Operator for right_shift_inplace */
 template<typename TT>
 inline void operator>>=( ternary_truth_table<TT>& tt, uint64_t shift )
+{
+  shift_right_inplace( tt, shift );
+}
+
+/*! \brief Operator for right_shift_inplace */
+template<typename TT>
+inline void operator>>=( quaternary_truth_table<TT>& tt, uint64_t shift )
 {
   shift_right_inplace( tt, shift );
 }

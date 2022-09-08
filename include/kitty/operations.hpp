@@ -110,7 +110,7 @@ inline TT binary_and( const TT& first, const TT& second )
  * - `0 & 0 = 0 & 1 = 1 & 0 = 0`
  * - `1 & 1 = 1`
  * - `0 & - = - & 0 = 0`
- * - `1 & - = - & 1 = - & - = -`
+ * - `1 & x = x & 1 = x & - = - & x = x & x = x`
  */
 template<typename TT>
 inline ternary_truth_table<TT> binary_and( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
@@ -126,6 +126,31 @@ inline ternary_truth_table<TT> binary_and( const ternary_truth_table<TT>& first,
 
   return ternary_truth_table<TT>( quaternary_operation( first._bits, first._care, second._bits, second._care, op_bits ),
                                   quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
+}
+
+/*! \brief Bitwise OR of two quaternary truth tables
+ *
+ * Computation rules:
+ * - `0 & 0 = 0 & 1 = 1 & 0 = 0`
+ * - `1 & 1 = 1`
+ * - `0 & - = - & 0 = x & 0 = 0 & x = 0`
+ * - `1 & - = - & 1 = - & - = -`
+ * - `1 & x = x & 1 = x & - = - & x = x & x = x`
+ */
+template<typename TT>
+inline quaternary_truth_table<TT> binary_and( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  auto const op_on = []( auto a, auto b )
+  {
+    return a & b;
+  };
+  auto const op_off = []( auto a, auto b, auto c, auto d )
+  {
+    return ( ~a & b ) | ( b & c ) | ( a & d ) | ( ~b & ~c & d );
+  };
+
+  return quaternary_truth_table<TT>( binary_operation( first._onset, second._onset, op_on ),
+                                     quaternary_operation( first._onset, first._offset, second._onset, second._offset, op_off ) );
 }
 
 /*! \brief Bitwise OR of two truth tables */
@@ -159,6 +184,31 @@ inline ternary_truth_table<TT> binary_or( const ternary_truth_table<TT>& first, 
                                   quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
 }
 
+/*! \brief Bitwise OR of two quaternary truth tables
+ *
+ * Computation rules:
+ * - `0 | 0 = 0`
+ * - `0 | 1 = 1 | 0 = 1 | 1 = 1`
+ * - `1 | - = - | 1 = x | 1 = 1 | x = 1`
+ * - `0 | - = - | 0 = - | - = -`
+ * - `0 | x = x | 0 = x | - = - | x = x | x = x`
+ */
+template<typename TT>
+inline quaternary_truth_table<TT> binary_or( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  auto const op_on = []( auto a, auto b, auto c, auto d )
+  {
+    return ( a & ~b ) | ( b & c ) | ( c & ~d ) | ( a & b & d );
+  };
+  auto const op_off = []( auto a, auto b )
+  {
+    return a & b;
+  };
+
+  return quaternary_truth_table<TT>( quaternary_operation( first._onset, first._offset, second._onset, second._offset, op_on ),
+                                     binary_operation( first._offset, second._offset, op_off ) );
+}
+
 /*! \brief Bitwise XOR of two truth tables */
 template<typename TT>
 inline TT binary_xor( const TT& first, const TT& second )
@@ -187,6 +237,30 @@ inline ternary_truth_table<TT> binary_xor( const ternary_truth_table<TT>& first,
 
   return ternary_truth_table<TT>( quaternary_operation( first._bits, first._care, second._bits, second._care, op_bits ),
                                   quaternary_operation( first._bits, first._care, second._bits, second._care, op_care ) );
+}
+
+/*! \brief Bitwise XOR of two ternary truth tables
+ *
+ * Computation rules:
+ * - `0 ^ 0 = 1 ^ 1 = 0`
+ * - `0 ^ 1 = 1 ^ 0 = 1`
+ * - `0 ^ - = - ^ 0 = 1 ^ - = - ^ 1 = - ^ - = -`
+ * - `0 ^ x = x ^ 0 = 1 ^ x = x ^ 1 = - ^ x = x ^ - = x ^ x = x`
+ */
+template<typename TT>
+inline quaternary_truth_table<TT> binary_xor( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  auto const op_on = []( auto a, auto b, auto c, auto d )
+  {
+    return ( b & c ) | ( a & d );
+  };
+  auto const op_off = []( auto a, auto b, auto c, auto d )
+  {
+    return ( a & c ) | ( b & d );
+  };
+
+  return quaternary_truth_table<TT>( quaternary_operation( first._onset, first._offset, second._onset, second._offset, op_on ),
+                                     quaternary_operation( first._onset, first._offset, second._onset, second._offset, op_off ) );
 }
 
 /*! \brief Ternary majority of three truth tables */
@@ -218,6 +292,20 @@ inline ternary_truth_table<TT> ternary_majority( const ternary_truth_table<TT>& 
   };
   return ternary_truth_table<TT>( ternary_operation( first._bits, second._bits, third._bits, op_bits ),
                                   ternary_operation( care12, care23, care13, ternary_or ) );
+}
+
+/*! \brief Ternary majority of three quaternary truth tables
+ *
+ * Computation rules:
+ * When there are two 0, 1, or x the result is 0, 1, x
+ * - ternary_majority(0, 1, -) = ternary_majority(0, -, -) =  ternary_majority(1, -, -) =  -
+ * - ternary_majority(0, 1, x) = ternary_majority(0, x, -) = ternary_majority(1, x, -) = ternary_majority(x, -, -) = x
+ * - ternary_majority is commutative
+ */
+template<typename TT>
+inline quaternary_truth_table<TT> ternary_majority( quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second, const quaternary_truth_table<TT>& third )
+{
+  return ( ( first & second ) | ( second & third ) ) | ( first & third );
 }
 
 /*! \brief Performs ternary if-then-else of three truth tables
@@ -256,6 +344,62 @@ inline ternary_truth_table<TT> ternary_ite( const ternary_truth_table<TT>& first
   };
   return ternary_truth_table<TT>( ternary_operation( first._bits, second._bits, third._bits, op_bits ),
                                   ternary_operation( first._care, care1, care2, final_op ) );
+}
+
+/*! \brief Performs ternary if-then-else of three quaternary truth tables
+
+   In general, each time the result would depend from a x, x is the result.
+   For example, ternary_ite( -, 0, x ) = x
+   However, ternary_ite( x, 0, 0 ) = ternary_ite( -, 0, 0 ) = 0
+            ternary_ite( x, 1, 1 ) = ternary_ite( -, 1, 1 ) = 1
+            ternary_ite( x, -, - ) = ternary_ite( -, -, - ) = -
+
+  \param first Truth table for condition
+  \param second Truth table for then-case
+  \param third Truth table for else-case
+ */
+template<typename TT>
+inline quaternary_truth_table<TT> ternary_ite( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second, const quaternary_truth_table<TT>& third )
+{
+  auto const op_1 = []( auto a, auto b, auto c, auto d )
+  {
+    return ( a & b ) & ( ( c & d ) | ( ~c & ~d ) );
+  };
+  auto const op_2 = []( auto a, auto b, auto c )
+  {
+    return ( a & b & c );
+  };
+  auto const op_3 = []( auto a, auto b, auto c )
+  {
+    return ( a & b & ~c );
+  };
+  auto const or_4 = []( auto a, auto b, auto c, auto d )
+  {
+    return ( a | b | c | d );
+  };
+  auto const or_3 = []( auto a, auto b, auto c )
+  {
+    return ( a | b | c );
+  };
+  TT on1 = ternary_operation( first._offset, third._onset, first._onset, op_3 );
+  TT on2 = ternary_operation( first._onset, second._onset, first._offset, op_3 );
+  TT on3 = ternary_operation( first._offset, second._onset, third._onset, op_2 );
+  TT on4 = ternary_operation( first._offset, second._offset, third._onset, op_2 );
+  TT on5 = ternary_operation( first._onset, second._onset, third._offset, op_2 );
+  TT on6 = quaternary_operation( second._onset, third._onset, second._offset, third._offset, op_1 );
+  TT on7 = quaternary_operation( on1, on2, on3, on4, or_4 );
+  TT res_onset = ternary_operation( on7, on5, on6, or_3 );
+
+  TT off1 = ternary_operation( third._offset, first._offset, first._onset, op_3 );
+  TT off2 = ternary_operation( first._onset, second._offset, first._offset, op_3 );
+  TT off3 = ternary_operation( first._offset, second._offset, third._offset, op_2 );
+  TT off4 = ternary_operation( first._offset, second._onset, third._offset, op_2 );
+  TT off5 = ternary_operation( first._onset, second._offset, third._onset, op_2 );
+  TT off6 = quaternary_operation( second._offset, third._offset, second._onset, third._onset, op_1 );
+  TT off7 = quaternary_operation( off1, off2, off3, off4, or_4 );
+  TT res_offset = ternary_operation( off7, off5, off6, or_3 );
+
+  return quaternary_truth_table<TT>( res_onset, res_offset );
 }
 
 /*! \brief Muxes two truth tables based on a variable
@@ -322,6 +466,38 @@ inline ternary_truth_table<TT> mux_var( uint8_t var_index, const ternary_truth_t
   return then_new | else_new;
 }
 
+/*! \brief Muxes two ternary truth tables based on a variable
+
+ * Values that are not taken by the projections become 0s.
+
+  \param var_index Variable index
+  \param then_ Truth table for the then-case
+  \param else_ Truth table for the else-case
+*/
+template<typename TT>
+inline quaternary_truth_table<TT> mux_var( uint8_t var_index, const quaternary_truth_table<TT>& then_, const quaternary_truth_table<TT>& else_ )
+{
+  auto const projection = [&var_index]( auto a )
+  {
+    return ( a & detail::projections[var_index] );
+  };
+  auto const projection_off = [&var_index]( auto a )
+  {
+    return ( ( a & detail::projections[var_index] ) | detail::projections_neg[var_index] );
+  };
+  auto const projection_neg = [&var_index]( auto a )
+  {
+    return ( a & detail::projections_neg[var_index] );
+  };
+  auto const projection_neg_off = [&var_index]( auto a )
+  {
+    return ( ( a & detail::projections_neg[var_index] ) | detail::projections[var_index] );
+  };
+  quaternary_truth_table<TT> then_new( unary_operation( then_._onset, projection ), unary_operation( then_._offset, projection_off ) );
+  quaternary_truth_table<TT> else_new( unary_operation( else_._onset, projection_neg ), unary_operation( else_._offset, projection_neg_off ) );
+  return then_new | else_new;
+}
+
 /*! \brief Checks whether two truth tables are equal
 
   \param first First truth table
@@ -347,14 +523,19 @@ inline bool equal( const partial_truth_table& first, const partial_truth_table& 
   }
 
   return binary_predicate( first, second, std::equal_to<>() );
-}
+} /*! \endcond */
 
 template<typename TT>
 inline bool equal( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
 {
   return equal( first._bits, second._bits ) && equal( first._care, second._care );
 }
-/*! \endcond */
+
+template<typename TT>
+inline bool equal( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  return equal( first._onset, second._onset ) && equal( first._offset, second._offset );
+}
 
 /*! \brief Checks if first truth table implies a second truth table
 
@@ -368,13 +549,24 @@ inline bool implies( const TT& first, const TT& second )
                            { return ( a & ~b ) == 0u; } );
 }
 
-/*! \brief Checks if first ternary truth table implies a ternary second truth table
+/*! \brief Checks if first ternary truth table implies a second ternary truth table
 
   \param first First truth table
   \param second Second truth table
 */
 template<typename TT>
 inline bool implies( const ternary_truth_table<TT>& first, const ternary_truth_table<TT>& second )
+{
+  return is_const0( first & ~second );
+}
+
+/*! \brief Checks if first quaternary truth table implies a second quaternary truth table
+
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool implies( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
 {
   return is_const0( first & ~second );
 }
@@ -412,6 +604,19 @@ inline bool less_than( const ternary_truth_table<TT>& first, const ternary_truth
   return first._bits < second._bits;
 }
 
+/*! \brief Checks whether a quaternary truth table is lexicographically smaller than another
+
+  Comparison is initiated from most-significant bit
+  Don't cares are considered as 0 and don't knows are considered as 1.
+  \param first First truth table
+  \param second Second truth table
+*/
+template<typename TT>
+inline bool less_than( const quaternary_truth_table<TT>& first, const quaternary_truth_table<TT>& second )
+{
+  return first._onset < second._onset;
+}
+
 /*! \brief Checks whether truth table is contant 0
 
   \param tt Truth table
@@ -438,6 +643,16 @@ template<typename TT>
 inline bool is_const0( const ternary_truth_table<TT>& tt )
 {
   return is_const0( tt._bits | ~tt._care );
+}
+
+/*! \brief Checks whether a quaternary truth table is constant composed by only - and 0.
+
+  \param tt Truth table
+*/
+template<typename TT>
+inline bool is_const0( const quaternary_truth_table<TT>& tt )
+{
+  return is_const0( ~tt._offset );
 }
 
 /*! \endcond */
@@ -475,6 +690,26 @@ bool intersection_is_empty( const TT& first, const TT& second )
 */
 template<typename TT, bool polarity1 = true, bool polarity2 = true>
 bool intersection_is_empty( const ternary_truth_table<TT>& a, const ternary_truth_table<TT>& b )
+{
+  if constexpr ( polarity1 && polarity2 )
+    return is_const0( a & b );
+  else if constexpr ( !polarity1 && polarity2 )
+    return is_const0( ~a & b );
+  else if constexpr ( polarity1 && !polarity2 )
+    return is_const0( a & ~b );
+  else // !polarity1 && !polarity2
+    return is_const0( ~a & ~b );
+}
+
+/*! \brief Checks whether the intersection of two quaternary truth tables is empty
+
+  \param first First truth table
+  \param second Second truth table
+  \param polarity1 Polarity of the first truth table
+  \param polarity2 Polarity of the second truth table
+*/
+template<typename TT, bool polarity1 = true, bool polarity2 = true>
+bool intersection_is_empty( const quaternary_truth_table<TT>& a, const quaternary_truth_table<TT>& b )
 {
   if constexpr ( polarity1 && polarity2 )
     return is_const0( a & b );
@@ -554,6 +789,36 @@ bool intersection_is_empty( const ternary_truth_table<TT>& a, const ternary_trut
     return is_const0( ~a & ~b & ~c );
 }
 
+/*! \brief Checks whether the intersection of three quaternary truth tables is empty
+
+  \param first First truth table
+  \param second Second truth table
+  \param third Third truth table
+  \param polarity1 Polarity of the first truth table
+  \param polarity2 Polarity of the second truth table
+  \param polarity3 Polarity of the first truth table
+*/
+template<typename TT, bool polarity1 = true, bool polarity2 = true, bool polarity3 = true>
+bool intersection_is_empty( const quaternary_truth_table<TT>& a, const quaternary_truth_table<TT>& b, const quaternary_truth_table<TT>& c )
+{
+  if constexpr ( polarity1 && polarity2 && polarity3 )
+    return is_const0( a & b & c );
+  else if constexpr ( !polarity1 && polarity2 && polarity3 )
+    return is_const0( ~a & b & c );
+  else if constexpr ( polarity1 && !polarity2 && polarity3 )
+    return is_const0( a & ~b & c );
+  else if constexpr ( polarity1 && polarity2 && !polarity3 )
+    return is_const0( a & b & ~c );
+  else if constexpr ( !polarity1 && !polarity2 && polarity3 )
+    return is_const0( ~a & ~b & c );
+  else if constexpr ( polarity1 && !polarity2 && !polarity3 )
+    return is_const0( a & ~b & ~c );
+  else if constexpr ( !polarity1 && polarity2 && !polarity3 )
+    return is_const0( ~a & b & ~c );
+  else // !polarity1 && !polarity2 && !polarity3
+    return is_const0( ~a & ~b & ~c );
+}
+
 /*! \brief Checks whether truth table depends on given variable index
 
   \param tt Truth table
@@ -607,6 +872,70 @@ template<typename TT>
 bool has_var( const ternary_truth_table<TT>& tt, uint8_t var_index )
 {
   return has_var( tt._bits, var_index );
+}
+
+/*! \brief Checks whether a quaternary truth table depends on given variable index.
+           This function returns false if the truth table potentially does not depend
+           on the variable (due to don't cares) and returns true if the truth table potentially
+           depends on the variable (due to don't knows).
+
+           For example, has_var( -01-, 0 ) = has_var( -01-, 1 ) = false.
+           In the first case the truth table is considered to be 0011 and
+           in the second case the truth table is considered to be 1010.
+
+           Yet, has_var( x01-, 0 ) = has_var( x01-, 1 ) = true.
+           In the first case we cannot assume x = 0 and
+           in the second case we cannot assume x = 1.
+
+           Finally, has_var( x0-0, 1 ) = true, since the don't care should be
+           equal to an unknown value.
+
+  \param tt Truth table
+  \param var_index Variable index
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+bool has_var( const quaternary_truth_table<TT>& tt, uint8_t var_index )
+{
+  auto const compare_func = []( auto a, auto b, auto c, auto d )
+  {
+    return ( ~a & ~b & ~c & ~d ) | ( b & d ) | ( a & c );
+  };
+  if ( tt.num_vars() <= 6 || var_index < 6 )
+  {
+    auto const projection = [&var_index]( auto a )
+    {
+      return ( a & detail::projections[var_index] );
+    };
+    auto const projection_neg = [&var_index]( auto a )
+    {
+      return ( a & detail::projections_neg[var_index] );
+    };
+    auto proj_pos_on = unary_operation( tt._onset, projection );
+    auto proj_pos_off = unary_operation( tt._offset, projection );
+    auto proj_neg_on = unary_operation( tt._onset, projection_neg ) << ( 1 << var_index );
+    auto proj_neg_off = unary_operation( tt._offset, projection_neg ) << ( 1 << var_index );
+    return !is_const0( ~quaternary_operation( proj_pos_on, proj_pos_off, proj_neg_on, proj_neg_off, compare_func ) );
+  }
+  const auto step = 1 << ( var_index - 6 );
+  for ( auto i = 0u; i < static_cast<uint32_t>( tt.num_blocks() ); i += 2 * step )
+  {
+    for ( auto j = 0; j < step; ++j )
+    {
+      auto tta = create<dynamic_truth_table>( tt._onset.num_vars() );
+      auto ttb = create<dynamic_truth_table>( tt._onset.num_vars() );
+      auto ttc = create<dynamic_truth_table>( tt._onset.num_vars() );
+      auto ttd = create<dynamic_truth_table>( tt._onset.num_vars() );
+      tta._bits[0] = get_block( tt._onset, i + j );
+      ttb._bits[0] = get_block( tt._offset, i + j );
+      ttc._bits[0] = get_block( tt._onset, i + j + step );
+      ttd._bits[0] = get_block( tt._offset, i + j + step );
+      if ( !is_const0( ~quaternary_operation( tta, ttb, ttc, ttd, compare_func ) ) )
+      {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /*! \brief Computes the next lexicographically larger truth table
@@ -684,6 +1013,68 @@ void next_inplace( ternary_truth_table<TT>& tt )
   tt._care = tt._care | ( tt._bits ^ copy._bits );
 }
 
+/*! \brief Computes the next lexicographically larger truth table
+
+  This methods updates `tt` to become the next lexicographically
+  larger truth table. If `tt` is already the largest truth table, the
+  updated truth table will contain all zeros.
+
+  Lexicographical increasing order for quaternary truth table:
+
+  0, 1, -, x
+
+  \param tt Truth table
+*/
+
+template<typename TT>
+void next_inplace( quaternary_truth_table<TT>& tt )
+{
+  auto copy = tt;
+  auto first_bit_on = find_first_one_bit( tt._onset );
+  auto first_bit_of = find_first_one_bit( tt._offset );
+  if ( first_bit_on == -1 )
+    first_bit_on = tt._onset.num_bits();
+  if ( first_bit_of == -1 )
+    first_bit_of = tt._offset.num_bits();
+  if ( first_bit_of < first_bit_on )
+  {
+    clear_bit( tt._offset, first_bit_of );
+    set_bit( tt._onset, first_bit_of );
+    for ( uint64_t i = 0; i < first_bit_of; i++ )
+    {
+      set_bit( tt._offset, i );
+      clear_bit( tt._onset, i );
+    }
+  }
+  else
+  {
+    if ( first_bit_of > first_bit_on )
+    {
+      set_bit( tt._offset, first_bit_on );
+      for ( uint64_t i = 0; i < first_bit_on; i++ )
+      {
+        set_bit( tt._offset, i );
+        clear_bit( tt._onset, i );
+      }
+    }
+    else
+    {
+      if ( first_bit_of == tt._offset.num_bits() && first_bit_on == tt._onset.num_bits() )
+        set_bit( tt._offset, first_bit_of - 1 );
+      else
+      {
+        clear_bit( tt._onset, first_bit_on );
+        clear_bit( tt._offset, first_bit_on );
+      }
+      for ( uint64_t i = 0; i < first_bit_of; i++ )
+      {
+        set_bit( tt._offset, i );
+        clear_bit( tt._onset, i );
+      }
+    }
+  }
+}
+
 /*! \brief Returns the next lexicographically larger truth table
 
   Out-of-place variant for `next_inplace`.
@@ -748,6 +1139,18 @@ void cofactor0_inplace( ternary_truth_table<TT>& tt, uint8_t var_index )
   cofactor0_inplace( tt._care, var_index );
 }
 
+/*! \brief Computes co-factor with respect to 0
+
+  \param tt Ternary truth table
+  \param var_index Variable index
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void cofactor0_inplace( quaternary_truth_table<TT>& tt, uint8_t var_index )
+{
+  cofactor0_inplace( tt._onset, var_index );
+  cofactor0_inplace( tt._offset, var_index );
+}
+
 /*! \brief Returns co-factor with respect to 0
 
  \param tt Truth table
@@ -808,6 +1211,18 @@ void cofactor1_inplace( ternary_truth_table<TT>& tt, uint8_t var_index )
 {
   cofactor1_inplace( tt._bits, var_index );
   cofactor1_inplace( tt._care, var_index );
+}
+
+/*! \brief Computes co-factor with respect to 1
+
+  \param tt Ternary truth table
+  \param var_index Variable index
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void cofactor1_inplace( quaternary_truth_table<TT>& tt, uint8_t var_index )
+{
+  cofactor1_inplace( tt._onset, var_index );
+  cofactor1_inplace( tt._offset, var_index );
 }
 
 /*! \brief Returns co-factor with respect to 1
@@ -906,6 +1321,22 @@ void swap_adjacent_inplace( ternary_truth_table<TT>& tt, uint8_t var_index )
 {
   swap_adjacent_inplace( tt._bits, var_index );
   swap_adjacent_inplace( tt._care, var_index );
+}
+
+/*! \brief Swaps two adjacent variables in a truth table
+
+  The function swaps variable `var_index` with `var_index + 1`.  The
+  function will change `tt` in-place.  If `tt` should not be changed,
+  one can use `swap_adjacent` instead.
+
+  \param tt Truth table
+  \param var_index A variable
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void swap_adjacent_inplace( quaternary_truth_table<TT>& tt, uint8_t var_index )
+{
+  swap_adjacent_inplace( tt._onset, var_index );
+  swap_adjacent_inplace( tt._offset, var_index );
 }
 
 /*! \brief Swaps two adjacent variables in a truth table
@@ -1036,6 +1467,23 @@ void swap_inplace( ternary_truth_table<TT>& tt, uint8_t var_index1, uint8_t var_
   swap_inplace( tt._care, var_index1, var_index2 );
 }
 
+/*! \brief Swaps two variables in a truth table
+
+  The function swaps variable `var_index1` with `var_index2`.  The
+  function will change `tt` in-place.  If `tt` should not be changed,
+  one can use `swap` instead.
+
+  \param tt Ternary truth table
+  \param var_index1 First variable
+  \param var_index2 Second variable
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void swap_inplace( quaternary_truth_table<TT>& tt, uint8_t var_index1, uint8_t var_index2 )
+{
+  swap_inplace( tt._onset, var_index1, var_index2 );
+  swap_inplace( tt._offset, var_index1, var_index2 );
+}
+
 /*! \brief Swaps two adjacent variables in a truth table
 
   The function swaps variable `var_index1` with `var_index2`.  The
@@ -1121,6 +1569,22 @@ void flip_inplace( ternary_truth_table<TT>& tt, uint8_t var_index )
 {
   flip_inplace( tt._bits, var_index );
   flip_inplace( tt._care, var_index );
+}
+
+/*! \brief Flips a variable in a ternary truth table
+
+  The function flips variable `var_index` in `tt`.  The function will
+  change `tt` in-place.  If `tt` should not be changed, one can use
+  `flip` instead.
+
+  \param tt Ternary truth table
+  \param var_index A variable
+*/
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void flip_inplace( quaternary_truth_table<TT>& tt, uint8_t var_index )
+{
+  flip_inplace( tt._onset, var_index );
+  flip_inplace( tt._offset, var_index );
 }
 
 /*! \brief Flips a variable in a truth table
@@ -1247,6 +1711,22 @@ void extend_to_inplace( ternary_truth_table<TT>& tt, const ternary_truth_table<T
   extend_to_inplace( tt._care, from._care );
 }
 
+/*! \brief Extends smaller ternary truth table to larger one
+
+  The most significant variables will not be in the functional support of the
+  resulting truth table, but the method is helpful to align a truth table when
+  being used with another one.
+
+  \param tt Larger ternary truth table to create
+  \param from Smaller ternary truth table to copy from
+*/
+template<typename TT, typename TTFrom, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void extend_to_inplace( quaternary_truth_table<TT>& tt, const quaternary_truth_table<TTFrom>& from )
+{
+  extend_to_inplace( tt._onset, from._onset );
+  extend_to_inplace( tt._offset, from._offset );
+}
+
 /*! \brief Extends smaller truth table to larger static one
 
   This is an out-of-place version of `extend_to_inplace` that has the truth
@@ -1298,6 +1778,23 @@ inline ternary_truth_table<TTFrom> extend_to( const ternary_truth_table<TTFrom>&
   return tt;
 }
 
+/*! \brief Extends smaller ternary truth table to larger one of the same underlying type
+
+  This is an out-of-place version of `extend_to_inplace` that has the truth
+  table as a return value.  It only works for creating dynamic truth tables.
+  The parameter `num_vars` must be equal or larger to the number of variables in
+  `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<typename TTFrom>
+inline quaternary_truth_table<TTFrom> extend_to( const quaternary_truth_table<TTFrom>& from, unsigned num_vars )
+{
+  auto tt = quaternary_truth_table<TTFrom>( num_vars );
+  extend_to_inplace( tt, from );
+  return tt;
+}
+
 /*! \brief Shrinks larger truth table to smaller one
 
   The function expects that the most significant bits, which are cut off, are
@@ -1334,6 +1831,22 @@ void shrink_to_inplace( ternary_truth_table<TT>& tt, const ternary_truth_table<T
 {
   shrink_to_inplace( tt._bits, from._bits );
   shrink_to_inplace( tt._care, from._care );
+}
+
+/*! \brief Shrinks larger ternary truth table to smaller one
+
+  The function expects that the most significant bits, which are cut off, are
+  not in the functional support of the original function.  Only then it is
+  ensured that the resulting function is equivalent.
+
+  \param tt Smaller ternary truth table to create
+  \param from Larger ternary truth table to copy from
+*/
+template<typename TT, typename TTFrom, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+void shrink_to_inplace( quaternary_truth_table<TT>& tt, const quaternary_truth_table<TTFrom>& from )
+{
+  shrink_to_inplace( tt._onset, from._onset );
+  shrink_to_inplace( tt._offset, from._offset );
 }
 
 /*! \brief Shrinks larger truth table to smaller static one
@@ -1381,6 +1894,22 @@ template<typename TTFrom>
 inline ternary_truth_table<TTFrom> shrink_to( const ternary_truth_table<TTFrom>& from, unsigned num_vars )
 {
   auto tt = ternary_truth_table<TTFrom>( num_vars );
+  shrink_to_inplace( tt, from );
+  return tt;
+}
+
+/*! \brief Shrinks larger ternary truth table to smaller one of the same underlying type
+
+  This is an out-of-place version of `shrink_to` that has the truth table as a
+  return value.  It only works for creating dynamic tables.  The parameter
+  `num_vars` must be equal or smaller to the number of variables in `from`.
+
+  \param from Smaller truth table to copy from
+*/
+template<typename TTFrom>
+inline quaternary_truth_table<TTFrom> shrink_to( const quaternary_truth_table<TTFrom>& from, unsigned num_vars )
+{
+  auto tt = quaternary_truth_table<TTFrom>( num_vars );
   shrink_to_inplace( tt, from );
   return tt;
 }
@@ -1503,6 +2032,25 @@ inline void shift_left_inplace( ternary_truth_table<TT>& tt, uint64_t shift )
   for ( auto i = 0u; i < shift; i++ )
   {
     set_bit( tt._care, i );
+  }
+}
+
+/*! \brief Left-shift quaternary truth table
+
+  Drops overflowing most-significant bits and fills up least-significant bits
+  with zeroes.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+inline void shift_left_inplace( quaternary_truth_table<TT>& tt, uint64_t shift )
+{
+  shift_left_inplace( tt._onset, shift );
+  shift_left_inplace( tt._offset, shift );
+  for ( auto i = 0u; i < shift; i++ )
+  {
+    set_bit( tt._offset, i );
   }
 }
 
@@ -1640,6 +2188,25 @@ inline void shift_right_inplace( ternary_truth_table<TT>& tt, uint64_t shift )
   }
 }
 
+/*! \brief Right-shift quaternary truth table
+
+  Drops overflowing most-significant bits and fills up least-significant bits
+  with zeroes.
+
+  \param tt Truth table
+  \param shift Number of bits to shift
+*/
+template<typename TT>
+inline void shift_right_inplace( quaternary_truth_table<TT>& tt, uint64_t shift )
+{
+  shift_right_inplace( tt._onset, shift );
+  shift_right_inplace( tt._offset, shift );
+  for ( auto i = 0u; i < shift; i++ )
+  {
+    set_bit( tt._offset, tt._offset.num_bits() - 1 - i );
+  }
+}
+
 /*! \brief Right-shift truth table
 
   Out-of-place variant of `shift_right_inplace`.
@@ -1706,6 +2273,8 @@ inline auto compose_truth_table( const TTf& f, const std::vector<TTv>& vars )
   However, if `f(x1, x2) = 1100` and
   `vars = {x1 = 1001, x2= -010}`, the function returns 1001.
 
+  This function does not support truth quaternary table with more than 6 variables.
+
   \param f The outer function
   \param vars The ordered set of input variables
   \return The composed truth table with vars.size() variables
@@ -1758,13 +2327,102 @@ inline auto compose_truth_table( const ternary_truth_table<TTf>& f, const std::v
     }
     else
     {
-      if ( count_ones( f_copy._bits ) == ( 1 << cnt_care ) )
+      if ( count_ones( f_copy._bits ) == ( 1 << cnt_care ) ) // count_ones( f_copy._onset & ~f_copy._offset ) count real ones in f_copy
       {
         set_bit( composed, i );
       }
       else
       {
         set_dont_care( composed, i );
+      }
+    }
+  }
+
+  return composed;
+}
+
+/*! \brief Composes a truth table.
+
+  Given a function `f`, and a set of truth tables as arguments, computes the
+  composed truth table.  For example, if `f(x1, x2) = 1001` and
+  `vars = {x1 = 1001, x2= 1010}`, the function returns 1000.
+  For example, if `f(x1, x2) = 1-00` and
+  `vars = {x1 = 1001, x2= 1010}`, the function returns 100-.
+  For example, if `f(x1, x2) = 1-00` and
+  `vars = {x1 = 1001, x2= -010}`, the function returns 100-.
+  If `f(x1, x2) = 1100` and
+  `vars = {x1 = 1x01, x2= -01x}`, the function returns 1x01.
+
+  This function does not support truth quaternary table with more than 6 variables.
+
+  \param f The outer function
+  \param vars The ordered set of input variables
+  \return The composed truth table with vars.size() variables
+*/
+template<class TTf, class TTv, typename = std::enable_if_t<is_complete_truth_table<TTf>::value>>
+inline auto compose_truth_table( const quaternary_truth_table<TTf>& f, const std::vector<quaternary_truth_table<TTv>>& vars )
+{
+  assert( vars.size() == static_cast<std::size_t>( f.num_vars() ) );
+  auto a = create<TTv>( vars[0].num_vars() );
+  auto b = create<TTv>( vars[0].num_vars() );
+  auto composed = quaternary_truth_table<TTv>( a, b );
+
+  for ( uint64_t i = 0u; i < composed.num_bits(); ++i )
+  {
+    auto f_copy = f;
+    uint64_t cnt_care = 0u;
+    bool dont_know_found = false;
+    for ( uint64_t j = 0u; j < vars.size(); ++j )
+    {
+      auto tt_mask = f._onset.construct();
+      auto const projection = [&j, &f]( auto a )
+      {
+        return ( a | detail::projections[f.num_vars() - 1 - j] );
+      };
+      auto const projection_neg = [&j, &f]( auto a )
+      {
+        return ( a | detail::projections_neg[f.num_vars() - j - 1] );
+      };
+      if ( !is_dont_care( vars[j], i ) && !is_dont_know( vars[j], i ) )
+      {
+        auto bit = get_bit( vars[j], i );
+        if ( bit )
+        {
+          auto ttt_mask = quaternary_truth_table<TTf>( unary_operation( tt_mask, projection ) );
+          f_copy &= ttt_mask;
+        }
+        else
+        {
+          auto ttt_mask = quaternary_truth_table<TTf>( unary_operation( tt_mask, projection_neg ) );
+          f_copy &= ttt_mask;
+        }
+      }
+      else
+      {
+        ++cnt_care;
+        if ( is_dont_know( vars[j], i ) )
+          dont_know_found = true;
+      }
+    }
+    if ( is_const0( f_copy ) )
+    {
+      if ( count_ones( f_copy._onset ) == ( 1 << cnt_care ) )
+        set_dont_care( composed, i );
+      else
+        set_bit( composed, i, false );
+    }
+    else
+    {
+      if ( count_ones( f_copy._onset ) == ( 1 << cnt_care ) )
+      {
+        set_bit( composed, i );
+      }
+      else
+      {
+        if ( ( !dont_know_found && is_const0( ~f_copy._onset & ~f_copy._offset ) ) )
+          set_dont_care( composed, i );
+        else
+          set_dont_know( composed, i );
       }
     }
   }
@@ -1818,6 +2476,38 @@ inline void shift_with_mask_inplace( ternary_truth_table<TT>& f, uint8_t mask )
 
   shift_with_mask_inplace( f._bits, mask );
   f._care = ~f._care.construct();
+}
+
+template<typename TT, typename = std::enable_if_t<is_complete_truth_table<TT>::value>>
+inline void shift_with_mask_inplace( quaternary_truth_table<TT>& f, uint8_t mask )
+{
+  std::vector<uint8_t> mask_from = {};
+  std::vector<uint8_t> mask_to = {};
+  for ( auto i = 0u; i < f.num_vars(); i++ )
+  {
+    if ( has_var( f, i ) )
+      mask_from.push_back( i );
+  }
+  for ( uint64_t count = 0u; mask > 0; mask = (int)mask / 2, count++ )
+  {
+    if ( mask % 2 )
+      mask_to.push_back( count );
+  }
+  assert( mask_to.size() == mask_from.size() );
+  std::vector<uint8_t> index_remove = {};
+  for ( auto i = 0; i < mask_from.size(); i++ )
+  {
+    int index = std::find( begin( mask_to ), end( mask_to ), mask_from[i] ) - mask_to.begin();
+    if ( index < mask_to.size() )
+    {
+      mask_to.erase( mask_to.begin() + index );
+      mask_from.erase( mask_from.begin() + i );
+    }
+  }
+  for ( auto i = 0; i < mask_from.size(); i++ )
+  {
+    swap_inplace( f, mask_from[i], mask_to[i] );
+  }
 }
 
 /*! \brief Shifts a small truth table with respect to a mask
