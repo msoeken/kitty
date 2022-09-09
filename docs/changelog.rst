@@ -3,6 +3,10 @@ Change Log
 
 Next release
 ------------
+
+v0.8 (September 9, 2022)
+------------------------
+
 * Data structure: ``ternary_truth_table`` and ``quaternary_truth_table`` (contributed by Siang-Yun Lee and Gianluca Radi)
   `#133 <https://github.com/msoeken/kitty/pull/133>`_
 
