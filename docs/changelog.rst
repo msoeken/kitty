@@ -3,6 +3,9 @@ Change Log
 
 Next release
 ------------
+* Data structure: ``ternary_truth_table`` and ``quaternary_truth_table`` (contributed by Siang-Yun Lee and Gianluca Radi)
+  `#133 <https://github.com/msoeken/kitty/pull/133>`_
+
 * Print: ``print_kmap`` (contributed by Gianluca Radi)
   `#129 <https://github.com/msoeken/kitty/pull/129>`_
 
