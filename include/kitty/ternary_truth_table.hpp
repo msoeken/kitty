@@ -75,7 +75,7 @@ struct ternary_truth_table
     \param care Care truth table.
   */
   ternary_truth_table( TT const& bits, TT const& care )
-      : _bits( bits ), _care( care )
+      : _care( care ), _bits( bits )
   {
   }
 

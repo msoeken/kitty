@@ -117,6 +117,8 @@ inline ternary_truth_table<TT> binary_and( const ternary_truth_table<TT>& first,
 {
   auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 )
   {
+    (void)c1;
+    (void)c2;
     return b1 & b2;
   };
   auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
@@ -173,6 +175,8 @@ inline ternary_truth_table<TT> binary_or( const ternary_truth_table<TT>& first, 
 {
   auto const op_bits = []( auto b1, auto c1, auto b2, auto c2 )
   {
+    (void)c1;
+    (void)c2;
     return b1 | b2;
   };
   auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
@@ -232,6 +236,8 @@ inline ternary_truth_table<TT> binary_xor( const ternary_truth_table<TT>& first,
   };
   auto const op_care = []( auto b1, auto c1, auto b2, auto c2 )
   {
+    (void)b1;
+    (void)b2;
     return c1 & c2;
   };
 
@@ -930,8 +936,8 @@ template<typename TT>
 void next_inplace( quaternary_truth_table<TT>& tt )
 {
   auto copy = tt;
-  auto first_bit_on = find_first_one_bit( tt._onset );
-  auto first_bit_of = find_first_one_bit( tt._offset );
+  int64_t first_bit_on = find_first_one_bit( tt._onset );
+  int64_t first_bit_of = find_first_one_bit( tt._offset );
   if ( first_bit_on == -1 )
     first_bit_on = tt._onset.num_bits();
   if ( first_bit_of == -1 )
@@ -940,7 +946,7 @@ void next_inplace( quaternary_truth_table<TT>& tt )
   {
     clear_bit( tt._offset, first_bit_of );
     set_bit( tt._onset, first_bit_of );
-    for ( uint64_t i = 0; i < first_bit_of; i++ )
+    for ( int64_t i = 0; i < first_bit_of; i++ )
     {
       set_bit( tt._offset, i );
       clear_bit( tt._onset, i );
@@ -951,7 +957,7 @@ void next_inplace( quaternary_truth_table<TT>& tt )
     if ( first_bit_of > first_bit_on )
     {
       set_bit( tt._offset, first_bit_on );
-      for ( uint64_t i = 0; i < first_bit_on; i++ )
+      for ( int64_t i = 0; i < first_bit_on; i++ )
       {
         set_bit( tt._offset, i );
         clear_bit( tt._onset, i );
@@ -959,14 +965,14 @@ void next_inplace( quaternary_truth_table<TT>& tt )
     }
     else
     {
-      if ( first_bit_of == tt._offset.num_bits() && first_bit_on == tt._onset.num_bits() )
+      if ( uint64_t( first_bit_of ) == tt._offset.num_bits() && uint64_t( first_bit_on ) == tt._onset.num_bits() )
         set_bit( tt._offset, first_bit_of - 1 );
       else
       {
         clear_bit( tt._onset, first_bit_on );
         clear_bit( tt._offset, first_bit_on );
       }
-      for ( uint64_t i = 0; i < first_bit_of; i++ )
+      for ( int64_t i = 0; i < first_bit_of; i++ )
       {
         set_bit( tt._offset, i );
         clear_bit( tt._onset, i );
@@ -2395,16 +2401,16 @@ inline void shift_with_mask_inplace( quaternary_truth_table<TT>& f, uint8_t mask
   }
   assert( mask_to.size() == mask_from.size() );
   std::vector<uint8_t> index_remove = {};
-  for ( auto i = 0; i < mask_from.size(); i++ )
+  for ( auto i = 0u; i < mask_from.size(); i++ )
   {
-    int index = std::find( begin( mask_to ), end( mask_to ), mask_from[i] ) - mask_to.begin();
-    if ( index < mask_to.size() )
+    auto it = std::find( mask_to.begin(), mask_to.end(), mask_from[i] );
+    if ( it != mask_to.end() )
     {
-      mask_to.erase( mask_to.begin() + index );
+      mask_to.erase( it );
       mask_from.erase( mask_from.begin() + i );
     }
   }
-  for ( auto i = 0; i < mask_from.size(); i++ )
+  for ( auto i = 0u; i < mask_from.size(); i++ )
   {
     swap_inplace( f, mask_from[i], mask_to[i] );
   }
