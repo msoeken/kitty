@@ -128,3 +128,19 @@ TEST_F( CubeTest, negate_cube )
   EXPECT_EQ( to_string( ~cube( "-1-" ), 3 ), "-0-" );
   EXPECT_EQ( to_string( ~cube( "*00" ), 3 ), "-11" );
 }
+
+TEST_F( CubeTest, foreach_minterm )
+{
+  cube c( "-1-" );
+  std::vector<cube> minterms;
+  c.foreach_minterm( 3, [&]( cube const& m ){
+    minterms.emplace_back( m );
+    return true;
+  } );
+
+  EXPECT_EQ( minterms.size(), 4 );
+  EXPECT_EQ( to_string( minterms.at( 0 ), 3 ), "010" );
+  EXPECT_EQ( to_string( minterms.at( 1 ), 3 ), "110" );
+  EXPECT_EQ( to_string( minterms.at( 2 ), 3 ), "011" );
+  EXPECT_EQ( to_string( minterms.at( 3 ), 3 ), "111" );
+}

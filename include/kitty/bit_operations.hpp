@@ -210,6 +210,8 @@ bool is_dont_care( const quaternary_truth_table<TT>& tt, uint64_t index )
 template<typename TT>
 bool is_dont_care( const TT& tt, uint64_t index )
 {
+  (void)tt;
+  (void)index;
   return false;
 }
 
@@ -263,6 +265,8 @@ bool is_dont_know( const quaternary_truth_table<TT>& tt, uint64_t index )
 template<typename TT>
 bool is_dont_know( const TT& tt, uint64_t index )
 {
+  (void)tt;
+  (void)index;
   return false;
 }
 
@@ -278,12 +282,15 @@ void set_dont_know( quaternary_truth_table<TT>& tt, uint64_t index )
 template<typename TT>
 uint64_t get_block( const TT& tt, uint64_t block_index )
 {
+  assert( block_index < tt.num_blocks() );
   return tt._bits[block_index];
 }
 
 template<uint32_t NumVars>
 uint64_t get_block( const static_truth_table<NumVars, true>& tt, uint64_t block_index )
 {
+  assert( block_index == 0 );
+  (void)block_index;
   return tt._bits;
 }
 
