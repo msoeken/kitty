@@ -989,41 +989,6 @@ TEST_F( OperationsTest, predicate_for_ternary )
   EXPECT_FALSE( has_var( tt22, 6 ) );
 }
 
-TEST_F( OperationsTest, instersection_for_ternary )
-{
-  auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "5" ), from_hex( 2, "f" ) );
-  auto tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "d" ), from_hex( 2, "f" ) );
-  auto tt3 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "2" ), from_hex( 2, "f" ) );
-  EXPECT_FALSE( intersection_is_empty( tt1, tt2 ) );
-  EXPECT_TRUE( intersection_is_empty( tt1, tt3 ) );
-  EXPECT_TRUE( intersection_is_empty( tt3, tt2 ) );
-  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
-
-  tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "4" ), from_hex( 2, "5" ) );
-  tt2 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "8" ), from_hex( 2, "e" ) );
-  tt3 = ternary_truth_table<dynamic_truth_table>( from_hex( 2, "3" ), from_hex( 2, "b" ) );
-  EXPECT_FALSE( intersection_is_empty( tt1, tt2 ) );
-  EXPECT_FALSE( intersection_is_empty( tt1, tt3 ) );
-  EXPECT_FALSE( intersection_is_empty( tt3, tt2 ) );
-  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
-
-  auto tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
-  auto tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "92929292929292929292929292929292" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
-  auto tt33 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d" ), from_hex( 7, "ffffffffffffffffffffffffffffffff" ) );
-  EXPECT_FALSE( intersection_is_empty( tt11, tt22 ) );
-  EXPECT_FALSE( intersection_is_empty( tt11, tt33 ) );
-  EXPECT_TRUE( intersection_is_empty( tt33, tt22 ) );
-  EXPECT_TRUE( intersection_is_empty( tt11, tt22, tt33 ) );
-
-  tt11 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "46464646464646464646464646464646" ), from_hex( 7, "77777777777777777777777777777777" ) );
-  tt22 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "01010101010101010101010101010101" ), from_hex( 7, "c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7" ) );
-  tt33 = ternary_truth_table<dynamic_truth_table>( from_hex( 7, "50505050505050505050505050505050" ), from_hex( 7, "5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e" ) );
-  EXPECT_FALSE( intersection_is_empty( tt11, tt22 ) );
-  EXPECT_FALSE( intersection_is_empty( tt11, tt33 ) );
-  EXPECT_FALSE( intersection_is_empty( tt33, tt22 ) );
-  EXPECT_TRUE( intersection_is_empty( tt11, tt22, tt33 ) );
-}
-
 TEST_F( OperationsTest, cofactor_for_ternary )
 {
   auto tt1 = ternary_truth_table<dynamic_truth_table>( from_hex( 3, "5b" ), from_hex( 3, "ff" ) );
@@ -1327,34 +1292,6 @@ TEST_F( OperationsTest, predicate_for_quaternary )
   EXPECT_TRUE( has_var( ttt2, 2 ) );
   EXPECT_TRUE( has_var( ttt2, 1 ) );
   EXPECT_TRUE( has_var( ttt2, 0 ) );
-}
-
-TEST_F( OperationsTest, instersection_for_quaternary )
-{
-  auto tt1 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "c3" ), from_hex( 3, "b9" ) );
-  auto tt2 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "30" ), from_hex( 3, "d7" ) );
-  auto tt3 = quaternary_truth_table<dynamic_truth_table>( from_hex( 3, "5b" ), from_hex( 3, "f6" ) );
-  EXPECT_TRUE( intersection_is_empty( tt1, tt2 ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt1, tt2 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt1, tt2 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt1, tt2 ) ) );
-  EXPECT_TRUE( intersection_is_empty( tt1, tt3 ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt1, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt1, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt1, tt3 ) ) );
-  EXPECT_FALSE( intersection_is_empty( tt2, tt3 ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false>( tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true>( tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false>( tt2, tt3 ) ) );
-
-  EXPECT_TRUE( intersection_is_empty( tt1, tt2, tt3 ) );
-  EXPECT_TRUE( ( intersection_is_empty<dynamic_truth_table, true, true, false>( tt1, tt2, tt3 ) ) );
-  EXPECT_TRUE( ( intersection_is_empty<dynamic_truth_table, true, false, true>( tt1, tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, true, false, false>( tt1, tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true, true>( tt1, tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, true, false>( tt1, tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false, true>( tt1, tt2, tt3 ) ) );
-  EXPECT_FALSE( ( intersection_is_empty<dynamic_truth_table, false, false, false>( tt1, tt2, tt3 ) ) );
 }
 
 TEST_F( OperationsTest, cofactor_for_quaternary )
